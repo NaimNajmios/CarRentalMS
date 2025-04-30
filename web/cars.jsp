@@ -1,4 +1,17 @@
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="Database.UIAccessObject"%>
+<%@ page import="Vehicle.Vehicle" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<%
+
+    List<Vehicle> vehicles = new ArrayList<>();
+    UIAccessObject uiAccessObject = new UIAccessObject();
+    vehicles = uiAccessObject.getVehicleList();
+
+%>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
