@@ -54,6 +54,7 @@ public class UIAccessObject {
                 vehicle.setVehicleMileage(resultSet.getInt("mileage"));
                 vehicle.setVehicleRatePerDay(resultSet.getString("ratePerDay"));
                 vehicle.setVehicleRegistrationNo(resultSet.getString("registrationNo"));
+                vehicle.setVehicleImagePath(resultSet.getString("vehicleImagePath"));
                 vehicleList.add(vehicle);
                 LOGGER.log(Level.FINE, "Retrieved vehicle: {0}", vehicle.getVehicleId());
             }

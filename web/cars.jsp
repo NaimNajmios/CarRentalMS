@@ -1,15 +1,13 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="Database.UIAccessObject"%>
 <%@ page import="Vehicle.Vehicle" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%
-
     List<Vehicle> vehicles = new ArrayList<>();
     UIAccessObject uiAccessObject = new UIAccessObject();
     vehicles = uiAccessObject.getVehicleList();
-
 %>
 
 <!DOCTYPE html>
@@ -51,78 +49,213 @@
                 </ul>
                 <!-- Car Listings -->
                 <div class="tab-content" id="carCategoryTabContent">
+                    <!-- All Tab -->
                     <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                            <!-- Car Card -->
+                            <%
+                                for (Vehicle vehicle : vehicles) {
+                                    if (vehicle.getVehicleAvailablity()) {
+                            %>
                             <div class="col">
                                 <div class="card h-100 border-0 shadow-sm">
-                                    <img src="images/img_1.jpg" class="card-img-top" alt="Car">
+                                    <img src="<%= vehicle.getVehicleImagePath()%>" class="card-img-top" alt="<%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%>">
                                     <div class="card-body text-center">
                                         <div class="card-details">
-                                            <h5 class="card-title fw-semibold">Land Rover Range Rover S64</h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$250 <span class="fs-6 text-muted">/day</span></p>
+                                            <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
+                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> Land Rover</li>
-                                                <li><span class="text-muted">Model:</span> Range Rover S64</li>
-                                                <li><span class="text-muted">Transmission:</span> Automatic</li>
-                                                <li><span class="text-muted">Fuel Type:</span> Diesel</li>
+                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="#" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="card h-100 border-0 shadow-sm">
-                                    <img src="images/img_2.jpg" class="card-img-top" alt="Car">
-                                    <div class="card-body text-center">
-                                        <div class="card-details">
-                                            <h5 class="card-title fw-semibold">BMW X5 M50i</h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$250 <span class="fs-6 text-muted">/day</span></p>
-                                            <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> BMW</li>
-                                                <li><span class="text-muted">Model:</span> X5 M50i</li>
-                                                <li><span class="text-muted">Transmission:</span> Automatic</li>
-                                                <li><span class="text-muted">Fuel Type:</span> Petrol</li>
-                                            </ul>
-                                        </div>
-                                        <div class="card-footer-btn">
-                                            <a href="#" class="btn btn-primary w-100">Rent Now</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="card h-100 border-0 shadow-sm">
-                                    <img src="images/img_3.jpg" class="card-img-top" alt="Car">
-                                    <div class="card-body text-center">
-                                        <div class="card-details">
-                                            <h5 class="card-title fw-semibold">Mercedes-Benz GLC 300</h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$250 <span class="fs-6 text-muted">/day</span></p>
-                                            <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> Mercedes-Benz</li>
-                                                <li><span class="text-muted">Model:</span> GLC 300</li>
-                                                <li><span class="text-muted">Transmission:</span> Automatic</li>
-                                                <li><span class="text-muted">Fuel Type:</span> Hybrid</li>
-                                            </ul>
-                                        </div>
-                                        <div class="card-footer-btn">
-                                            <a href="#" class="btn btn-primary w-100">Rent Now</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <%
+                                    }
+                                }
+                            %>
                         </div>
                     </div>
-                    <!-- Placeholder for other tabs (empty for now) -->
-                    <div class="tab-pane fade" id="hatchback" role="tabpanel" aria-labelledby="hatchback-tab"></div>
-                    <div class="tab-pane fade" id="sedan" role="tabpanel" aria-labelledby="sedan-tab"></div>
-                    <div class="tab-pane fade" id="suv" role="tabpanel" aria-labelledby="suv-tab"></div>
-                    <div class="tab-pane fade" id="van" role="tabpanel" aria-labelledby="van-tab"></div>
-                    <div class="tab-pane fade" id="truck" role="tabpanel" aria-labelledby="truck-tab"></div>
+                    <!-- Hatchback Tab -->
+                    <div class="tab-pane fade" id="hatchback" role="tabpanel" aria-labelledby="hatchback-tab">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                            <%
+                                for (Vehicle vehicle : vehicles) {
+                                    if (vehicle.getVehicleAvailablity() && "Hatchback".equalsIgnoreCase(vehicle.getVehicleCategory())) {
+                            %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img src="<%= vehicle.getVehicleImagePath()%>" class="card-img-top" alt="<%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%>">
+                                    <div class="card-body text-center">
+                                        <div class="card-details">
+                                            <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
+                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <ul class="list-unstyled row row-cols-2 g-2 mb-4">
+                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer-btn">
+                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%
+                                    }
+                                }
+                            %>
+                        </div>
+                    </div>
+                    <!-- Sedan Tab -->
+                    <div class="tab-pane fade" id="sedan" role="tabpanel" aria-labelledby="sedan-tab">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                            <%
+                                for (Vehicle vehicle : vehicles) {
+                                    if (vehicle.getVehicleAvailablity() && "Sedan".equalsIgnoreCase(vehicle.getVehicleCategory())) {
+                            %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img src="<%= vehicle.getVehicleImagePath()%>" class="card-img-top" alt="<%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%>">
+                                    <div class="card-body text-center">
+                                        <div class="card-details">
+                                            <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
+                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <ul class="list-unstyled row row-cols-2 g-2 mb-4">
+                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer-btn">
+                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%
+                                    }
+                                }
+                            %>
+                        </div>
+                    </div>
+                    <!-- SUV Tab -->
+                    <div class="tab-pane fade" id="suv" role="tabpanel" aria-labelledby="suv-tab">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                            <%
+                                for (Vehicle vehicle : vehicles) {
+                                    if (vehicle.getVehicleAvailablity() && "SUV".equalsIgnoreCase(vehicle.getVehicleCategory())) {
+                            %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img src="<%= vehicle.getVehicleImagePath()%>" class="card-img-top" alt="<%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%>">
+                                    <div class="card-body text-center">
+                                        <div class="card-details">
+                                            <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
+                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <ul class="list-unstyled row row-cols-2 g-2 mb-4">
+                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer-btn">
+                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%
+                                    }
+                                }
+                            %>
+                        </div>
+                    </div>
+                    <!-- Van Tab -->
+                    <div class="tab-pane fade" id="van" role="tabpanel" aria-labelledby="van-tab">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                            <%
+                                for (Vehicle vehicle : vehicles) {
+                                    if (vehicle.getVehicleAvailablity() && "Van".equalsIgnoreCase(vehicle.getVehicleCategory())) {
+                            %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img src="<%= vehicle.getVehicleImagePath()%>" class="card-img-top" alt="<%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%>">
+                                    <div class="card-body text-center">
+                                        <div class="card-details">
+                                            <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
+                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <ul class="list-unstyled row row-cols-2 g-2 mb-4">
+                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer-btn">
+                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%
+                                    }
+                                }
+                            %>
+                        </div>
+                    </div>
+                    <!-- Truck Tab -->
+                    <div class="tab-pane fade" id="truck" role="tabpanel" aria-labelledby="truck-tab">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                            <%
+                                for (Vehicle vehicle : vehicles) {
+                                    if (vehicle.getVehicleAvailablity() && "Truck".equalsIgnoreCase(vehicle.getVehicleCategory())) {
+                            %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img src="<%= vehicle.getVehicleImagePath()%>" class="card-img-top" alt="<%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%>">
+                                    <div class="card-body text-center">
+                                        <div class="card-details">
+                                            <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
+                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <ul class="list-unstyled row row-cols-2 g-2 mb-4">
+                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer-btn">
+                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%
+                                    }
+                                }
+                            %>
+                        </div>
+                    </div>
                 </div>
+                <!-- Pagination (Placeholder, can be implemented dynamically if needed) -->
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    </ul>
+                </nav>
             </div>
         </section>
 

@@ -17,6 +17,7 @@ public class Vehicle {
     private int vehicleMileage;
     private String vehicleRatePerDay;
     private String vehicleRegistrationNo;
+    private String vehicleImagePath;
 
     // Empty constructor
     public Vehicle() {
@@ -127,6 +128,14 @@ public class Vehicle {
 
     public void setVehicleRegistrationNo(String vehicleRegistrationNo) {
         this.vehicleRegistrationNo = vehicleRegistrationNo;
+    }
+
+    public String getVehicleImagePath() {
+        return this.vehicleImagePath;
+    }
+
+    public void setVehicleImagePath(String vehicleImagePath) {
+        this.vehicleImagePath = vehicleImagePath;
     }
 
     @Override

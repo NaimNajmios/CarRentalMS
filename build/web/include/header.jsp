@@ -12,7 +12,7 @@
                         <a class="nav-link ${pageContext.request.requestURI.contains('main') ? 'active' : ''}" href="main.jsp">Main</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('index') ? 'active' : ''}" href="index.jsp">Cars</a>
+                        <a class="nav-link ${pageContext.request.requestURI.contains('cars') ? 'active' : ''}" href="cars.jsp">Cars</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ${pageContext.request.requestURI.contains('booking') ? 'active' : ''}" href="booking.jsp">Booking</a>
