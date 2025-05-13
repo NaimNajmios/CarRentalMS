@@ -206,7 +206,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="totalCost">Total Cost (RM)</label>
-                                <input type="number" step="0.01" class="form-control" id="totalCost" name="totalCost" readonly>
+                                <input type="number" step="0.01" class="form-control" id="totalCost" name="totalCost" placeholder="0.00" readonly>
                                 <small class="text-muted">Calculated automatically</small>
                             </div>
                             <button type="submit" class="submit-btn">Submit Booking</button>
