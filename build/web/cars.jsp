@@ -62,7 +62,7 @@
                                     <div class="card-body text-center">
                                         <div class="card-details">
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
                                                 <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
                                                 <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
@@ -71,7 +71,7 @@
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle-details.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -95,7 +95,7 @@
                                     <div class="card-body text-center">
                                         <div class="card-details">
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
                                                 <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
                                                 <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
@@ -104,7 +104,7 @@
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@
                                     <div class="card-body text-center">
                                         <div class="card-details">
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
                                                 <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
                                                 <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
@@ -137,7 +137,7 @@
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -161,7 +161,7 @@
                                     <div class="card-body text-center">
                                         <div class="card-details">
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
                                                 <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
                                                 <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
@@ -170,7 +170,7 @@
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -194,7 +194,7 @@
                                     <div class="card-body text-center">
                                         <div class="card-details">
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
                                                 <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
                                                 <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
@@ -203,7 +203,7 @@
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -227,7 +227,7 @@
                                     <div class="card-body text-center">
                                         <div class="card-details">
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
-                                            <p class="card-text fs-4 fw-bold mb-3">$<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
+                                            <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
                                                 <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
                                                 <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
@@ -236,7 +236,7 @@
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="booking.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -254,7 +254,7 @@
                         <li class="page-item active"><a class="page-link" href="#">1</a></li>
                         <li class="page-item"><a class="page-link" href="#">2</a></li>
                         <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    </ul>
+                    </ul>   
                 </nav>
             </div>
         </section>

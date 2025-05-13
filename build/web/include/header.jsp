@@ -12,16 +12,16 @@
                         <a class="nav-link ${pageContext.request.requestURI.contains('main') ? 'active' : ''}" href="main.jsp">Main</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('cars') ? 'active' : ''}" href="cars.jsp">Cars</a>
+                        <a class="nav-link ${pageContext.request.requestURI.contains('cars') || pageContext.request.requestURI.contains('vehicle-details') ? 'active' : ''}" href="cars.jsp">Cars</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('booking') ? 'active' : ''}" href="booking.jsp">Booking</a>
+                        <a class="nav-link ${pageContext.request.requestURI.contains('booking') || pageContext.request.requestURI.contains('booking-form') ? 'active' : ''}" href="booking.jsp">Booking</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ${pageContext.request.requestURI.contains('payment') ? 'active' : ''}" href="payment.jsp">Payment</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('profile') ? 'active' : ''}" href="profile.jsp">Profile</a>
+                        <a class="nav-link ${pageContext.request.requestURI.contains('profile') || pageContext.request.requestURI.contains('edit-profile') ? 'active' : ''}" href="profile.jsp">Profile</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="logout.jsp">Logout</a>
