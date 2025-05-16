@@ -82,7 +82,7 @@ public class DatabaseCRUD {
                                     try (PreparedStatement paymentStatement = connection
                                             .prepareStatement(paymentQuery)) {
                                         paymentStatement.setLong(1, newBookingId);
-                                        paymentStatement.setString(2, "Credit Card"); // Default payment type
+                                        paymentStatement.setString(2, null); // Default payment type, null
                                         paymentStatement.setString(3, booking.getTotalCost());
                                         paymentStatement.setString(4, "Pending"); // Default payment status
                                         paymentStatement.setDate(5, null); // Null date

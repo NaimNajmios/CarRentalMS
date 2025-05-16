@@ -181,7 +181,6 @@
                                 <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
                                 <p><strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
                                 <p><strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
-                                <p><strong>Date:</strong> <%= payment.getPaymentDate()%></p>
                             </div>
                             <div class="payment-info">
                                 <p class="amount">RM <%= String.format("%.2f", payment.getAmount())%></p>
