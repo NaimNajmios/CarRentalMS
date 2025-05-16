@@ -73,38 +73,51 @@
                 color: white;
                 border-color: #007bff;
             }
-            .payment-cards-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 1.5rem;
+            .payment-cards-list {
+                list-style: none;
                 padding: 0 1rem;
             }
-            .payment-card {
+            .payment-item {
                 background-color: #fff;
                 border: 1px solid #dee2e6;
                 border-radius: 8px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                padding: 1rem;
+                display: flex; /* Arrange content horizontally */
+                align-items: center;
+                justify-content: space-between; /* Distribute space between elements */
                 cursor: pointer;
                 transition: transform 0.1s ease-in-out;
             }
-            .payment-card:hover {
+            .payment-item:hover {
                 transform: scale(1.02);
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
-            .card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1rem;
+            .payment-details {
+                flex-grow: 1; /* Allow details to take up available space */
+                margin-right: 1rem;
             }
-            .card-header h5 {
-                font-size: 1.1rem;
+            .payment-details p {
+                margin-bottom: 0.3rem;
+                font-size: 0.95rem;
+                color: #555;
+            }
+            .payment-details strong {
                 font-weight: 600;
                 color: #34495e;
-                margin: 0;
             }
-            .card-header .status {
+            .payment-info {
+                text-align: right;
+                min-width: 150px; /* Ensure status and amount don't collapse too much */
+            }
+            .payment-info .amount {
+                font-size: 1.1rem;
+                font-weight: bold;
+                color: #27ae60;
+                margin-bottom: 0.3rem;
+            }
+            .payment-info .status {
                 display: inline-block;
                 padding: 0.3rem 0.6rem;
                 border-radius: 20px;
@@ -122,22 +135,6 @@
             .status-Cancelled {
                 background-color: #f8d7da;
                 color: #721c24;
-            }
-            .card-details p {
-                margin-bottom: 0.5rem;
-                font-size: 0.95rem;
-                color: #555;
-            }
-            .card-details strong {
-                font-weight: 600;
-                color: #34495e;
-            }
-            .card-footer {
-                margin-top: 1rem;
-                text-align: right;
-                font-size: 1rem;
-                color: #27ae60;
-                font-weight: bold;
             }
             .no-payments {
                 text-align: center;
@@ -168,33 +165,31 @@
                     </div>
 
                     <div class="filter-buttons">
-                        <button class="filter-btn active" data-status="all">All</button>
-                        <button class="filter-btn" data-status="Pending">Pending</button>
+                        <button class="filter-btn active" data-status="Pending">Pending</button>
                         <button class="filter-btn" data-status="Completed">Completed</button>
                         <button class="filter-btn" data-status="Cancelled">Cancelled</button>
+                        <button class="filter-btn" data-status="all">All</button>
                     </div>
 
                     <% if (allPayments == null || allPayments.isEmpty()) { %>
                     <div class="no-payments">No payment records found for this client.</div>
                     <% } else { %>
-                    <div class="payment-cards-grid" id="paymentCardsGrid">
+                    <ul class="payment-cards-list" id="paymentCardsList">
                         <% for (Payment payment : allPayments) {%>
-                        <div class="payment-card payment-item" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>" onclick="window.location = 'payment-details.jsp?paymentId=<%= payment.getPaymentID()%>'">
-                            <div class="card-header">
-                                <h5>Payment ID: <%= payment.getPaymentID()%></h5>
-                                <span class="status status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().replace(" ", "") : ""%>"><%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%></span>
-                            </div>
-                            <div class="card-details">
+                        <li class="payment-item payment-card" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>" onclick="window.location = 'payment-details.jsp?paymentId=<%= payment.getPaymentID()%>'">
+                            <div class="payment-details">
+                                <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
                                 <p><strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
                                 <p><strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
                                 <p><strong>Date:</strong> <%= payment.getPaymentDate()%></p>
                             </div>
-                            <div class="card-footer">
-                                RM <%= String.format("%.2f", payment.getAmount())%>
+                            <div class="payment-info">
+                                <p class="amount">RM <%= String.format("%.2f", payment.getAmount())%></p>
+                                <span class="status status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().replace(" ", "") : ""%>"><%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%></span>
                             </div>
-                        </div>
+                        </li>
                         <% } %>
-                    </div>
+                    </ul>
                     <% }%>
 
                     <div class="timestamp">Last updated: <%= currentDateTime%></div>
@@ -208,9 +203,33 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const filterButtons = document.querySelectorAll('.filter-btn');
-                const paymentCards = document.querySelectorAll('#paymentCardsGrid .payment-item');
-                const paymentCardsGrid = document.getElementById('paymentCardsGrid');
+                const paymentCards = document.querySelectorAll('#paymentCardsList .payment-item');
+                const paymentCardsList = document.getElementById('paymentCardsList');
                 const noPaymentsMessage = document.querySelector('.no-payments');
+
+                // Function to filter cards by status
+                function filterCards(status) {
+                    let visibleCardsCount = 0;
+                    paymentCards.forEach(card => {
+                        const cardStatus = card.getAttribute('data-status');
+                        if (status === 'all' || cardStatus === status) {
+                            card.classList.remove('hidden');
+                            visibleCardsCount++;
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+
+                    if (visibleCardsCount === 0 && allPaymentsExist()) {
+                        noPaymentsMessage.style.display = 'block';
+                        paymentCardsList.style.display = 'none';
+                    } else if (allPaymentsExist()) {
+                        noPaymentsMessage.style.display = 'none';
+                        paymentCardsList.style.display = 'block';
+                    } else {
+                        paymentCardsList.style.display = 'none';
+                    }
+                }
 
                 filterButtons.forEach(button => {
                     button.addEventListener('click', function () {
@@ -219,40 +238,16 @@
                         filterButtons.forEach(btn => btn.classList.remove('active'));
                         this.classList.add('active');
 
-                        let visibleCardsCount = 0;
-                        paymentCards.forEach(card => {
-                            const cardStatus = card.getAttribute('data-status');
-                            if (status === 'all' || cardStatus === status) {
-                                card.classList.remove('hidden');
-                                visibleCardsCount++;
-                            } else {
-                                card.classList.add('hidden');
-                            }
-                        });
-
-                        if (visibleCardsCount === 0 && allPaymentsExist()) {
-                            noPaymentsMessage.style.display = 'block';
-                            paymentCardsGrid.style.display = 'none';
-                        } else if (allPaymentsExist()) {
-                            noPaymentsMessage.style.display = 'none';
-                            paymentCardsGrid.style.display = 'grid';
-                        } else {
-                            paymentCardsGrid.style.display = 'none';
-                        }
+                        filterCards(status);
                     });
                 });
 
                 function allPaymentsExist() {
-                    return document.querySelectorAll('#paymentCardsGrid .payment-item').length > 0;
+                    return document.querySelectorAll('#paymentCardsList .payment-item').length > 0;
                 }
 
-                // Initial state: show all
-                if (allPaymentsExist()) {
-                    noPaymentsMessage.style.display = 'none';
-                    paymentCardsGrid.style.display = 'grid';
-                } else {
-                    paymentCardsGrid.style.display = 'none';
-                }
+                // Initial load: show only pending
+                filterCards('Pending');
             });
         </script>
     </body>
