@@ -188,9 +188,11 @@
                     </div>
                     <div class="booking-form">
                         <h2>Book This Vehicle</h2>
-                        <form action="BookingServlet" method="post" onsubmit="return validateForm()">
+                        <form action="VehicleBooking" method="post" onsubmit="return validateForm()">
                             <input type="hidden" name="vehicleId" value="<%= vehicleId%>">
                             <input type="hidden" name="createdBy" value="<%= createdBy%>">
+                            <input type="hidden" name="assignedDate" value="<%= currentDate%>">
+                            <input type="hidden" name="clientId" value="1000">
                             <div class="form-group">
                                 <label for="bookingDate">Booking Date</label>
                                 <input type="date" class="form-control" id="bookingDate" name="bookingDate" value="<%= currentDate%>" readonly>

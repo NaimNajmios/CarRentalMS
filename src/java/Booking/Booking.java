@@ -12,8 +12,10 @@ package Booking;
 public class Booking {
 
     // Attributes
-    private int bookingId;
-    private int clientId;
+    private String bookingId;
+    private String clientId;
+    private String vehicleId;
+    private String assignedDate;
     private String bookingDate;
     private String bookingStartDate;
     private String bookingEndDate;
@@ -22,37 +24,51 @@ public class Booking {
     private String bookingStatus;
     private String createdBy;
 
-    // Empty constructor
-    public Booking() {
-    }
-
     // Constructor
-    public Booking(int bookingId, int clientId, String bookingDate, String bookingStartDate, String bookingEndDate, String actualReturnDate, String totalCost, String bookingStatus, String createdBy) {
-        this.bookingId = bookingId;
+    public Booking(String clientId, String vehicleId, String assignedDate, String bookingDate,
+            String bookingStartDate, String bookingEndDate, String totalCost,
+            String bookingStatus, String createdBy) {
         this.clientId = clientId;
+        this.vehicleId = vehicleId;
+        this.assignedDate = assignedDate;
         this.bookingDate = bookingDate;
         this.bookingStartDate = bookingStartDate;
         this.bookingEndDate = bookingEndDate;
-        this.actualReturnDate = actualReturnDate;
         this.totalCost = totalCost;
         this.bookingStatus = bookingStatus;
         this.createdBy = createdBy;
     }
 
-    public int getBookingId() {
+    public String getBookingId() {
         return this.bookingId;
     }
 
-    public void setBookingId(int bookingId) {
+    public void setBookingId(String bookingId) {
         this.bookingId = bookingId;
     }
 
-    public int getClientId() {
+    public String getClientId() {
         return this.clientId;
     }
 
-    public void setClientId(int clientId) {
+    public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getVehicleId() {
+        return this.vehicleId;
+    }
+
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public String getAssignedDate() {
+        return this.assignedDate;
+    }
+
+    public void setAssignedDate(String assignedDate) {
+        this.assignedDate = assignedDate;
     }
 
     public String getBookingDate() {
@@ -114,7 +130,10 @@ public class Booking {
     // toString method
     @Override
     public String toString() {
-        return "Booking{" + "bookingId=" + bookingId + ", clientId=" + clientId + ", bookingDate=" + bookingDate + ", bookingStartDate=" + bookingStartDate + ", bookingEndDate=" + bookingEndDate + ", actualReturnDate=" + actualReturnDate + ", totalCost=" + totalCost + ", bookingStatus=" + bookingStatus + ", createdBy=" + createdBy + '}';
+        return "Booking{" + "bookingId=" + bookingId + ", clientId=" + clientId + ", bookingDate=" + bookingDate
+                + ", bookingStartDate=" + bookingStartDate + ", bookingEndDate=" + bookingEndDate
+                + ", actualReturnDate=" + actualReturnDate + ", totalCost=" + totalCost + ", bookingStatus="
+                + bookingStatus + ", createdBy=" + createdBy + '}';
     }
 
 }
