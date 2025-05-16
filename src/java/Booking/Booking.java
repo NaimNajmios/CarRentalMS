@@ -24,6 +24,10 @@ public class Booking {
     private String bookingStatus;
     private String createdBy;
 
+    // Empty constructor
+    public Booking() {
+    }
+
     // Constructor
     public Booking(String clientId, String vehicleId, String assignedDate, String bookingDate,
             String bookingStartDate, String bookingEndDate, String totalCost,
@@ -39,7 +43,7 @@ public class Booking {
         this.createdBy = createdBy;
     }
 
-    public String getBookingId() {
+    public String getBookingId() {  
         return this.bookingId;
     }
 

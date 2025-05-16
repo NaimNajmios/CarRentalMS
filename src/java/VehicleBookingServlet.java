@@ -43,15 +43,15 @@ public class VehicleBookingServlet extends HttpServlet {
             throws ServletException, IOException, SQLException, ClassNotFoundException {
 
         // Get the booking details from the request
-        String clientID = request.getParameter("clientID");
-        String vehicleID = request.getParameter("vehicleID");
+        String clientID = request.getParameter("clientId");
+        String vehicleID = request.getParameter("vehicleId");
         String assignedDate = request.getParameter("assignedDate");
         String bookingDate = request.getParameter("bookingDate");
         String startDate = request.getParameter("startDate");
         String endDate = request.getParameter("endDate");
         String totalCost = request.getParameter("totalCost");
         String bookingStatus = "Pending";
-        String createdBy = request.getParameter("createdBy");
+        String createdBy = clientID;
 
         // Create a new booking object
         Booking booking = new Booking(clientID, vehicleID, assignedDate, bookingDate, startDate, endDate, totalCost,
@@ -65,13 +65,20 @@ public class VehicleBookingServlet extends HttpServlet {
         if (isBookingAdded) {
             // Log the success message
             LOGGER.info("Booking added successfully");
-            // Redirect to the booking confirmation page
-            response.sendRedirect("booking-confirmation.jsp");
+            // Pass the booking object to the booking confirmation page
+            request.setAttribute("booking", booking);
+            // Forward to the booking confirmation page instead of redirect to preserve
+            // request attributes
+            request.getRequestDispatcher("client-payment.jsp").forward(request, response);
+            // Log the forward message
+            LOGGER.info("Forwarding to client payment page");
         } else {
             // Log the failure message
             LOGGER.severe("Booking addition failed");
-            // Redirect to the booking failure page
-            response.sendRedirect("booking-failure.jsp");
+            // Forward to the booking failure page
+            request.getRequestDispatcher("booking-failure.jsp").forward(request, response);
+            // Log the forward message
+            LOGGER.info("Forwarding to booking failure page");
         }
 
     }

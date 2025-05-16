@@ -11,6 +11,7 @@
     // Get vehicleId from query parameter, parse to int
     String vehicleId = request.getParameter("vehicleId");
     int vehicleIdInt = 0;
+    String userid = "2000";
 
     if (vehicleId == null || vehicleId.trim().isEmpty()) {
         response.sendRedirect("cars.jsp");
@@ -46,6 +47,9 @@
 
     // Assume createdBy is set from session (e.g., logged-in user ID), if not, set null
     String createdBy = (session.getAttribute("userId") != null) ? (String) session.getAttribute("userId") : null;
+    if (createdBy == null) {
+        createdBy = userid; // Fallback to the hardcoded userid if session is not set
+    }
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String currentDate = sdf.format(new Date());
@@ -188,11 +192,11 @@
                     </div>
                     <div class="booking-form">
                         <h2>Book This Vehicle</h2>
-                        <form action="VehicleBooking" method="post" onsubmit="return validateForm()">
+                        <form action="booking-confirmation.jsp" method="post" onsubmit="return validateForm()">
                             <input type="hidden" name="vehicleId" value="<%= vehicleId%>">
-                            <input type="hidden" name="createdBy" value="<%= createdBy%>">
                             <input type="hidden" name="assignedDate" value="<%= currentDate%>">
-                            <input type="hidden" name="clientId" value="1000">
+                            <input type="hidden" name="clientId" value="<%= userid%>">
+                            <input type="hidden" name="createdBy" value="<%= createdBy%>">
                             <div class="form-group">
                                 <label for="bookingDate">Booking Date</label>
                                 <input type="date" class="form-control" id="bookingDate" name="bookingDate" value="<%= currentDate%>" readonly>
@@ -211,7 +215,7 @@
                                 <input type="number" step="0.01" class="form-control" id="totalCost" name="totalCost" placeholder="0.00" readonly>
                                 <small class="text-muted">Calculated automatically</small>
                             </div>
-                            <button type="submit" class="submit-btn">Submit Booking</button>
+                            <button type="submit" class="submit-btn">Proceed to Confirmation</button>
                         </form>
                     </div>
                 </div>
