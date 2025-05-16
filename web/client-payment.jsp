@@ -9,17 +9,21 @@
 
 <%
     String clientId = (String) session.getAttribute("userId");
+
+    // Temporary client ID for testing
+    clientId = "2000";
+
     if (clientId == null || clientId.trim().isEmpty()) {
         response.sendRedirect("login.jsp"); // Redirect to login if no client ID
         return;
     }
 
     UIAccessObject uiAccessObject = new UIAccessObject();
-    List<Payment> payments = uiAccessObject.getPaymentsByClientId(Integer.parseInt(clientId));
+    List<Payment> payments = uiAccessObject.getPaymentDetailsByClientID(clientId);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
-    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date()); // e.g., 2025-05-16 05:20 PM +08
+    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date()); // e.g., 2025-05-16 05:40 PM +08
 %>
 
 <!DOCTYPE html>
@@ -54,7 +58,7 @@
             }
             .payment-table th,
             .payment-table td {
-                padding: 0.75rem;
+                padding: 1rem;
                 text-align: left;
                 border-bottom: 1px solid #dee2e6;
             }
@@ -63,11 +67,40 @@
                 font-weight: 600;
                 color: #34495e;
             }
+            .payment-table th:nth-child(1),
+            .payment-table td:nth-child(1) { /* Payment ID */
+                width: 10%;
+            }
+            .payment-table th:nth-child(2),
+            .payment-table td:nth-child(2) { /* Booking ID */
+                width: 10%;
+            }
+            .payment-table th:nth-child(3),
+            .payment-table td:nth-child(3) { /* Payment Type */
+                width: 15%;
+            }
+            .payment-table th:nth-child(4),
+            .payment-table td:nth-child(4) { /* Amount */
+                width: 12%;
+            }
+            .payment-table th:nth-child(5),
+            .payment-table td:nth-child(5) { /* Payment Status */
+                width: 15%;
+            }
+            .payment-table th:nth-child(6),
+            .payment-table td:nth-child(6) { /* Payment Date */
+                width: 15%;
+            }
+            .payment-table th:nth-child(7),
+            .payment-table td:nth-child(7) { /* Proof of Payment */
+                width: 23%;
+            }
             .payment-table tr:nth-child(even) {
                 background-color: #f8f9fa;
             }
-            .payment-table tr:hover {
+            .payment-table tr.clickable-row:hover {
                 background-color: #e9ecef;
+                cursor: pointer;
             }
             .no-payments {
                 text-align: center;
@@ -89,7 +122,7 @@
             <div class="container">
                 <div class="payment-container">
                     <h2>Payment History for Client ID: <%= clientId%></h2>
-                    <p class="text-muted">Below is a list of all payments associated with your account.</p>
+                    <p class="text-muted">Below is a list of all payments associated with your account. Click on a row to view details.</p>
 
                     <% if (payments == null || payments.isEmpty()) { %>
                     <div class="no-payments">No payment records found for this client.</div>
@@ -102,26 +135,16 @@
                                 <th>Payment Type</th>
                                 <th>Amount (RM)</th>
                                 <th>Payment Status</th>
-                                <th>Reference No</th>
-                                <th>Payment Date</th>
-                                <th>Invoice Number</th>
-                                <th>Handled By</th>
-                                <th>Proof of Payment</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% for (Payment payment : payments) {%>
-                            <tr>
+                            <tr class="clickable-row" onclick="window.location = 'payment-details.jsp?paymentId=<%= payment.getPaymentID()%>'">
                                 <td><%= payment.getPaymentID()%></td>
                                 <td><%= payment.getBookingID()%></td>
-                                <td><%= payment.getPaymentType()%></td>
-                                <td><%= new DecimalFormat("#0.00").format(payment.getAmount())%></td>
-                                <td><%= payment.getPaymentStatus()%></td>
-                                <td><%= payment.getReferenceNo() != null ? payment.getReferenceNo() : "N/A"%></td>
-                                <td><%= payment.getPaymentDate() != null ? sdf.format(payment.getPaymentDate()) : "N/A"%></td>
-                                <td><%= payment.getInvoiceNumber() != null ? payment.getInvoiceNumber() : "N/A"%></td>
-                                <td><%= payment.getHandledBy() != 0 ? payment.getHandledBy() : "N/A"%></td>
-                                <td><%= payment.getProofOfPayment() != null ? payment.getProofOfPayment() : "N/A"%></td>
+                                <td><%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></td>
+                                <td><%= String.format("%.2f", payment.getAmount())%></td>
+                                <td><%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%></td>                                
                             </tr>
                             <% } %>
                         </tbody>

@@ -418,12 +418,12 @@ public class UIAccessObject {
         return client; // Returns populated Client object or null if not found
     }
 
-    // Method to get payment details by client ID
-    public Payment getPaymentDetailsByClientID(String clientID) {
+    // Method to get payment details by client ID, return payment ArrayList
+    public ArrayList<Payment> getPaymentDetailsByClientID(String clientID) {
+        ArrayList<Payment> paymentList = new ArrayList<>();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        Payment payment = null;
 
         try {
             connection = DatabaseConnection.getConnection();
@@ -450,10 +450,19 @@ public class UIAccessObject {
             preparedStatement.setString(1, clientID);
             resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
-                payment = new Payment();
-                payment.setPaymentID(resultSet.getString("paymentID"));
+            while (resultSet.next()) {
+                Payment payment = new Payment();
+                payment.setPaymentID(resultSet.getInt("paymentID"));
                 payment.setBookingID(resultSet.getString("bookingID"));
+                payment.setPaymentType(resultSet.getString("paymentType"));
+                payment.setAmount(resultSet.getDouble("amount"));
+                payment.setPaymentStatus(resultSet.getString("paymentStatus"));
+                payment.setReferenceNo(resultSet.getString("referenceNo"));
+                payment.setPaymentDate(resultSet.getString("paymentDate"));
+                payment.setInvoiceNumber(resultSet.getString("invoiceNumber"));
+                payment.setHandledBy(resultSet.getString("handledBy"));
+                payment.setProofOfPayment(resultSet.getString("proofOfPayment"));
+                paymentList.add(payment);
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException("Database error while retrieving payment details: " + e.getMessage());
@@ -474,6 +483,6 @@ public class UIAccessObject {
                 LOGGER.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
+        return paymentList;
     }
-
 }

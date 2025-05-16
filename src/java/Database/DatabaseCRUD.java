@@ -68,19 +68,43 @@ public class DatabaseCRUD {
                             try (PreparedStatement bookingVehicleStatement = connection
                                     .prepareStatement(bookingVehicleQuery)) {
                                 bookingVehicleStatement.setLong(1, newBookingId);
-                                bookingVehicleStatement.setString(2, booking.getVehicleId()); // Assuming Booking object
-                                // now has vehicleId
-                                bookingVehicleStatement.setString(3, booking.getAssignedDate()); // Assuming Booking
-                                // object now has
-                                // assignedDate
+                                bookingVehicleStatement.setString(2, booking.getVehicleId());
+                                bookingVehicleStatement.setString(3, booking.getAssignedDate());
 
                                 LOGGER.info("Executing BOOKINGVEHICLE table insert query");
                                 int bookingVehicleRowsAffected = bookingVehicleStatement.executeUpdate();
 
                                 if (bookingVehicleRowsAffected > 0) {
-                                    LOGGER.info("BOOKINGVEHICLE table insert successful. Committing transaction");
-                                    connection.commit();
-                                    return true; // Return true if both inserts are successful
+                                    LOGGER.info("BOOKINGVEHICLE table insert successful.");
+
+                                    // Step 3: Insert into PAYMENT table using the generated bookingID
+                                    String paymentQuery = "INSERT INTO payment (bookingID, paymentType, amount, paymentStatus, paymentDate, referenceNo, invoiceNumber, handledBy, proofOfPayment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                    try (PreparedStatement paymentStatement = connection
+                                            .prepareStatement(paymentQuery)) {
+                                        paymentStatement.setLong(1, newBookingId);
+                                        paymentStatement.setString(2, "Credit Card"); // Default payment type
+                                        paymentStatement.setString(3, booking.getTotalCost());
+                                        paymentStatement.setString(4, "Pending"); // Default payment status
+                                        paymentStatement.setDate(5, null); // Null date
+                                        paymentStatement.setString(6, null); // referenceNo (can be set by booking if
+                                                                             // needed)
+                                        paymentStatement.setString(7, null); // invoiceNumber (null)
+                                        paymentStatement.setString(8, null); // handledBy (null)
+                                        paymentStatement.setString(9, null); // proofOfPayment (null)
+
+                                        LOGGER.info("Executing PAYMENT table insert query");
+                                        int paymentRowsAffected = paymentStatement.executeUpdate();
+
+                                        if (paymentRowsAffected > 0) {
+                                            LOGGER.info("PAYMENT table insert successful. Committing transaction");
+                                            connection.commit();
+                                            return true; // Return true if all inserts are successful
+                                        } else {
+                                            LOGGER.warning("PAYMENT table insert failed. Rolling back transaction");
+                                            connection.rollback();
+                                            return false;
+                                        }
+                                    }
                                 } else {
                                     LOGGER.warning("BOOKINGVEHICLE table insert failed. Rolling back transaction");
                                     connection.rollback();

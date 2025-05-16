@@ -227,65 +227,65 @@
         <%@ include file="include/scripts.html" %>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script>
-            const startDateInput = document.getElementById("startDate");
-            const endDateInput = document.getElementById("endDate");
-            const totalCostInput = document.getElementById("totalCost");
-            const ratePerDay = <%= vehicle.getVehicleRatePerDay()%>;
-            const bookedDates = JSON.parse('<%= bookedDatesJson%>');
+                            const startDateInput = document.getElementById("startDate");
+                            const endDateInput = document.getElementById("endDate");
+                            const totalCostInput = document.getElementById("totalCost");
+                            const ratePerDay = <%= vehicle.getVehicleRatePerDay()%>;
+                            const bookedDates = JSON.parse('<%= bookedDatesJson%>');
 
-            flatpickr(startDateInput, {
-                enableTime: false,
-                dateFormat: "Y-m-d",
-                minDate: "<%= currentDate%>",
-                disable: bookedDates,
-                onChange: function (selectedDates, dateStr, instance) {
-                    endDatePicker.set("minDate", dateStr);
-                    calculateTotalCost();
-                }
-            });
+                            flatpickr(startDateInput, {
+                                enableTime: false,
+                                dateFormat: "Y-m-d",
+                                minDate: "<%= currentDate%>",
+                                disable: bookedDates,
+                                onChange: function (selectedDates, dateStr, instance) {
+                                    endDatePicker.set("minDate", dateStr);
+                                    calculateTotalCost();
+                                }
+                            });
 
-            const endDatePicker = flatpickr(endDateInput, {
-                enableTime: false,
-                dateFormat: "Y-m-d",
-                minDate: "<%= currentDate%>",
-                disable: bookedDates,
-                onChange: calculateTotalCost
-            });
+                            const endDatePicker = flatpickr(endDateInput, {
+                                enableTime: false,
+                                dateFormat: "Y-m-d",
+                                minDate: "<%= currentDate%>",
+                                disable: bookedDates,
+                                onChange: calculateTotalCost
+                            });
 
-            function calculateTotalCost() {
-                const startDateValue = startDateInput.value;
-                const endDateValue = endDateInput.value;
+                            function calculateTotalCost() {
+                                const startDateValue = startDateInput.value;
+                                const endDateValue = endDateInput.value;
 
-                if (startDateValue && endDateValue) {
-                    const startDate = new Date(startDateValue);
-                    const endDate = new Date(endDateValue);
+                                if (startDateValue && endDateValue) {
+                                    const startDate = new Date(startDateValue);
+                                    const endDate = new Date(endDateValue);
 
-                    if (startDate <= endDate) {
-                        const timeDifference = endDate.getTime() - startDate.getTime();
-                        const numberOfDays = Math.ceil(timeDifference / (1000 * 3600 * 24)) + 1; // Include both start and end date
-                        const total = numberOfDays * ratePerDay;
-                        totalCostInput.value = total.toFixed(2);
-                    } else {
-                        totalCostInput.value = "";
-                    }
-                } else {
-                    totalCostInput.value = "";
-                }
-            }
+                                    if (startDate <= endDate) {
+                                        const timeDifference = endDate.getTime() - startDate.getTime();
+                                        const numberOfDays = Math.ceil(timeDifference / (1000 * 3600 * 24)) + 1; // Include both start and end date
+                                        const total = numberOfDays * ratePerDay;
+                                        totalCostInput.value = total.toFixed(2);
+                                    } else {
+                                        totalCostInput.value = "";
+                                    }
+                                } else {
+                                    totalCostInput.value = "";
+                                }
+                            }
 
-            function validateForm() {
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-                if (startDate > endDate) {
-                    alert("Start date must be before or on the end date.");
-                    return false;
-                }
-                if (!totalCostInput.value) {
-                    alert("Please select a valid start and end date to calculate the total cost.");
-                    return false;
-                }
-                return true;
-            }
+                            function validateForm() {
+                                const startDate = new Date(startDateInput.value);
+                                const endDate = new Date(endDateInput.value);
+                                if (startDate > endDate) {
+                                    alert("Start date must be before or on the end date.");
+                                    return false;
+                                }
+                                if (!totalCostInput.value) {
+                                    alert("Please select a valid start and end date to calculate the total cost.");
+                                    return false;
+                                }
+                                return true;
+                            }
         </script>
     </body>
 </html>
