@@ -658,7 +658,7 @@ public class UIAccessObject {
                 booking = new Booking();
                 booking.setBookingId(resultSet.getString("bookingID"));
                 booking.setClientId(resultSet.getString("clientID"));
-                booking.setVehicleId(resultSet.getString("vehicleID"));
+                booking.setVehicleId(resultSet.getString("vehicleId"));
                 booking.setAssignedDate(resultSet.getString("assignedDate"));
                 booking.setBookingDate(resultSet.getString("bookingDate"));
                 booking.setBookingStartDate(resultSet.getString("startDate"));
@@ -703,6 +703,8 @@ public class UIAccessObject {
                 booking = new Booking();
                 booking.setBookingId(resultSet.getString("bookingID"));
                 booking.setClientId(resultSet.getString("clientID"));
+                booking.setVehicleId(resultSet.getString("vehicleId"));
+                booking.setAssignedDate(resultSet.getString("assignedDate"));
                 booking.setBookingDate(resultSet.getString("bookingDate"));
                 booking.setBookingStartDate(resultSet.getString("startDate"));
                 booking.setBookingEndDate(resultSet.getString("endDate"));

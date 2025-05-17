@@ -23,7 +23,7 @@
     }
 
     UIAccessObject uiAccessObject = new UIAccessObject();
-    Booking booking = uiAccessObject.getBookingById(bookingId);
+    Booking booking = uiAccessObject.getBookingByBookingId(bookingId);
     logger.log(Level.INFO, "Retrieved booking: {0}", booking);
 
     if (booking == null) {
