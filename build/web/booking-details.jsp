@@ -124,10 +124,22 @@
                 font-size: 0.9rem;
                 font-weight: bold;
             }
-            .status-Confirmed { background-color: #d4edda; color: #155724; }
-            .status-Pending { background-color: #fff3cd; color: #856404; }
-            .status-Cancelled { background-color: #f8d7da; color: #721c24; }
-            .status-Completed { background-color: #cce5ff; color: #004085; }
+            .status-Confirmed {
+                background-color: #d4edda;
+                color: #155724;
+            }
+            .status-Pending {
+                background-color: #fff3cd;
+                color: #856404;
+            }
+            .status-Cancelled {
+                background-color: #f8d7da;
+                color: #721c24;
+            }
+            .status-Completed {
+                background-color: #cce5ff;
+                color: #004085;
+            }
             .vehicle-info-card {
                 display: flex;
                 gap: 1rem;
@@ -251,9 +263,9 @@
                 <p><strong>Payment Type:</strong> <%= payment.getPaymentType()%></p>
                 <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus().replace(" ", "")%>"><%= payment.getPaymentStatus()%></span></p>
                 <p><strong>Payment Date:</strong> <%= payment.getPaymentDate()%></p>
-                <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) { %>
-                <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A" %></p>
-                <p><strong>Booking ID:</strong> <%= booking.getBookingId() %></p>
+                <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
+                <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
+                <p><strong>Booking ID:</strong> <%= booking.getBookingId()%></p>
                 <p><strong>Payment ID:</strong> Not yet assigned</p>
                 <p class="no-info">Payment pending. Please proceed to make the payment.</p>
                 <% } else { %>
@@ -263,7 +275,7 @@
 
             <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
             <div class="proceed-button-container">
-                <a href="payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button">Proceed to Payment</a>
+                <a href="booking-payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button">Proceed to Payment</a>
             </div>
             <% }%>
 

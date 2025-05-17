@@ -10,8 +10,8 @@
 <%@ page import="java.util.logging.Level"%>
 
 <%
-    Logger logger = Logger.getLogger("booking-details.jsp");
-    logger.log(Level.INFO, "Starting booking details page");
+    Logger logger = Logger.getLogger("booking-payment.jsp");
+    logger.log(Level.INFO, "Starting booking payment page");
 
     String bookingId = request.getParameter("bookingId");
     logger.log(Level.INFO, "Received bookingId: {0}", bookingId);
@@ -37,7 +37,7 @@
     Payment payment = null;
     try {
         vehicle = uiAccessObject.getVehicleById(Integer.parseInt(booking.getVehicleId()));
-        payment = uiAccessObject.getPaymentById(bookingId);
+        payment = uiAccessObject.getPaymentById(bookingId); // Check if payment exists
         logger.log(Level.INFO, "Retrieved vehicle: {0}", vehicle);
         logger.log(Level.INFO, "Retrieved payment: {0}", payment);
     } catch (NumberFormatException e) {
@@ -46,7 +46,7 @@
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
-    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date());
+    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date()); // 10:38 PM +08 on Saturday, May 17, 2025
     logger.log(Level.INFO, "Current date time: {0}", currentDateTime);
 %>
 
@@ -55,7 +55,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CarRent - Booking Details</title>
+        <title>CarRent - Booking Payment</title>
         <%@ include file="include/client-css.html" %>
         <style>
             body {
@@ -66,7 +66,7 @@
                 min-height: 100vh;
                 margin: 0;
             }
-            .booking-details-container {
+            .booking-payment-container {
                 max-width: 960px;
                 margin: 2rem auto;
                 padding: 2rem;
@@ -168,12 +168,27 @@
                 padding: 1.5rem;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             }
-            .proceed-button-container {
-                grid-column: 1 / -1;
-                text-align: center;
-                margin-top: 2rem;
+            .payment-form {
+                margin-top: 1rem;
             }
-            .proceed-button {
+            .payment-form label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: bold;
+                color: #333;
+            }
+            .payment-form input, .payment-form select {
+                width: 100%;
+                padding: 0.5rem;
+                margin-bottom: 1rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+            .payment-form input[type="file"] {
+                padding: 0.25rem 0;
+            }
+            .payment-form button {
                 background-color: #28a745;
                 color: white;
                 border: none;
@@ -182,9 +197,8 @@
                 cursor: pointer;
                 font-size: 1.1rem;
                 font-weight: bold;
-                text-decoration: none;
             }
-            .proceed-button:hover {
+            .payment-form button:hover {
                 background-color: #218838;
             }
             .timestamp {
@@ -197,14 +211,22 @@
             .no-info {
                 color: #777;
             }
+            #cardInfo, #bankTransferInfo {
+                display: none;
+            }
+            .bank-transfer-image {
+                max-width: 100%;
+                height: auto;
+                margin-top: 1rem;
+            }
         </style>
     </head>
     <body>
         <%@ include file="include/header.jsp" %>
 
-        <div class="booking-details-container">
+        <div class="booking-payment-container">
             <div class="booking-header">
-                <h2>Booking Details</h2>
+                <h2>Booking Payment</h2>
                 <a href="mybooking.jsp" class="back-link">← Back to Bookings</a>
             </div>
 
@@ -262,27 +284,77 @@
                 <p><strong>Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
                 <p><strong>Payment Type:</strong> <%= payment.getPaymentType()%></p>
                 <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus().replace(" ", "")%>"><%= payment.getPaymentStatus()%></span></p>
-                <p><strong>Payment Date:</strong> <%= payment.getPaymentDate()%></p>
+                <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? sdf.format(payment.getPaymentDate()) : "N/A"%></p>
                 <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
                 <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
                 <p><strong>Booking ID:</strong> <%= booking.getBookingId()%></p>
                 <p><strong>Payment ID:</strong> Not yet assigned</p>
-                <p class="no-info">Payment pending. Please proceed to make the payment.</p>
+                <p class="no-info">Payment pending. Please provide the following details to proceed.</p>
                 <% } else { %>
                 <p class="no-info">No payment information available.</p>
                 <% } %>
-            </div>
 
-            <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
-            <div class="proceed-button-container">
-                <a href="booking-payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button">Proceed to Payment</a>
+                <!-- Payment Input Form -->
+                <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
+                <form action="process-payment.jsp" method="post" enctype="multipart/form-data" class="payment-form">
+                    <input type="hidden" name="bookingId" value="<%= booking.getBookingId()%>">
+                    <label for="paymentType">Payment Type:</label>
+                    <select id="paymentType" name="paymentType" required onchange="showPaymentDetails()">
+                        <option value="">Select payment type</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cash">Cash</option>
+                    </select>
+                    <label for="amount">Amount (RM):</label>
+                    <input type="number" id="amount" name="amount" step="0.01" value="<%= booking.getTotalCost() != null ? Double.parseDouble(booking.getTotalCost()) : 0%>" required readonly>
+                    
+                    <div id="cardInfo" style="display:none;">
+                        <label for="cardNumber">Card Number:</label>
+                        <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" required>
+                        <label for="cardName">Name on Card:</label>
+                        <input type="text" id="cardName" name="cardName" placeholder="John Doe" required>
+                        <label for="expiryDate">Expiry Date:</label>
+                        <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+                        <label for="cvv">CVV:</label>
+                        <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                    </div>
+                    
+                    <div id="bankTransferInfo" style="display:none;">
+                        <p>Please transfer the amount to the following account:</p>
+                        <img src="images/companyUsage/qr_carrentco.png" alt="Bank Transfer Information" class="bank-transfer-image">
+                        <label for="proofOfPayment">Upload Proof of Payment (PDF or Image, max 5MB):</label>
+                        <input type="file" id="proofOfPayment" name="proofOfPayment" accept="image/*,application/pdf" required>
+                    </div>
+                    
+                    <button type="submit">Submit Payment</button>
+                </form>
+                <% }%>
             </div>
-            <% }%>
 
             <div class="timestamp">Last updated: <%= currentDateTime%></div>
         </div>
 
         <%@ include file="include/footer.jsp" %>
         <%@ include file="include/scripts.html" %>
+        
+        <script>
+            function showPaymentDetails() {
+                var paymentType = document.getElementById("paymentType").value;
+                var cardInfo = document.getElementById("cardInfo");
+                var bankTransferInfo = document.getElementById("bankTransferInfo");
+                
+                if (paymentType === "Credit Card" || paymentType === "Debit Card") {
+                    cardInfo.style.display = "block";
+                    bankTransferInfo.style.display = "none";
+                } else if (paymentType === "Bank Transfer") {
+                    cardInfo.style.display = "none";
+                    bankTransferInfo.style.display = "block";
+                } else {
+                    cardInfo.style.display = "none";
+                    bankTransferInfo.style.display = "none";
+                }
+            }
+        </script>
     </body>
 </html>
