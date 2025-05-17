@@ -1,0 +1,285 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="Database.UIAccessObject"%>
+<%@ page import="Booking.Booking"%>
+<%@ page import="Vehicle.Vehicle"%>
+<%@ page import="java.text.SimpleDateFormat"%>
+<%@ page import="java.util.Date"%>
+
+<%
+    String clientId = (String) session.getAttribute("userId");
+
+    // Temporary client ID for testing
+    clientId = "2000";
+
+    if (clientId == null || clientId.trim().isEmpty()) {
+        response.sendRedirect("login.jsp"); // Redirect to login if no client ID
+        return;
+    }
+
+    UIAccessObject uiAccessObject = new UIAccessObject();
+
+    // Get all bookings by client ID
+    List<Booking> allBookings = uiAccessObject.getAllBookingByClientID(clientId);
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
+    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date()); // 2025-05-17 05:14 PM +08
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CarRent - My Bookings</title>
+        <%@ include file="include/client-css.html" %>
+        <style>
+            .booking-history-section {
+                padding: 2rem 0;
+                background-color: #f8f9fa;
+            }
+            .booking-history-container {
+                max-width: 1200px;
+                margin: 2rem auto;
+            }
+            .booking-history-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1.5rem;
+                padding: 0 1rem;
+            }
+            .booking-history-header h2 {
+                font-size: 1.75rem;
+                font-weight: 700;
+                color: #2c3e50;
+                margin: 0;
+            }
+            .filter-buttons {
+                margin-bottom: 1rem;
+                padding: 0 1rem;
+            }
+            .filter-buttons button {
+                padding: 0.5rem 1rem;
+                margin-right: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                cursor: pointer;
+                background-color: #f8f9fa;
+                color: #333;
+            }
+            .filter-buttons button.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+            .booking-cards-list {
+                list-style: none;
+                padding: 0;
+            }
+            .booking-item {
+                background-color: #fff;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                overflow: hidden;
+                transition: transform 0.1s ease-in-out;
+                cursor: pointer;
+                display: flex;
+                margin-bottom: 1.5rem;
+            }
+            .booking-item:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            .booking-image {
+                width: 200px;
+                height: 200px;
+                object-fit: cover;
+                background-color: #e9ecef; /* Fallback color if image fails */
+            }
+            .booking-details {
+                flex: 1;
+                padding: 1rem;
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .booking-details p {
+                margin-bottom: 0.3rem;
+                font-size: 0.95rem;
+                color: #555;
+                width: 50%;
+            }
+            .booking-details strong {
+                font-weight: 600;
+                color: #34495e;
+            }
+            .booking-info {
+                background-color: #f8f9fa;
+                padding: 1rem;
+                border-left: 1px solid #dee2e6;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 200px;
+            }
+            .booking-info .total-cost {
+                font-size: 1.1rem;
+                font-weight: bold;
+                color: #27ae60;
+                margin-bottom: 0.3rem;
+            }
+            .booking-info .status {
+                display: inline-block;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            .status-Confirmed {
+                background-color: #d4edda;
+                color: #155724;
+            }
+            .status-Pending {
+                background-color: #fff3cd;
+                color: #85640a;
+            }
+            .status-Cancelled {
+                background-color: #f8d7da;
+                color: #721c24;
+            }
+            .status-Completed {
+                background-color: #cce5ff;
+                color: #004085;
+            }
+            .no-bookings {
+                text-align: center;
+                color: #7f8c8d;
+                padding: 2rem;
+            }
+            .timestamp {
+                font-size: 0.9rem;
+                color: #7f8c8d;
+                text-align: right;
+                margin-top: 1rem;
+                padding: 0 1rem;
+            }
+            .hidden {
+                display: none !important;
+            }
+        </style>
+    </head>
+    <body>
+        <%@ include file="include/header.jsp" %>
+
+        <section class="booking-history-section">
+            <div class="container">
+                <div class="booking-history-container">
+                    <div class="booking-history-header">
+                        <h2>My Bookings</h2>
+                        <p class="text-muted">Client ID: <%= clientId%></p>
+                    </div>
+
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-status="Pending">Pending</button>
+                        <button class="filter-btn" data-status="Confirmed">Confirmed</button>
+                        <button class="filter-btn" data-status="Completed">Completed</button>
+                        <button class="filter-btn" data-status="Cancelled">Cancelled</button>
+                        <button class="filter-btn" data-status="all">All</button>
+                    </div>
+
+                    <% if (allBookings == null || allBookings.isEmpty()) { %>
+                    <div class="no-bookings">No booking records found for this client.</div>
+                    <% } else { %>
+                    <ul class="booking-cards-list" id="bookingCardsList">
+                        <% for (Booking booking : allBookings) { %>
+                        <%
+                            // Fetch vehicle details directly using vehicleId from Booking
+                            Vehicle vehicle = uiAccessObject.getVehicleById(Integer.parseInt(booking.getVehicleId()));
+                        %>
+                        <li class="booking-item booking-card" data-status="<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>" onclick="window.location = 'booking-details.jsp?bookingId=<%= booking.getBookingId()%>'">
+                            <img src="<%= vehicle != null ? vehicle.getVehicleImagePath() : "path/to/default/image.jpg"%>" alt="Vehicle Image" class="booking-image" onerror="this.src='path/to/default/image.jpg';">
+                            <div class="booking-details">
+                                <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
+                                <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                                <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
+                                <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
+                                <% if (vehicle != null) {%>
+                                <p><strong>Vehicle:</strong> <%= vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel()%></p>
+                                <% } else { %>
+                                <p><strong>Vehicle:</strong> N/A</p>
+                                <% }%>
+                                <p><strong>Created By:</strong> <%= booking.getCreatedBy() != null ? booking.getCreatedBy() : "N/A"%></p>
+                            </div>
+                            <div class="booking-info">
+                                <p class="total-cost">RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
+                                <span class="status status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span>
+                            </div>
+                        </li>
+                        <% } %>
+                    </ul>
+                    <% }%>
+
+                    <div class="timestamp">Last updated: <%= currentDateTime%></div>
+                </div>
+            </div>
+        </section>
+
+        <%@ include file="include/footer.jsp" %>
+        <%@ include file="include/scripts.html" %>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const filterButtons = document.querySelectorAll('.filter-btn');
+                const bookingCards = document.querySelectorAll('#bookingCardsList .booking-item');
+                const bookingCardsList = document.getElementById('bookingCardsList');
+                const noBookingsMessage = document.querySelector('.no-bookings');
+
+                // Function to filter cards by status
+                function filterCards(status) {
+                    let visibleCardsCount = 0;
+                    bookingCards.forEach(card => {
+                        const cardStatus = card.getAttribute('data-status');
+                        if (status === 'all' || cardStatus === status) {
+                            card.classList.remove('hidden');
+                            visibleCardsCount++;
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+
+                    if (visibleCardsCount === 0 && allBookingsExist()) {
+                        noBookingsMessage.style.display = 'block';
+                        bookingCardsList.style.display = 'none';
+                    } else if (allBookingsExist()) {
+                        noBookingsMessage.style.display = 'none';
+                        bookingCardsList.style.display = 'block';
+                    } else {
+                        bookingCardsList.style.display = 'none';
+                    }
+                }
+
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const status = this.getAttribute('data-status');
+
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+
+                        filterCards(status);
+                    });
+                });
+
+                function allBookingsExist() {
+                    return document.querySelectorAll('#bookingCardsList .booking-item').length > 0;
+                }
+
+                // Initial load: show only pending
+                filterCards('Pending');
+            });
+        </script>
+    </body>
+</html>

@@ -15,7 +15,7 @@
                         <a class="nav-link ${pageContext.request.requestURI.contains('cars') || pageContext.request.requestURI.contains('vehicle-details') ? 'active' : ''}" href="cars.jsp">Cars</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('booking') || pageContext.request.requestURI.contains('booking-form') ? 'active' : ''}" href="booking.jsp">Booking</a>
+                        <a class="nav-link ${pageContext.request.requestURI.contains('booking') || pageContext.request.requestURI.contains('booking-form') ? 'active' : ''}" href="mybooking.jsp">Booking</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ${pageContext.request.requestURI.contains('payment') ? 'active' : ''}" href="client-payment.jsp">Payment</a>
