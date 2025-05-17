@@ -46,7 +46,7 @@
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
-    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date()); // 2025-05-17 05:37 PM +08
+    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date());
     logger.log(Level.INFO, "Current date time: {0}", currentDateTime);
 %>
 
@@ -58,167 +58,217 @@
         <title>CarRent - Booking Details</title>
         <%@ include file="include/client-css.html" %>
         <style>
-            .booking-details-section {
-                padding: 2rem 0;
-                background-color: #f8f9fa;
+            body {
+                background-color: #f4f4f4;
+                font-family: 'Arial', sans-serif;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+                margin: 0;
             }
             .booking-details-container {
                 max-width: 960px;
                 margin: 2rem auto;
+                padding: 2rem;
+                background-color: #ffffff;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Two main columns */
+                gap: 2rem;
             }
-            .booking-details-header {
+            .booking-header {
+                grid-column: 1 / -1; /* Span across both columns */
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 1.5rem;
-                padding: 0 1rem;
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid #e0e0e0;
             }
-            .booking-details-header h2 {
-                font-size: 1.75rem;
-                font-weight: 700;
-                color: #2c3e50;
+            .booking-header h2 {
+                font-size: 2rem;
+                color: #333;
                 margin: 0;
             }
             .back-link {
-                font-size: 0.95rem;
-                color: #007bff;
                 text-decoration: none;
+                color: #007bff;
+                font-weight: bold;
             }
-            .back-link:hover {
-                text-decoration: underline;
-            }
-            .info-card {
-                background-color: #fff;
-                border: 1px solid #dee2e6;
+            .detail-section {
+                background-color: #f9f9f9;
                 border-radius: 8px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
                 padding: 1.5rem;
-                margin: 1rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             }
-            .info-card h3 {
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: #34495e;
+            .detail-section h3 {
+                font-size: 1.4rem;
+                color: #333;
                 margin-bottom: 1rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #e0e0e0;
             }
-            .info-card p {
-                margin-bottom: 0.5rem;
-                font-size: 0.95rem;
+            .detail-section p {
+                margin-bottom: 0.8rem;
+                font-size: 1rem;
                 color: #555;
             }
-            .info-card strong {
-                font-weight: 600;
-                color: #34495e;
+            .detail-section strong {
+                color: #333;
             }
-            .booking-info .total-cost {
-                font-size: 1.5rem;
+            .status-badge {
+                display: inline-block;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
                 font-weight: bold;
-                color: #27ae60;
-                margin-bottom: 0.5rem;
             }
-            .booking-info .status {
-                display: inline-block;
-                padding: 0.3rem 0.6rem;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                font-weight: 600;
+            .status-Confirmed { background-color: #d4edda; color: #155724; }
+            .status-Pending { background-color: #fff3cd; color: #856404; }
+            .status-Cancelled { background-color: #f8d7da; color: #721c24; }
+            .status-Completed { background-color: #cce5ff; color: #004085; }
+            .vehicle-info-card {
+                display: flex;
+                gap: 1rem;
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                align-items: center;
             }
-            .status-Confirmed {
-                background-color: #d4edda;
-                color: #155724;
+            .vehicle-image-container {
+                max-width: 180px;
+                border-radius: 4px;
+                overflow: hidden;
             }
-            .status-Pending {
-                background-color: #fff3cd;
-                color: #85640a;
+            .vehicle-image {
+                display: block;
+                width: 100%;
+                height: auto;
             }
-            .status-Cancelled {
-                background-color: #f8d7da;
-                color: #721c24;
+            .vehicle-details {
+                flex-grow: 1;
             }
-            .status-Completed {
-                background-color: #cce5ff;
-                color: #004085;
+            .payment-info-card {
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             }
-            .payment-info .status {
-                display: inline-block;
-                padding: 0.3rem 0.6rem;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                font-weight: 600;
+            .proceed-button-container {
+                grid-column: 1 / -1;
+                text-align: center;
+                margin-top: 2rem;
             }
-            .payment-info .amount {
+            .proceed-button {
+                background-color: #28a745;
+                color: white;
+                border: none;
+                padding: 1rem 2rem;
+                border-radius: 5px;
+                cursor: pointer;
                 font-size: 1.1rem;
                 font-weight: bold;
-                color: #27ae60;
-                margin-bottom: 0.3rem;
+                text-decoration: none;
+            }
+            .proceed-button:hover {
+                background-color: #218838;
             }
             .timestamp {
-                font-size: 0.9rem;
-                color: #7f8c8d;
+                grid-column: 1 / -1;
                 text-align: right;
-                margin-top: 1rem;
-                padding: 0 1rem;
+                font-size: 0.9rem;
+                color: #777;
+                margin-top: 2rem;
+            }
+            .no-info {
+                color: #777;
             }
         </style>
     </head>
     <body>
         <%@ include file="include/header.jsp" %>
 
-        <section class="booking-details-section">
-            <div class="container">
-                <div class="booking-details-container">
-                    <div class="booking-details-header">
-                        <h2>Booking Details</h2>
-                        <a href="mybooking.jsp" class="back-link">Back to Bookings</a>
-                    </div>
+        <div class="booking-details-container">
+            <div class="booking-header">
+                <h2>Booking Details</h2>
+                <a href="mybooking.jsp" class="back-link">← Back to Bookings</a>
+            </div>
 
-                    <div class="info-card">
-                        <!-- Booking Details -->
-                        <div class="booking-info">
-                            <h3>Booking Information</h3>
-                            <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
-                            <p><strong>Client ID:</strong> <%= booking.getClientId() != null ? booking.getClientId() : "N/A"%></p>
-                            <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
-                            <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
-                            <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
-                            <p><strong>Actual Return Date:</strong> <%= booking.getActualReturnDate() != null ? booking.getActualReturnDate() : "N/A"%></p>
-                            <p><strong>Assigned Date:</strong> <%= booking.getAssignedDate() != null ? booking.getAssignedDate() : "N/A"%></p>
-                            <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
-                            <p><strong>Status:</strong> <span class="status status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
-                            <p><strong>Created By:</strong> <%= booking.getCreatedBy() != null ? booking.getCreatedBy() : "N/A"%></p>
-                        </div>
+            <div class="detail-section">
+                <h3>Booking Information</h3>
+                <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
+                <p><strong>Client ID:</strong> <%= booking.getClientId() != null ? booking.getClientId() : "N/A"%></p>
+                <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
+                <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
+                <p><strong>Duration:</strong>
+                    <%
+                        if (booking.getBookingStartDate() != null && booking.getBookingEndDate() != null) {
+                            try {
+                                Date startDate = sdf.parse(booking.getBookingStartDate());
+                                Date endDate = sdf.parse(booking.getBookingEndDate());
+                                long diff = endDate.getTime() - startDate.getTime();
+                                long days = diff / (24 * 60 * 60 * 1000);
+                                out.print(days + (days == 1 ? " day" : " days"));
+                            } catch (Exception e) {
+                                out.print("N/A");
+                            }
+                        } else {
+                            out.print("N/A");
+                        }
+                    %>
+                </p>
+                <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
+            </div>
 
-                        <!-- Vehicle Details -->
-                        <div class="vehicle-info">
-                            <h3>Vehicle Information</h3>
-                            <% if (vehicle != null) {%>
-                            <p><strong>Vehicle ID:</strong> <%= booking.getVehicleId() != null ? booking.getVehicleId() : "N/A"%></p>
-                            <p><strong>Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
-                            <p><strong>Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
-                            <% } else { %>
-                            <p>No vehicle information available.</p>
-                            <% } %>
-                        </div>
-
-                        <!-- Related Payments -->
-                        <div class="payment-info">
-                            <h3>Payment Information</h3>
-                            <% if (payment != null) { %>
-                            <p><strong>Payment ID:</strong> <%= payment.getPaymentID() %></p>
-                            <p><strong>Amount:</strong> RM <%= String.format("%.2f", payment.getAmount()) %></p>
-                            <p><strong>Payment Type:</strong> <%= payment.getPaymentType() %></p>
-                            <p><strong>Payment Status:</strong> <span class="status status-<%= payment.getPaymentStatus().replace(" ", "") %>"><%= payment.getPaymentStatus() %></span></p>
-                            <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() %></p>
-                            <% } else { %>
-                            <p>No payment information available.</p>
-                            <% } %>
-                        </div>
-                    </div>
-
-                    <div class="timestamp">Last updated: <%= currentDateTime%></div>
+            <div class="vehicle-info-card">
+                <div class="vehicle-image-container">
+                    <img src="<%= vehicle != null && vehicle.getVehicleImagePath() != null ? vehicle.getVehicleImagePath() : "images/default-car.jpg"%>" alt="<%= vehicle != null ? vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel() : "No Vehicle Info"%>" class="vehicle-image">
+                </div>
+                <div class="vehicle-details">
+                    <h3>Vehicle Information</h3>
+                    <% if (vehicle != null) {%>
+                    <p><strong>Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
+                    <p><strong>Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
+                    <p><strong>Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
+                    <p><strong>Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
+                    <p><strong>Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
+                    <p><strong>Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
+                    <p><strong>Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
+                    <% } else { %>
+                    <p class="no-info">No vehicle information available.</p>
+                    <% } %>
                 </div>
             </div>
-        </section>
+
+            <div class="payment-info-card">
+                <h3>Payment Information</h3>
+                <% if (payment != null) {%>
+                <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
+                <p><strong>Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
+                <p><strong>Payment Type:</strong> <%= payment.getPaymentType()%></p>
+                <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus().replace(" ", "")%>"><%= payment.getPaymentStatus()%></span></p>
+                <p><strong>Payment Date:</strong> <%= payment.getPaymentDate()%></p>
+                <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) { %>
+                <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A" %></p>
+                <p><strong>Booking ID:</strong> <%= booking.getBookingId() %></p>
+                <p><strong>Payment ID:</strong> Not yet assigned</p>
+                <p class="no-info">Payment pending. Please proceed to make the payment.</p>
+                <% } else { %>
+                <p class="no-info">No payment information available.</p>
+                <% } %>
+            </div>
+
+            <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
+            <div class="proceed-button-container">
+                <a href="payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button">Proceed to Payment</a>
+            </div>
+            <% }%>
+
+            <div class="timestamp">Last updated: <%= currentDateTime%></div>
+        </div>
 
         <%@ include file="include/footer.jsp" %>
         <%@ include file="include/scripts.html" %>
