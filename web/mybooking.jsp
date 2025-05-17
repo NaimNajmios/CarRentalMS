@@ -87,30 +87,35 @@
                 overflow: hidden;
                 transition: transform 0.1s ease-in-out;
                 cursor: pointer;
-                display: flex;
+                display: grid; /* Use grid for better layout control */
+                grid-template-columns: 220px 1fr 180px; /* Image | Details | Info */
                 margin-bottom: 1.5rem;
             }
             .booking-item:hover {
                 transform: translateY(-5px);
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
+            .booking-image-container {
+                width: 220px;
+                height: 100%;
+                overflow: hidden;
+            }
             .booking-image {
-                width: 200px;
-                height: 200px;
+                width: 100%;
+                height: 100%;
                 object-fit: cover;
-                background-color: #e9ecef; /* Fallback color if image fails */
+                background-color: #e9ecef; /* Fallback color */
             }
             .booking-details {
-                flex: 1;
                 padding: 1rem;
                 display: flex;
-                flex-wrap: wrap;
+                flex-direction: column;
+                justify-content: center; /* Vertically center details */
             }
             .booking-details p {
                 margin-bottom: 0.3rem;
                 font-size: 0.95rem;
                 color: #555;
-                width: 50%;
             }
             .booking-details strong {
                 font-weight: 600;
@@ -124,37 +129,25 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                width: 200px;
             }
             .booking-info .total-cost {
                 font-size: 1.1rem;
                 font-weight: bold;
                 color: #27ae60;
-                margin-bottom: 0.3rem;
+                margin-bottom: 0.5rem;
             }
             .booking-info .status {
                 display: inline-block;
                 padding: 0.3rem 0.6rem;
                 border-radius: 20px;
-                font-size: 0.75rem;
+                font-size: 0.8rem;
                 font-weight: 600;
+                text-align: center;
             }
-            .status-Confirmed {
-                background-color: #d4edda;
-                color: #155724;
-            }
-            .status-Pending {
-                background-color: #fff3cd;
-                color: #85640a;
-            }
-            .status-Cancelled {
-                background-color: #f8d7da;
-                color: #721c24;
-            }
-            .status-Completed {
-                background-color: #cce5ff;
-                color: #004085;
-            }
+            .status-Confirmed { background-color: #d4edda; color: #155724; }
+            .status-Pending { background-color: #fff3cd; color: #85640a; }
+            .status-Cancelled { background-color: #f8d7da; color: #721c24; }
+            .status-Completed { background-color: #cce5ff; color: #004085; }
             .no-bookings {
                 text-align: center;
                 color: #7f8c8d;
@@ -201,17 +194,15 @@
                             Vehicle vehicle = uiAccessObject.getVehicleById(Integer.parseInt(booking.getVehicleId()));
                         %>
                         <li class="booking-item booking-card" data-status="<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>" onclick="window.location = 'booking-details.jsp?bookingId=<%= booking.getBookingId()%>'">
-                            <img src="<%= vehicle != null ? vehicle.getVehicleImagePath() : "path/to/default/image.jpg"%>" alt="Vehicle Image" class="booking-image" onerror="this.src='path/to/default/image.jpg';">
+                            <div class="booking-image-container">
+                                <img src="<%= vehicle != null ? vehicle.getVehicleImagePath() : "path/to/default/image.jpg"%>" alt="Vehicle Image" class="booking-image" onerror="this.src='path/to/default/image.jpg';">
+                            </div>
                             <div class="booking-details">
                                 <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
-                                <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                                <p><strong>Vehicle:</strong> <%= vehicle != null ? vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel() : "N/A"%></p>
                                 <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
                                 <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
-                                <% if (vehicle != null) {%>
-                                <p><strong>Vehicle:</strong> <%= vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel()%></p>
-                                <% } else { %>
-                                <p><strong>Vehicle:</strong> N/A</p>
-                                <% }%>
+                                <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
                                 <p><strong>Created By:</strong> <%= booking.getCreatedBy() != null ? booking.getCreatedBy() : "N/A"%></p>
                             </div>
                             <div class="booking-info">

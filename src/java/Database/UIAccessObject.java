@@ -636,6 +636,60 @@ public class UIAccessObject {
         return payment;
     }
 
+    // Method to get payments by booking ID, return booking object
+    public Booking getBookingByBookingId(String bookingID) {
+        Booking booking = null;
+        try {
+            connection = DatabaseConnection.getConnection();
+            preparedStatement = connection
+                    .prepareStatement("SELECT p.paymentID, p.paymentType, p.amount, p.paymentStatus, p.referenceNo, "
+                            + "p.paymentDate, p.invoiceNumber, p.handledBy, p.proofOfPayment, "
+                            + "b.bookingID, b.clientID, b.bookingDate, b.startDate, b.endDate, "
+                            + "b.actualReturnDate, b.totalCost, b.bookingStatus, "
+                            + "bv.vehicleID, bv.assignedDate "
+                            + "FROM Payment p "
+                            + "JOIN Booking b ON p.bookingID = b.bookingID "
+                            + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
+                            + "WHERE p.bookingID = ?");
+            preparedStatement.setString(1, bookingID);
+            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                booking = new Booking();
+                booking.setBookingId(resultSet.getString("bookingID"));
+                booking.setClientId(resultSet.getString("clientID"));
+                booking.setVehicleId(resultSet.getString("vehicleID"));
+                booking.setAssignedDate(resultSet.getString("assignedDate"));
+                booking.setBookingDate(resultSet.getString("bookingDate"));
+                booking.setBookingStartDate(resultSet.getString("startDate"));
+                booking.setBookingEndDate(resultSet.getString("endDate"));
+                booking.setActualReturnDate(resultSet.getString("actualReturnDate"));
+                booking.setTotalCost(resultSet.getString("totalCost"));
+                booking.setBookingStatus(resultSet.getString("bookingStatus"));
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "Database error while retrieving payment details: {0}", e.getMessage());
+            throw new RuntimeException("Database error while retrieving payment details: " + e.getMessage());
+        } finally {
+            // Close resources
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+                LOGGER.log(Level.FINE, "Database resources closed.");
+            } catch (SQLException ex) {
+                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+            }
+        }
+        return booking;
+    }
+
     // Method to get booking details by booking ID, return booking object
     public Booking getBookingById(String bookingID) {
         Booking booking = null;
