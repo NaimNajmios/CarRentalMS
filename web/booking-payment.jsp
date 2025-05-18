@@ -35,9 +35,10 @@
     // Fetch related vehicle and payment data
     Vehicle vehicle = null;
     Payment payment = null;
+
     try {
         vehicle = uiAccessObject.getVehicleById(Integer.parseInt(booking.getVehicleId()));
-        payment = uiAccessObject.getPaymentById(bookingId); // Check if payment exists
+        payment = uiAccessObject.getPaymentByBookingId(bookingId); // Check if payment exists
         logger.log(Level.INFO, "Retrieved vehicle: {0}", vehicle);
         logger.log(Level.INFO, "Retrieved payment: {0}", payment);
     } catch (NumberFormatException e) {
@@ -308,8 +309,9 @@
                 <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
                 <div class="payment-info-card">
                     <h3>Payment Form</h3>
-                    <form action="process-payment.jsp" method="post" enctype="multipart/form-data" class="payment-form">
+                    <form action="SubmitPayment" method="post" enctype="multipart/form-data" class="payment-form">
                         <input type="hidden" name="bookingId" value="<%= booking.getBookingId()%>">
+                        <input type="hidden" name="paymentId" value="<%= payment != null ? payment.getPaymentID() : "" %>">
                         <label for="paymentType">Payment Type:</label>
                         <select id="paymentType" name="paymentType" required onchange="showPaymentDetails()">
                             <option value="">Select payment type</option>
@@ -323,21 +325,23 @@
                         
                         <div id="cardInfo" style="display:none;">
                             <label for="cardNumber">Card Number:</label>
-                            <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" required>
+                            <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456">
                             <label for="cardName">Name on Card:</label>
-                            <input type="text" id="cardName" name="cardName" placeholder="John Doe" required>
+                            <input type="text" id="cardName" name="cardName" placeholder="John Doe">
                             <label for="expiryDate">Expiry Date:</label>
-                            <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+                            <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY">
                             <label for="cvv">CVV:</label>
-                            <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                            <input type="text" id="cvv" name="cvv" placeholder="123">
                         </div>
                         
                         <div id="bankTransferInfo" style="display:none;">
                             <p>Please transfer the amount to the following account:</p>
                             <img src="images/companyUsage/qr_carrentco.png" alt="Bank Transfer Information" class="bank-transfer-image">
                             <label for="proofOfPayment">Upload Proof of Payment (PDF or Image, max 5MB):</label>
-                            <input type="file" id="proofOfPayment" name="proofOfPayment" accept="image/*,application/pdf" required>
+                            <input type="file" id="proofOfPayment" name="proofOfPayment" accept="image/*,application/pdf">
                         </div>
+                        
+                        <p><strong>Note:</strong> If selecting Cash, payment will be made upon vehicle pickup.</p>
                         
                         <button type="submit">Submit Payment</button>
                     </form>
@@ -356,16 +360,30 @@
                 var paymentType = document.getElementById("paymentType").value;
                 var cardInfo = document.getElementById("cardInfo");
                 var bankTransferInfo = document.getElementById("bankTransferInfo");
+                var cardInputs = cardInfo.getElementsByTagName('input');
+                var bankTransferInput = document.getElementById("proofOfPayment");
                 
                 if (paymentType === "Credit Card" || paymentType === "Debit Card") {
                     cardInfo.style.display = "block";
                     bankTransferInfo.style.display = "none";
+                    for (var i = 0; i < cardInputs.length; i++) {
+                        cardInputs[i].required = true;
+                    }
+                    bankTransferInput.required = false;
                 } else if (paymentType === "Bank Transfer") {
                     cardInfo.style.display = "none";
                     bankTransferInfo.style.display = "block";
+                    for (var i = 0; i < cardInputs.length; i++) {
+                        cardInputs[i].required = false;
+                    }
+                    bankTransferInput.required = true;
                 } else {
                     cardInfo.style.display = "none";
                     bankTransferInfo.style.display = "none";
+                    for (var i = 0; i < cardInputs.length; i++) {
+                        cardInputs[i].required = false;
+                    }
+                    bankTransferInput.required = false;
                 }
             }
         </script>

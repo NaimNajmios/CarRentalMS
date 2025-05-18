@@ -690,6 +690,50 @@ public class UIAccessObject {
         return booking;
     }
 
+    // Method to get payment details by booking ID, return payment object
+    public Payment getPaymentByBookingId(String bookingID) {
+        Payment payment = null;
+        try {
+            connection = DatabaseConnection.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM Payment WHERE bookingID = ?");
+            preparedStatement.setString(1, bookingID); 
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                payment = new Payment();
+                payment.setPaymentID(resultSet.getInt("paymentID"));
+                payment.setBookingID(resultSet.getString("bookingID"));
+                payment.setPaymentType(resultSet.getString("paymentType"));
+                payment.setAmount(resultSet.getDouble("amount"));
+                payment.setPaymentStatus(resultSet.getString("paymentStatus"));
+                payment.setReferenceNo(resultSet.getString("referenceNo")); 
+                payment.setPaymentDate(resultSet.getString("paymentDate")); 
+                payment.setInvoiceNumber(resultSet.getString("invoiceNumber"));
+                payment.setHandledBy(resultSet.getString("handledBy"));
+                payment.setProofOfPayment(resultSet.getString("proofOfPayment"));   
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "Database error while retrieving payment ID: {0}", e.getMessage());
+            throw new RuntimeException("Database error while retrieving payment ID: " + e.getMessage());
+        } finally {
+            // Close resources
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+                LOGGER.log(Level.FINE, "Database resources closed.");
+            } catch (SQLException ex) {
+                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+            }
+        } 
+        return payment; 
+    }
+
     // Method to get booking details by booking ID, return booking object
     public Booking getBookingById(String bookingID) {
         Booking booking = null;

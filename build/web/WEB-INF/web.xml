@@ -4,9 +4,17 @@
         <servlet-name>VehicleBookingServlet</servlet-name>
         <servlet-class>VehicleBookingServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SubmitPaymentServlet</servlet-name>
+        <servlet-class>SubmitPaymentServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SubmitPaymentServlet</servlet-name>
+        <url-pattern>/SubmitPayment</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
