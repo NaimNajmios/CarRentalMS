@@ -25,7 +25,7 @@
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
-    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date()); // 2025-05-17 05:14 PM +08
+    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date()); // 2025-05-18 10:35 AM +08
 %>
 
 <!DOCTYPE html>
@@ -87,8 +87,8 @@
                 overflow: hidden;
                 transition: transform 0.1s ease-in-out;
                 cursor: pointer;
-                display: grid; /* Use grid for better layout control */
-                grid-template-columns: 220px 1fr 180px; /* Image | Details | Info */
+                display: grid;
+                grid-template-columns: 220px 1fr 180px;
                 margin-bottom: 1.5rem;
             }
             .booking-item:hover {
@@ -104,13 +104,13 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                background-color: #e9ecef; /* Fallback color */
+                background-color: #e9ecef;
             }
             .booking-details {
                 padding: 1rem;
                 display: flex;
                 flex-direction: column;
-                justify-content: center; /* Vertically center details */
+                justify-content: center;
             }
             .booking-details p {
                 margin-bottom: 0.3rem;
@@ -144,10 +144,9 @@
                 font-weight: 600;
                 text-align: center;
             }
-            .status-Confirmed { background-color: #d4edda; color: #155724; }
             .status-Pending { background-color: #fff3cd; color: #85640a; }
-            .status-Cancelled { background-color: #f8d7da; color: #721c24; }
             .status-Completed { background-color: #cce5ff; color: #004085; }
+            .status-Cancelled { background-color: #f8d7da; color: #721c24; }
             .no-bookings {
                 text-align: center;
                 color: #7f8c8d;
@@ -178,7 +177,6 @@
 
                     <div class="filter-buttons">
                         <button class="filter-btn active" data-status="Pending">Pending</button>
-                        <button class="filter-btn" data-status="Confirmed">Confirmed</button>
                         <button class="filter-btn" data-status="Completed">Completed</button>
                         <button class="filter-btn" data-status="Cancelled">Cancelled</button>
                         <button class="filter-btn" data-status="all">All</button>
@@ -192,8 +190,13 @@
                         <%
                             // Fetch vehicle details directly using vehicleId from Booking
                             Vehicle vehicle = uiAccessObject.getVehicleById(Integer.parseInt(booking.getVehicleId()));
+                            // Normalize booking status
+                            String bookingStatus = booking.getBookingStatus();
+                            bookingStatus = bookingStatus != null ? bookingStatus.trim() : "";
+                            // Debug: Print booking status to console
+                            System.out.println("Booking ID: " + booking.getBookingId() + ", Status: " + bookingStatus);
                         %>
-                        <li class="booking-item booking-card" data-status="<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>" onclick="window.location = 'booking-details.jsp?bookingId=<%= booking.getBookingId()%>'">
+                        <li class="booking-item booking-card" data-status="<%= bookingStatus %>" onclick="window.location = 'booking-details.jsp?bookingId=<%= booking.getBookingId()%>'">
                             <div class="booking-image-container">
                                 <img src="<%= vehicle != null ? vehicle.getVehicleImagePath() : "path/to/default/image.jpg"%>" alt="Vehicle Image" class="booking-image" onerror="this.src='path/to/default/image.jpg';">
                             </div>
@@ -203,11 +206,10 @@
                                 <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
                                 <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
                                 <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
-                                <p><strong>Created By:</strong> <%= booking.getCreatedBy() != null ? booking.getCreatedBy() : "N/A"%></p>
                             </div>
                             <div class="booking-info">
                                 <p class="total-cost">RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
-                                <span class="status status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span>
+                                <span class="status status-<%= bookingStatus.replace(" ", "") %>"><%= bookingStatus != null ? bookingStatus : "N/A"%></span>
                             </div>
                         </li>
                         <% } %>
@@ -233,7 +235,8 @@
                 function filterCards(status) {
                     let visibleCardsCount = 0;
                     bookingCards.forEach(card => {
-                        const cardStatus = card.getAttribute('data-status');
+                        const cardStatus = card.getAttribute('data-status').trim();
+                        console.log("Filtering - Card Status: " + cardStatus + ", Filter: " + status); // Debug
                         if (status === 'all' || cardStatus === status) {
                             card.classList.remove('hidden');
                             visibleCardsCount++;
@@ -256,10 +259,8 @@
                 filterButtons.forEach(button => {
                     button.addEventListener('click', function () {
                         const status = this.getAttribute('data-status');
-
                         filterButtons.forEach(btn => btn.classList.remove('active'));
                         this.classList.add('active');
-
                         filterCards(status);
                     });
                 });
