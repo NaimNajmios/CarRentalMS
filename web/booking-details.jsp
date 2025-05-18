@@ -262,7 +262,6 @@
                 <p><strong>Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
                 <p><strong>Payment Type:</strong> <%= payment.getPaymentType()%></p>
                 <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus().replace(" ", "")%>"><%= payment.getPaymentStatus()%></span></p>
-                <p><strong>Payment Date:</strong> <%= payment.getPaymentDate()%></p>
                 <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
                 <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
                 <p><strong>Booking ID:</strong> <%= booking.getBookingId()%></p>

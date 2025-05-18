@@ -322,12 +322,13 @@
                 <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? payment.getPaymentDate() : "N/A"%></p>
                 <% if (payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) {%>
                 <p><strong>Proof of Payment:</strong> <a href="<%= request.getContextPath()%><%= payment.getProofOfPayment()%>" target="_blank">View</a></p>
+                <p class="info">Payment proof has been submitted and is awaiting response.</p>
                 <% } %>
                 <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
                 <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
                 <p><strong>Booking ID:</strong> <%= booking.getBookingId()%></p>
                 <p><strong>Payment ID:</strong> Not yet assigned</p>
-                <p class="no-info">Payment pending. Please provide the payment details in the form below.</p>
+                <p class="no-info"><strong>Payment pending.</strong> Please provide the payment details in the form below to complete your booking.</p>
                 <% } else { %>
                 <p class="no-info">No payment information available.</p>
                 <% } %>
@@ -336,6 +337,9 @@
             <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
             <div class="payment-form-card">
                 <h3>Payment Form</h3>
+                <% if (payment != null && payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) { %>
+                <p class="info">Payment proof has been submitted. The form is now disabled.</p>
+                <% } else { %>
                 <form action="SubmitPayment" method="post" enctype="multipart/form-data" class="payment-form">
                     <input type="hidden" name="bookingId" value="<%= booking.getBookingId()%>">
                     <input type="hidden" name="paymentId" value="<%= payment != null ? payment.getPaymentID() : ""%>">
@@ -372,6 +376,7 @@
 
                     <button type="submit">Submit Payment</button>
                 </form>
+                <% } %>
             </div>
             <% }%>
 
