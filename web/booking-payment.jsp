@@ -67,14 +67,14 @@
                 margin: 0;
             }
             .booking-payment-container {
-                max-width: 960px;
+                max-width: 1200px;
                 margin: 2rem auto;
                 padding: 2rem;
                 background-color: #ffffff;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
                 border-radius: 8px;
                 display: grid;
-                grid-template-columns: 1fr 1fr; /* Two main columns */
+                grid-template-columns: 2fr 1fr; /* Two columns, left column twice the width of right */
                 gap: 2rem;
             }
             .booking-header {
@@ -219,6 +219,12 @@
                 height: auto;
                 margin-top: 1rem;
             }
+            .left-column {
+                grid-column: 1 / 2;
+            }
+            .right-column {
+                grid-column: 2 / 3;
+            }
         </style>
     </head>
     <body>
@@ -230,105 +236,112 @@
                 <a href="mybooking.jsp" class="back-link">← Back to Bookings</a>
             </div>
 
-            <div class="detail-section">
-                <h3>Booking Information</h3>
-                <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
-                <p><strong>Client ID:</strong> <%= booking.getClientId() != null ? booking.getClientId() : "N/A"%></p>
-                <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
-                <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
-                <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
-                <p><strong>Duration:</strong>
-                    <%
-                        if (booking.getBookingStartDate() != null && booking.getBookingEndDate() != null) {
-                            try {
-                                Date startDate = sdf.parse(booking.getBookingStartDate());
-                                Date endDate = sdf.parse(booking.getBookingEndDate());
-                                long diff = endDate.getTime() - startDate.getTime();
-                                long days = diff / (24 * 60 * 60 * 1000);
-                                out.print(days + (days == 1 ? " day" : " days"));
-                            } catch (Exception e) {
+            <div class="left-column">
+                <div class="detail-section">
+                    <h3>Booking Information</h3>
+                    <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
+                    <p><strong>Client ID:</strong> <%= booking.getClientId() != null ? booking.getClientId() : "N/A"%></p>
+                    <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                    <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
+                    <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
+                    <p><strong>Duration:</strong>
+                        <%
+                            if (booking.getBookingStartDate() != null && booking.getBookingEndDate() != null) {
+                                try {
+                                    Date startDate = sdf.parse(booking.getBookingStartDate());
+                                    Date endDate = sdf.parse(booking.getBookingEndDate());
+                                    long diff = endDate.getTime() - startDate.getTime();
+                                    long days = diff / (24 * 60 * 60 * 1000);
+                                    out.print(days + (days == 1 ? " day" : " days"));
+                                } catch (Exception e) {
+                                    out.print("N/A");
+                                }
+                            } else {
                                 out.print("N/A");
                             }
-                        } else {
-                            out.print("N/A");
-                        }
-                    %>
-                </p>
-                <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
-            </div>
-
-            <div class="vehicle-info-card">
-                <div class="vehicle-image-container">
-                    <img src="<%= vehicle != null && vehicle.getVehicleImagePath() != null ? vehicle.getVehicleImagePath() : "images/default-car.jpg"%>" alt="<%= vehicle != null ? vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel() : "No Vehicle Info"%>" class="vehicle-image">
+                        %>
+                    </p>
+                    <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
                 </div>
-                <div class="vehicle-details">
-                    <h3>Vehicle Information</h3>
-                    <% if (vehicle != null) {%>
-                    <p><strong>Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
-                    <p><strong>Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
-                    <p><strong>Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
-                    <p><strong>Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
-                    <p><strong>Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
-                    <p><strong>Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
-                    <p><strong>Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
+
+                <div class="vehicle-info-card">
+                    <div class="vehicle-image-container">
+                        <img src="<%= vehicle != null && vehicle.getVehicleImagePath() != null ? vehicle.getVehicleImagePath() : "images/default-car.jpg"%>" alt="<%= vehicle != null ? vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel() : "No Vehicle Info"%>" class="vehicle-image">
+                    </div>
+                    <div class="vehicle-details">
+                        <h3>Vehicle Information</h3>
+                        <% if (vehicle != null) {%>
+                        <p><strong>Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
+                        <p><strong>Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
+                        <p><strong>Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
+                        <p><strong>Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
+                        <p><strong>Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
+                        <p><strong>Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
+                        <p><strong>Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
+                        <% } else { %>
+                        <p class="no-info">No vehicle information available.</p>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div class="payment-info-card">
+                    <h3>Payment Information</h3>
+                    <% if (payment != null) {%>
+                    <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
+                    <p><strong>Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
+                    <p><strong>Payment Type:</strong> <%= payment.getPaymentType()%></p>
+                    <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus().replace(" ", "")%>"><%= payment.getPaymentStatus()%></span></p>
+                    <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? sdf.format(payment.getPaymentDate()) : "N/A"%></p>
+                    <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
+                    <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
+                    <p><strong>Booking ID:</strong> <%= booking.getBookingId()%></p>
+                    <p><strong>Payment ID:</strong> Not yet assigned</p>
+                    <p class="no-info">Payment pending. Please provide the payment details in the form on the right.</p>
                     <% } else { %>
-                    <p class="no-info">No vehicle information available.</p>
+                    <p class="no-info">No payment information available.</p>
                     <% } %>
                 </div>
             </div>
 
-            <div class="payment-info-card">
-                <h3>Payment Information</h3>
-                <% if (payment != null) {%>
-                <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
-                <p><strong>Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
-                <p><strong>Payment Type:</strong> <%= payment.getPaymentType()%></p>
-                <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus().replace(" ", "")%>"><%= payment.getPaymentStatus()%></span></p>
-                <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? sdf.format(payment.getPaymentDate()) : "N/A"%></p>
-                <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
-                <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
-                <p><strong>Booking ID:</strong> <%= booking.getBookingId()%></p>
-                <p><strong>Payment ID:</strong> Not yet assigned</p>
-                <p class="no-info">Payment pending. Please provide the following details to proceed.</p>
-                <% } else { %>
-                <p class="no-info">No payment information available.</p>
-                <% } %>
-
+            <div class="right-column">
                 <!-- Payment Input Form -->
                 <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
-                <form action="process-payment.jsp" method="post" enctype="multipart/form-data" class="payment-form">
-                    <input type="hidden" name="bookingId" value="<%= booking.getBookingId()%>">
-                    <label for="paymentType">Payment Type:</label>
-                    <select id="paymentType" name="paymentType" required onchange="showPaymentDetails()">
-                        <option value="">Select payment type</option>
-                        <option value="Credit Card">Credit Card</option>
-                        <option value="Debit Card">Debit Card</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
-                        <option value="Cash">Cash</option>
-                    </select>
-                    <label for="amount">Amount (RM):</label>
-                    <input type="number" id="amount" name="amount" step="0.01" value="<%= booking.getTotalCost() != null ? Double.parseDouble(booking.getTotalCost()) : 0%>" required readonly>
-                    
-                    <div id="cardInfo" style="display:none;">
-                        <label for="cardNumber">Card Number:</label>
-                        <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" required>
-                        <label for="cardName">Name on Card:</label>
-                        <input type="text" id="cardName" name="cardName" placeholder="John Doe" required>
-                        <label for="expiryDate">Expiry Date:</label>
-                        <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
-                        <label for="cvv">CVV:</label>
-                        <input type="text" id="cvv" name="cvv" placeholder="123" required>
-                    </div>
-                    
-                    <div id="bankTransferInfo" style="display:none;">
-                        <p>Please transfer the amount to the following account:</p>
-                        <img src="images/companyUsage/qr_carrentco.png" alt="Bank Transfer Information" class="bank-transfer-image">
-                        <label for="proofOfPayment">Upload Proof of Payment (PDF or Image, max 5MB):</label>
-                        <input type="file" id="proofOfPayment" name="proofOfPayment" accept="image/*,application/pdf" required>
-                    </div>
-                    
-                    <button type="submit">Submit Payment</button>
-                </form>
+                <div class="payment-info-card">
+                    <h3>Payment Form</h3>
+                    <form action="process-payment.jsp" method="post" enctype="multipart/form-data" class="payment-form">
+                        <input type="hidden" name="bookingId" value="<%= booking.getBookingId()%>">
+                        <label for="paymentType">Payment Type:</label>
+                        <select id="paymentType" name="paymentType" required onchange="showPaymentDetails()">
+                            <option value="">Select payment type</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Cash">Cash</option>
+                        </select>
+                        <label for="amount">Amount (RM):</label>
+                        <input type="number" id="amount" name="amount" step="0.01" value="<%= booking.getTotalCost() != null ? Double.parseDouble(booking.getTotalCost()) : 0%>" required readonly>
+                        
+                        <div id="cardInfo" style="display:none;">
+                            <label for="cardNumber">Card Number:</label>
+                            <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" required>
+                            <label for="cardName">Name on Card:</label>
+                            <input type="text" id="cardName" name="cardName" placeholder="John Doe" required>
+                            <label for="expiryDate">Expiry Date:</label>
+                            <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+                            <label for="cvv">CVV:</label>
+                            <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                        </div>
+                        
+                        <div id="bankTransferInfo" style="display:none;">
+                            <p>Please transfer the amount to the following account:</p>
+                            <img src="images/companyUsage/qr_carrentco.png" alt="Bank Transfer Information" class="bank-transfer-image">
+                            <label for="proofOfPayment">Upload Proof of Payment (PDF or Image, max 5MB):</label>
+                            <input type="file" id="proofOfPayment" name="proofOfPayment" accept="image/*,application/pdf" required>
+                        </div>
+                        
+                        <button type="submit">Submit Payment</button>
+                    </form>
+                </div>
                 <% }%>
             </div>
 
