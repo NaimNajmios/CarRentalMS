@@ -321,7 +321,7 @@
                 <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().replace(" ", "") : ""%>"><%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%></span></p>
                 <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? payment.getPaymentDate() : "N/A"%></p>
                 <% if (payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) {%>
-                <p><strong>Proof of Payment:</strong> <a href="<%= payment.getProofOfPayment()%>" target="_blank">View</a></p>
+                <p><strong>Proof of Payment:</strong> <a href="<%= request.getContextPath()%><%= payment.getProofOfPayment()%>" target="_blank">View</a></p>
                 <% } %>
                 <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
                 <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
