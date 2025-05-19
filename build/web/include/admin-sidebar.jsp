@@ -21,7 +21,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="admin-payments.jsp">
+            <a class="nav-link" href="admin-payment-verification.jsp">
                 <i class="fa fa-credit-card"></i> Payment Verification
             </a>
         </li>

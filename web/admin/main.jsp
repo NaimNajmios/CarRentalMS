@@ -108,12 +108,6 @@
         <!-- Admin Sidebar -->
         <%@ include file="../include/admin-sidebar.jsp" %>
 
-        <!-- Main Content -->
-            <main class="main-content">
-                <section id="dashboard-overview" class="py-3">
-
-                </section>
-            </main>
 
         <!-- JavaScript Imports -->
         <%@ include file="../include/scripts.html" %>

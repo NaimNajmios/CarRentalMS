@@ -1,299 +1,458 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="Database.UIAccessObject"%>
-<%@ page import="Payment.Payment"%>
-<%@ page import="java.text.SimpleDateFormat"%>
-<%@ page import="java.util.Date"%>
-<%@ page import="java.text.DecimalFormat"%>
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <%@ page import="java.util.List"%>
+    <%@ page import="java.util.ArrayList"%>
+    <%@ page import="Database.UIAccessObject"%>
+    <%@ page import="Payment.Payment"%>
+    <%@ page import="java.text.SimpleDateFormat"%>
+    <%@ page import="java.util.Date"%>
+    <%@ page import="java.text.DecimalFormat"%>
 
-<%
-    String clientId = (String) session.getAttribute("userId");
-    
-    if (clientId == null || clientId.trim().isEmpty()) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
+    <%
+        UIAccessObject uiAccessObject = new UIAccessObject();
+        List<Payment> allPayments = uiAccessObject.getAllPaymentDetails();
 
-    UIAccessObject uiAccessObject = new UIAccessObject();
-    // Get all payments from all clients
-    List<Payment> allPayments = uiAccessObject.getPaymentDetailsByClientID(clientId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
+        String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date());
+    %>
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>CarRent - Payment Verification</title>
+            <%@ include file="../include/admin-css.html" %>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+            <style>
+                body {
+                    font-family: 'Inter', sans-serif;
+                    background-color: #f4f4f4;
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 100vh;
+                    margin: 0;
+                    padding-top: 56px; /* Account for fixed header height */
+                }
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
-    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date());
-%>
+                header {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    z-index: 1000;
+                }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment History - CarRent</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f1c40f;
-            --danger-color: #e74c3c;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+                .wrapper {
+                    display: flex;
+                    flex-grow: 1;
+                }
 
-        body {
-            background-color: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+                .sidebar {
+                    width: 250px; /* Adjust as needed */
+                    background-color: #f8f9fa;
+                    padding: 20px;
+                    flex-shrink: 0;
+                }
 
-        .payment-history-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
+                .sidebar .nav-link {
+                    color: #4b5563;
+                    padding: 0.75rem 1rem;
+                    transition: color 0.2s;
+                    display: block;
+                    text-decoration: none;
+                }
 
-        .page-header {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
-        }
+                .sidebar .nav-link:hover {
+                    color: #2563eb;
+                    background-color: #e9ecef;
+                }
 
-        .page-header h1 {
-            color: var(--primary-color);
-            margin: 0;
-            font-size: 1.8rem;
-        }
+                .sidebar .nav-link i {
+                    margin-right: 0.75rem;
+                }
 
-        .filter-section {
-            background-color: white;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1.5rem;
-        }
+                .sidebar .nav-item {
+                    margin-bottom: 0.5rem;
+                }
 
-        .filter-btn {
-            padding: 0.5rem 1.5rem;
-            border: none;
-            border-radius: 5px;
-            margin-right: 0.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
+                .main-content {
+                    flex-grow: 1;
+                    padding: 2rem; /* Adjust padding as needed */
+                    background-color: #f4f4f4;
+                }
 
-        .filter-btn.active {
-            background-color: var(--secondary-color);
-            color: white;
-        }
+                .dashboard-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 2rem;
+                }
 
-        .payment-card {
-            background-color: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.2s ease;
-            cursor: pointer;
-        }
+                .dashboard-header h2 {
+                    font-size: 1.75rem;
+                    color: #333;
+                    font-weight: 700;
+                    margin: 0;
+                }
 
-        .payment-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
+                .search-box {
+                    position: relative;
+                    max-width: 300px;
+                }
 
-        .payment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
+                .search-box input {
+                    padding: 0.6rem 1rem 0.6rem 2.2rem;
+                    border: 1px solid #ced4da;
+                    border-radius: 0.375rem;
+                    width: 100%;
+                    font-size: 0.9rem;
+                    transition: border-color 0.2s;
+                }
 
-        .payment-id {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
+                .search-box input:focus {
+                    border-color: #007bff;
+                    outline: none;
+                }
 
-        .payment-amount {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--success-color);
-        }
+                .search-box i {
+                    position: absolute;
+                    left: 0.75rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #6c757d;
+                }
 
-        .payment-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
+                .filter-buttons {
+                    margin-bottom: 1.5rem;
+                }
 
-        .detail-item {
-            margin-bottom: 0.5rem;
-        }
+                .filter-buttons button {
+                    padding: 0.5rem 1rem;
+                    margin-right: 0.5rem;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    background-color: #f8f9fa;
+                    color: #333;
+                }
 
-        .detail-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0.2rem;
-        }
+                .filter-buttons button.active {
+                    background-color: #007bff;
+                    color: white;
+                    border-color: #007bff;
+                }
 
-        .detail-value {
-            font-weight: 500;
-            color: var(--primary-color);
-        }
+                .payment-cards-list {
+                    list-style: none;
+                    padding: 0;
+                }
 
-        .status-badge {
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+                .payment-item {
+                    background-color: #fff;
+                    border: 1px solid #dee2e6;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                    margin-bottom: 1.5rem;
+                    padding: 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    transition: transform 0.1s ease-in-out;
+                }
 
-        .status-completed {
-            background-color: #d4edda;
-            color: #155724;
-        }
+                .payment-item:hover {
+                    transform: scale(1.02);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
 
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
+                .payment-details {
+                    flex-grow: 1;
+                    margin-right: 1rem;
+                }
 
-        .status-cancelled {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
+                .payment-details p {
+                    margin-bottom: 0.3rem;
+                    font-size: 0.95rem;
+                    color: #555;
+                }
 
-        .no-payments {
-            text-align: center;
-            padding: 3rem;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: var(--card-shadow);
-        }
+                .payment-details strong {
+                    font-weight: 600;
+                    color: #34495e;
+                }
 
-        .timestamp {
-            text-align: right;
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 1rem;
-        }
+                .payment-info {
+                    text-align: right;
+                    min-width: 200px;
+                }
 
-        @media (max-width: 768px) {
-            .payment-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-btn {
-                margin-bottom: 0.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="payment-history-container">
-        <div class="page-header">
-            <h1>Payment History</h1>
-        </div>
+                .payment-info .amount {
+                    font-size: 1.1rem;
+                    font-weight: bold;
+                    color: #27ae60;
+                    margin-bottom: 0.5rem;
+                }
 
-        <div class="filter-section">
-            <button class="filter-btn active" data-status="all">All Payments</button>
-            <button class="filter-btn" data-status="Completed">Completed</button>
-            <button class="filter-btn" data-status="Pending">Pending</button>
-            <button class="filter-btn" data-status="Cancelled">Cancelled</button>
-        </div>
+                .status-badge {
+                    display: inline-block;
+                    padding: 0.3rem 0.6rem;
+                    border-radius: 20px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                }
 
-        <% if (allPayments == null || allPayments.isEmpty()) { %>
-            <div class="no-payments">
-                <i class="fas fa-receipt fa-3x mb-3" style="color: #ccc;"></i>
-                <h3>No Payment Records Found</h3>
-                <p class="text-muted">You haven't made any payments yet.</p>
-            </div>
-        <% } else { %>
-            <div id="paymentList">
-                <% for (Payment payment : allPayments) { %>
-                    <div class="payment-card" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>" 
-                         onclick="window.location='payment-details.jsp?paymentId=<%= payment.getPaymentID()%>'">
-                        <div class="payment-header">
-                            <span class="payment-id">Payment #<%= payment.getPaymentID()%></span>
-                            <span class="payment-amount">RM <%= String.format("%.2f", payment.getAmount())%></span>
-                        </div>
-                        <div class="payment-details">
-                            <div class="detail-item">
-                                <div class="detail-label">Booking ID</div>
-                                <div class="detail-value">#<%= payment.getBookingID()%></div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Payment Type</div>
-                                <div class="detail-value"><%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Payment Date</div>
-                                <div class="detail-value"><%= payment.getPaymentDate() != null ? payment.getPaymentDate() : "N/A"%></div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Status</div>
-                                <div class="detail-value">
-                                    <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().toLowerCase() : ""%>">
-                                        <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
-                                    </span>
-                                </div>
-                            </div>
+                .status-Pending {
+                    background-color: #fff3cd;
+                    color: #85640a;
+                }
+
+                .status-Completed {
+                    background-color: #d4edda;
+                    color: #155724;
+                }
+
+                .status-Cancelled {
+                    background-color: #f8d7da;
+                    color: #721c24;
+                }
+
+                .action-buttons {
+                    margin-top: 0.5rem;
+                }
+
+                .action-btn {
+                    padding: 0.4rem 0.8rem;
+                    border-radius: 0.25rem;
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background-color 0.15s ease-in-out;
+                    margin-left: 0.5rem;
+                    border: 1px solid transparent;
+                }
+
+                .verify-btn {
+                    background-color: #28a745;
+                    color: white;
+                }
+
+                .reject-btn {
+                    background-color: #dc3545;
+                    color: white;
+                }
+
+                .verify-btn:hover {
+                    background-color: #218838;
+                }
+
+                .reject-btn:hover {
+                    background-color: #c82333;
+                }
+
+                .action-btn:disabled {
+                    background-color: #adb5bd;
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+
+                .timestamp {
+                    font-size: 0.9rem;
+                    color: #7f8c8d;
+                    text-align: right;
+                    margin-top: 1rem;
+                }
+
+                .hidden {
+                    display: none !important;
+                }
+
+                @media (max-width: 768px) {
+                    body {
+                        padding-top: 69px; /* Adjust for smaller screen header */
+                    }
+                    .wrapper {
+                        flex-direction: column; /* Stack sidebar and content on smaller screens */
+                    }
+                    .sidebar {
+                        width: 100%;
+                        margin-bottom: 1rem;
+                        padding: 15px;
+                    }
+                    .main-content {
+                        padding: 1.5rem;
+                    }
+                    .dashboard-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 1rem;
+                    }
+                    .search-box {
+                        max-width: 100%;
+                    }
+                    .payment-item {
+                        flex-direction: column;
+                        align-items: flex-start;
+                    }
+                    .payment-info {
+                        text-align: left;
+                        margin-top: 1rem;
+                        width: 100%;
+                    }
+                    .action-buttons {
+                        margin-top: 1rem;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <header>
+                <%@ include file="../include/admin-header.jsp" %>
+            </header>
+
+            <div class="wrapper">
+                <nav class="sidebar">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-dashboard.jsp">
+                                <i class="fa fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-users.jsp">
+                                <i class="fa fa-users"></i> User Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-vehicles.jsp">
+                                <i class="fa fa-car"></i> Vehicle Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-bookings.jsp">
+                                <i class="fa fa-calendar-check"></i> Booking Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-payment-verification.jsp">
+                                <i class="fa fa-credit-card"></i> Payment Verification
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="main-content">
+                    <div class="dashboard-header">
+                        <h2>Payment Verification</h2>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search payments..." class="form-control">
                         </div>
                     </div>
-                <% } %>
+
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-status="Pending">Pending</button>
+                        <button class="filter-btn" data-status="Completed">Completed</button>
+                        <button class="filter-btn" data-status="Cancelled">Cancelled</button>
+                        <button class="filter-btn" data-status="all">All</button>
+                    </div>
+
+                    <% if (allPayments == null || allPayments.isEmpty()) { %>
+                    <div class="no-payments">No payment records found.</div>
+                    <% } else { %>
+                    <ul class="payment-cards-list" id="paymentCardsList">
+                        <% for (Payment payment : allPayments) {%>
+                        <li class="payment-item payment-card" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>">
+                            <div class="payment-details">
+                                <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
+                                <p><strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
+                                <p><strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
+                            </div>
+                            <div class="payment-info">
+                                <p class="amount">RM <%= String.format("%.2f", payment.getAmount())%></p>
+                                <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().replace(" ", "") : ""%>">
+                                    <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                </span>
+                                <div class="action-buttons">
+                                    <% if ("Pending".equals(payment.getPaymentStatus())) { %>
+                                    <button class="action-btn verify-btn" onclick="confirmAction('verify', '<%= payment.getPaymentID()%>')">Verify</button>
+                                    <button class="action-btn reject-btn" onclick="confirmAction('reject', '<%= payment.getPaymentID()%>')">Reject</button>
+                                    <% } else { %>
+                                    <button class="action-btn verify-btn" disabled>Verified</button>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </li>
+                        <% } %>
+                    </ul>
+                    <% }%>
+
+                    <div class="timestamp">Last updated: <%= currentDateTime%></div>
+                </div>  
             </div>
-        <% } %>
 
-        <div class="timestamp">
-            Last updated: <%= currentDateTime%>
-        </div>
-    </div>
+            <%@ include file="../include/scripts.html" %>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            const paymentCards = document.querySelectorAll('.payment-card');
-            const noPayments = document.querySelector('.no-payments');
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const filterButtons = document.querySelectorAll('.filter-btn');
+                    const paymentCards = document.querySelectorAll('#paymentCardsList .payment-item');
+                    const searchInput = document.getElementById('searchInput');
 
-            function filterPayments(status) {
-                let visibleCount = 0;
-                
-                paymentCards.forEach(card => {
-                    const cardStatus = card.getAttribute('data-status');
-                    if (status === 'all' || cardStatus === status) {
-                        card.style.display = 'block';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
+                    // Function to filter cards by status
+                    function filterCards(status) {
+                        paymentCards.forEach(card => {
+                            const cardStatus = card.getAttribute('data-status');
+                            if (status === 'all' || cardStatus === status) {
+                                card.classList.remove('hidden');
+                            } else {
+                                card.classList.add('hidden');
+                            }
+                        });
                     }
+
+                    // Function to search cards
+                    function searchCards(searchText) {
+                        paymentCards.forEach(card => {
+                            const text = card.textContent.toLowerCase();
+                            if (text.includes(searchText.toLowerCase())) {
+                                card.classList.remove('hidden');
+                            } else {
+                                card.classList.add('hidden');
+                            }
+                        });
+                    }
+
+                    // Filter button click handlers
+                    filterButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const status = this.getAttribute('data-status');
+                            filterButtons.forEach(btn => btn.classList.remove('active'));
+                            this.classList.add('active');
+                            filterCards(status);
+                        });
+                    });
+
+                    // Search input handler
+                    searchInput.addEventListener('keyup', function () {
+                        const searchText = this.value;
+                        searchCards(searchText);
+                    });
+
+                    // Initial load: show only pending
+                    filterCards('Pending');
                 });
 
-                if (visibleCount === 0 && noPayments) {
-                    noPayments.style.display = 'block';
-                } else if (noPayments) {
-                    noPayments.style.display = 'none';
+                // Confirmation for Verify/Reject actions
+                function confirmAction(action, paymentId) {
+                    const message = action === 'verify'
+                            ? `Are you sure you want to verify payment ${paymentId}?`
+                            : `Are you sure you want to reject payment ${paymentId}?`;
+                    if (confirm(message)) {
+                        // Placeholder for actual action (e.g., form submission or AJAX call)
+                        alert(`${action.charAt(0).toUpperCase() + action.slice(1)}ed payment ${paymentId}`);
+                    }
                 }
-            }
-
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const status = this.getAttribute('data-status');
-                    
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    filterPayments(status);
-                });
-            });
-
-            // Initial filter
-            filterPayments('all');
-        });
-    </script>
-</body>
-</html>
+            </script>
+        </body>
+    </html>

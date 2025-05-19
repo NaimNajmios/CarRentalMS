@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 16, 2025 at 04:44 AM
+-- Generation Time: May 19, 2025 at 03:08 PM
 -- Server version: 8.0.40
 -- PHP Version: 8.2.12
 
@@ -71,23 +71,25 @@ CREATE TABLE `booking` (
 --
 
 INSERT INTO `booking` (`bookingID`, `clientID`, `bookingDate`, `startDate`, `endDate`, `actualReturnDate`, `totalCost`, `bookingStatus`, `createdBy`) VALUES
-(1, 2000, '2024-05-15', '2025-05-20', '2025-05-25', NULL, 600.00, 'Confirmed', 3000),
-(2, 2001, '2024-03-17', '2024-03-22', '2024-03-27', NULL, 900.00, 'Confirmed', 3001),
-(3, 2002, '2024-03-18', '2024-03-23', '2024-03-26', NULL, 750.00, 'Confirmed', 3002),
-(4, 2003, '2024-04-01', '2024-04-10', '2024-04-15', NULL, 1000.00, 'Confirmed', 3000),
-(5, 2004, '2024-04-02', '2024-04-09', '2024-04-16', NULL, 1400.00, 'Confirmed', 3001),
+(1, 2000, '2024-05-15', '2025-05-20', '2025-05-25', NULL, 600.00, 'Completed', 3000),
+(2, 2001, '2024-03-17', '2024-03-22', '2024-03-27', NULL, 900.00, 'Completed', 3001),
+(3, 2002, '2024-03-18', '2024-03-23', '2024-03-26', NULL, 750.00, 'Completed', 3002),
+(4, 2003, '2024-04-01', '2024-04-10', '2024-04-15', NULL, 1000.00, 'Completed', 3000),
+(5, 2004, '2024-04-02', '2024-04-09', '2024-04-16', NULL, 1400.00, 'Completed', 3001),
 (6, 2005, '2024-05-25', '2024-06-01', '2024-06-07', NULL, 1140.00, 'Pending', NULL),
 (7, 2006, '2024-05-26', '2024-06-02', '2024-06-05', NULL, 570.00, 'Pending', NULL),
 (8, 2000, '2024-08-15', '2024-08-29', '2024-09-02', NULL, 800.00, 'Pending', NULL),
 (9, 2002, '2024-04-05', '2024-04-20', '2024-04-22', NULL, 460.00, 'Cancelled', 3002),
-(10, 2007, '2024-03-20', '2024-03-25', '2024-03-30', NULL, 650.00, 'Confirmed', 3003),
-(11, 2008, '2024-03-22', '2024-03-27', '2024-04-01', NULL, 950.00, 'Confirmed', 3004),
-(12, 2009, '2024-04-03', '2024-04-12', '2024-04-17', NULL, 1100.00, 'Confirmed', 3000),
-(13, 2010, '2024-04-04', '2024-04-11', '2024-04-18', NULL, 1500.00, 'Confirmed', 3001),
+(10, 2007, '2024-03-20', '2024-03-25', '2024-03-30', NULL, 650.00, 'Completed', 3003),
+(11, 2008, '2024-03-22', '2024-03-27', '2024-04-01', NULL, 950.00, 'Completed', 3004),
+(12, 2009, '2024-04-03', '2024-04-12', '2024-04-17', NULL, 1100.00, 'Completed', 3000),
+(13, 2010, '2024-04-04', '2024-04-11', '2024-04-18', NULL, 1500.00, 'Completed', 3001),
 (14, 2011, '2024-05-27', '2024-06-03', '2024-06-08', NULL, 1200.00, 'Pending', NULL),
 (15, 2012, '2024-05-28', '2024-06-04', '2024-06-06', NULL, 600.00, 'Pending', NULL),
 (16, 2007, '2024-08-16', '2024-08-30', '2024-09-03', NULL, 850.00, 'Pending', NULL),
-(17, 2008, '2024-04-06', '2024-04-21', '2024-04-23', NULL, 500.00, 'Cancelled', 3002);
+(17, 2008, '2024-04-06', '2024-04-21', '2024-04-23', NULL, 500.00, 'Cancelled', 3002),
+(47, 2000, '2025-05-16', '2025-05-26', '2025-05-28', NULL, 360.00, 'Pending', NULL),
+(48, 2000, '2025-05-18', '2025-05-29', '2025-05-30', NULL, 240.00, 'Pending', NULL);
 
 -- --------------------------------------------------------
 
@@ -122,7 +124,9 @@ INSERT INTO `bookingvehicle` (`bookingID`, `vehicleID`, `assignedDate`) VALUES
 (14, 16, NULL),
 (15, 19, NULL),
 (16, 18, NULL),
-(17, 12, NULL);
+(17, 12, NULL),
+(47, 1, '2025-05-16'),
+(48, 1, '2025-05-18');
 
 -- --------------------------------------------------------
 
@@ -200,7 +204,9 @@ INSERT INTO `payment` (`paymentID`, `bookingID`, `paymentType`, `amount`, `payme
 (14, 14, 'Card', 1200.00, 'Pending', 'REF567890124', NULL, 'INV-2024-014', NULL, NULL),
 (15, 15, 'Cash', 600.00, 'Pending', 'REF678901235', NULL, 'INV-2024-015', NULL, NULL),
 (16, 16, 'Card', 850.00, 'Pending', 'REF789012346', NULL, 'INV-2024-016', NULL, NULL),
-(17, 17, 'Card', 500.00, 'Failed', 'REF890123457', '2024-04-06', 'INV-2024-017', NULL, NULL);
+(17, 17, 'Card', 500.00, 'Failed', 'REF890123457', '2024-04-06', 'INV-2024-017', NULL, NULL),
+(19, 47, 'Bank Transfer', 360.00, 'Pending', NULL, '2025-05-18', 'INV-47-1747561252974', NULL, '/user-upload/payments/47_1747561252950.pdf'),
+(20, 48, 'Bank Transfer', 240.00, 'Pending', NULL, '2025-05-18', 'INV-48-1747576374125', NULL, '/user-upload/payments/48_1747576374107.pdf');
 
 -- --------------------------------------------------------
 
@@ -362,7 +368,7 @@ ALTER TABLE `administrator`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `bookingID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `bookingID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `client`
@@ -374,7 +380,7 @@ ALTER TABLE `client`
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `paymentID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `paymentID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -402,7 +408,6 @@ ALTER TABLE `administrator`
 -- Constraints for table `booking`
 --
 ALTER TABLE `booking`
-  ADD CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `administrator` (`adminID`),
   ADD CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`clientID`) REFERENCES `client` (`clientID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
