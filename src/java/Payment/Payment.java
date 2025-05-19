@@ -1,6 +1,9 @@
 package Payment;
 
 // Class to represent a payment in the database
+
+import Booking.Booking;
+
 public class Payment {
     
     // Variables
@@ -14,6 +17,7 @@ public class Payment {
     private String invoiceNumber;
     private String handledBy;
     private String proofOfPayment;
+    private Booking booking;
 
     // Empty constructor
     public Payment() {
@@ -113,6 +117,14 @@ public class Payment {
 
     public void setProofOfPayment(String proofOfPayment) {
         this.proofOfPayment = proofOfPayment;
+    }
+
+    public Booking getBooking() {
+        return this.booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
     @Override

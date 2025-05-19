@@ -8,6 +8,10 @@
         <servlet-name>SubmitPaymentServlet</servlet-name>
         <servlet-class>SubmitPaymentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetBookingDetailsServlet</servlet-name>
+        <servlet-class>GetBookingDetailsServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
@@ -15,6 +19,10 @@
     <servlet-mapping>
         <servlet-name>SubmitPaymentServlet</servlet-name>
         <url-pattern>/SubmitPayment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetBookingDetailsServlet</servlet-name>
+        <url-pattern>/getBookingDetails</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

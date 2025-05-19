@@ -690,13 +690,107 @@ public class UIAccessObject {
         return booking;
     }
 
+    // Method to get all booking details, return booking ArrayList
+    public ArrayList<Booking> getAllBookingDetails() {
+        ArrayList<Booking> bookingList = new ArrayList<>();
+        try {
+            connection = DatabaseConnection.getConnection();
+            // From booking table, booking vehicle table, and payment table
+            preparedStatement = connection.prepareStatement("SELECT * FROM Booking b "
+                    + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
+                    + "JOIN Payment p ON b.bookingID = p.bookingID");
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Booking booking = new Booking();
+                booking.setBookingId(resultSet.getString("bookingID"));
+                booking.setClientId(resultSet.getString("clientID"));
+                booking.setVehicleId(resultSet.getString("vehicleId"));
+                booking.setAssignedDate(resultSet.getString("assignedDate"));
+                booking.setBookingDate(resultSet.getString("bookingDate"));
+                booking.setBookingStartDate(resultSet.getString("startDate"));
+                booking.setBookingEndDate(resultSet.getString("endDate"));
+                booking.setActualReturnDate(resultSet.getString("actualReturnDate"));
+                booking.setTotalCost(resultSet.getString("totalCost"));
+                booking.setBookingStatus(resultSet.getString("bookingStatus"));
+                bookingList.add(booking);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "Database error while retrieving all booking details: {0}", e.getMessage());
+            throw new RuntimeException("Database error while retrieving all booking details: " + e.getMessage());
+        } finally {
+            // Close resources
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+                LOGGER.log(Level.FINE, "Database resources closed.");
+            } catch (SQLException ex) {
+                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+            }
+        }
+        return bookingList;
+    }
+
+    // Method to get all booking details by payment ID, return booking object
+    public Booking getBookingByPaymentId(String paymentID) {
+        Booking booking = null;
+        try {
+            connection = DatabaseConnection.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM Booking b "
+                    + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
+                    + "JOIN Payment p ON b.bookingID = p.bookingID "
+                    + "WHERE p.paymentID = ?");
+            preparedStatement.setString(1, paymentID);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                booking = new Booking();
+                booking.setBookingId(resultSet.getString("bookingID"));
+                booking.setClientId(resultSet.getString("clientID"));
+                booking.setVehicleId(resultSet.getString("vehicleId"));
+                booking.setAssignedDate(resultSet.getString("assignedDate"));
+                booking.setBookingDate(resultSet.getString("bookingDate"));
+                booking.setBookingStartDate(resultSet.getString("startDate"));
+                booking.setBookingEndDate(resultSet.getString("endDate"));
+                booking.setActualReturnDate(resultSet.getString("actualReturnDate"));
+                booking.setTotalCost(resultSet.getString("totalCost"));
+                booking.setBookingStatus(resultSet.getString("bookingStatus"));
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
+            throw new RuntimeException("Database error while retrieving booking details: " + e.getMessage());
+        } finally {
+            // Close resources
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+                LOGGER.log(Level.FINE, "Database resources closed.");
+            } catch (SQLException ex) {
+                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+            }
+        }
+        return booking;
+    }
+
     // Method to get payment details by booking ID, return payment object
     public Payment getPaymentByBookingId(String bookingID) {
         Payment payment = null;
         try {
             connection = DatabaseConnection.getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM Payment WHERE bookingID = ?");
-            preparedStatement.setString(1, bookingID); 
+            preparedStatement.setString(1, bookingID);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 payment = new Payment();
@@ -705,11 +799,11 @@ public class UIAccessObject {
                 payment.setPaymentType(resultSet.getString("paymentType"));
                 payment.setAmount(resultSet.getDouble("amount"));
                 payment.setPaymentStatus(resultSet.getString("paymentStatus"));
-                payment.setReferenceNo(resultSet.getString("referenceNo")); 
-                payment.setPaymentDate(resultSet.getString("paymentDate")); 
+                payment.setReferenceNo(resultSet.getString("referenceNo"));
+                payment.setPaymentDate(resultSet.getString("paymentDate"));
                 payment.setInvoiceNumber(resultSet.getString("invoiceNumber"));
                 payment.setHandledBy(resultSet.getString("handledBy"));
-                payment.setProofOfPayment(resultSet.getString("proofOfPayment"));   
+                payment.setProofOfPayment(resultSet.getString("proofOfPayment"));
             }
         } catch (SQLException | ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, "Database error while retrieving payment ID: {0}", e.getMessage());
@@ -730,8 +824,8 @@ public class UIAccessObject {
             } catch (SQLException ex) {
                 LOGGER.log(Level.WARNING, "Error closing database resources", ex);
             }
-        } 
-        return payment; 
+        }
+        return payment;
     }
 
     // Method to get all payment details, return payment ArrayList
@@ -739,14 +833,16 @@ public class UIAccessObject {
         ArrayList<Payment> paymentList = new ArrayList<>();
         try {
             connection = DatabaseConnection.getConnection();
-            preparedStatement = connection.prepareStatement("SELECT p.paymentID, p.paymentType, p.amount, p.paymentStatus, p.referenceNo, "
-                            + "p.paymentDate, p.invoiceNumber, p.handledBy, p.proofOfPayment, "
-                            + "b.bookingID, b.clientID, b.bookingDate, b.startDate, b.endDate, "
-                            + "b.actualReturnDate, b.totalCost, b.bookingStatus, "
-                            + "bv.vehicleID, bv.assignedDate "
-                            + "FROM Payment p "
-                            + "JOIN Booking b ON p.bookingID = b.bookingID "
-                            + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID");
+            preparedStatement = connection.prepareStatement(
+                    "SELECT p.paymentID, p.paymentType, p.amount, p.paymentStatus, " +
+                            "p.referenceNo, p.paymentDate, p.invoiceNumber, p.handledBy, p.proofOfPayment, " +
+                            "b.bookingID, b.clientID, b.bookingDate, b.startDate, b.endDate, " +
+                            "b.actualReturnDate, b.totalCost, b.bookingStatus, " +
+                            "bv.vehicleID, bv.assignedDate " +
+                            "FROM Payment p " +
+                            "JOIN Booking b ON p.bookingID = b.bookingID " +
+                            "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID " +
+                            "WHERE p.paymentType IN ('Cash', 'Bank Transfer');");
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Payment payment = new Payment();
