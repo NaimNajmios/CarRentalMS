@@ -1,4 +1,4 @@
-<%@page import="Booking.Booking"%>
+<%@ page import="Booking.Booking"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.ArrayList"%>
@@ -394,6 +394,11 @@
 
                 <div class="filter-buttons">
                     <button class="filter-btn active" data-status="Pending">Pending</button>
+                    <select id="pendingFilter" style="display: none;">
+                        <option value="All">All Pending</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cash">Cash</option>
+                    </select>
                     <button class="filter-btn" data-status="Completed">Completed</button>
                     <button class="filter-btn" data-status="Cancelled">Cancelled</button>
                     <button class="filter-btn" data-status="all">All</button>
@@ -404,11 +409,12 @@
                 <% } else { %>
                 <ul class="payment-cards-list" id="paymentCardsList">
                     <% for (Payment payment : allPayments) {%>
-                    <li class="payment-item payment-card" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>">
+                    <li class="payment-item payment-card" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>" data-type="<%= payment.getPaymentType() != null ? payment.getPaymentType() : ""%>">
                         <div class="payment-header">
                             <div class="payment-details">
                                 <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
                                 <p><strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
+                                <p><strong>Payment Date:</strong> <%= payment.getPaymentDate()%></p>
                                 <p><strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
                             </div>
                             <div class="payment-info">
@@ -447,11 +453,14 @@
                 const filterButtons = document.querySelectorAll('.filter-btn');
                 const paymentCards = document.querySelectorAll('#paymentCardsList .payment-item');
                 const searchInput = document.getElementById('searchInput');
+                const pendingFilter = document.getElementById('pendingFilter');
 
-                function filterCards(status) {
+                function filterCards(status, type = 'All') {
                     paymentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status');
-                        if (status === 'all' || cardStatus === status) {
+                        const cardType = card.getAttribute('data-type');
+                        if (status === 'all' || 
+                            (cardStatus === status && (type === 'All' || cardType === type))) {
                             card.classList.remove('hidden');
                         } else {
                             card.classList.add('hidden');
@@ -475,8 +484,18 @@
                         const status = this.getAttribute('data-status');
                         filterButtons.forEach(btn => btn.classList.remove('active'));
                         this.classList.add('active');
-                        filterCards(status);
+                        if (status === 'Pending') {
+                            pendingFilter.style.display = 'inline-block';
+                            filterCards(status, pendingFilter.value);
+                        } else {
+                            pendingFilter.style.display = 'none';
+                            filterCards(status);
+                        }
                     });
+                });
+
+                pendingFilter.addEventListener('change', function() {
+                    filterCards('Pending', this.value);
                 });
 
                 searchInput.addEventListener('input', function () {
