@@ -11,32 +11,35 @@
 <%@ page import="java.util.logging.Level"%>
 
 <%
-    /**
-     * This JSP page handles the payment verification process for administrators.
-     * It retrieves all payment details, associates them with their corresponding bookings,
-     * and prepares the data for display in the admin interface.
-     */
-
-    // Initialize logger
     Logger logger = Logger.getLogger(this.getClass().getName());
 
-    UIAccessObject uiAccessObject = new UIAccessObject();
-    List<Payment> allPayments = uiAccessObject.getAllPaymentDetails();
+    List<Payment> allPayments = new ArrayList<>();
+    String errorMessage = null;
+    String currentDateTime = "";
 
-    // Get the booking details for each payment
-    for (Payment payment : allPayments) {
-        String bookingId = payment.getBookingID();
-        Booking booking = uiAccessObject.getBookingByPaymentId(bookingId);
-        payment.setBooking(booking);
+    try {
+        UIAccessObject uiAccessObject = new UIAccessObject();
+        allPayments = uiAccessObject.getAllPaymentDetails();
+
+        for (Payment payment : allPayments) {
+            Booking booking = uiAccessObject.getBookingById(payment.getBookingID());
+            if (booking != null) {
+                payment.setBooking(booking);
+            }
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
+        currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date());
+
+        logger.log(Level.INFO, "Retrieved {0} payments", new Object[]{allPayments.size()});
+
+    } catch (Exception e) {
+        errorMessage = "An error occurred while processing payment data: " + e.getMessage();
+        logger.log(Level.SEVERE, "Error in admin-payment-verification.jsp", e);
     }
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
-    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date());
-
-    // Log the number of payments and bookings retrieved
-    logger.log(Level.INFO, "Retrieved {0} payments", new Object[]{allPayments.size()});
 %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -54,7 +57,7 @@
                 flex-direction: column;
                 min-height: 100vh;
                 margin: 0;
-                padding-top: 56px; /* Account for fixed header height */
+                padding-top: 56px;
             }
 
             header {
@@ -71,7 +74,7 @@
             }
 
             .sidebar {
-                width: 250px; /* Adjust as needed */
+                width: 250px;
                 background-color: #f8f9fa;
                 padding: 20px;
                 flex-shrink: 0;
@@ -100,7 +103,7 @@
 
             .main-content {
                 flex-grow: 1;
-                padding: 2rem; /* Adjust padding as needed */
+                padding: 2rem;
                 background-color: #f4f4f4;
             }
 
@@ -177,15 +180,18 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
                 margin-bottom: 1.5rem;
                 padding: 1.5rem;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
                 transition: transform 0.1s ease-in-out;
             }
 
             .payment-item:hover {
                 transform: scale(1.02);
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .payment-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .payment-details {
@@ -264,12 +270,21 @@
                 color: white;
             }
 
+            .cancel-btn {
+                background-color: #6c757d;
+                color: white;
+            }
+
             .verify-btn:hover {
                 background-color: #218838;
             }
 
             .reject-btn:hover {
                 background-color: #c82333;
+            }
+
+            .cancel-btn:hover {
+                background-color: #5a6268;
             }
 
             .action-btn:disabled {
@@ -291,10 +306,10 @@
 
             @media (max-width: 768px) {
                 body {
-                    padding-top: 69px; /* Adjust for smaller screen header */
+                    padding-top: 69px;
                 }
                 .wrapper {
-                    flex-direction: column; /* Stack sidebar and content on smaller screens */
+                    flex-direction: column;
                 }
                 .sidebar {
                     width: 100%;
@@ -364,6 +379,11 @@
             </nav>
 
             <div class="main-content">
+                <% if (errorMessage != null) {%>
+                <div style="color: #721c24; background-color: #f8d7da; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                    <strong>Error:</strong> <%= errorMessage%>
+                </div>
+                <% } %>
                 <div class="dashboard-header">
                     <h2>Payment Verification</h2>
                     <div class="search-box">
@@ -385,26 +405,30 @@
                 <ul class="payment-cards-list" id="paymentCardsList">
                     <% for (Payment payment : allPayments) {%>
                     <li class="payment-item payment-card" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>">
-                        <div class="payment-details">
-                            <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
-                            <p><strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
-                            <p><strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
-                        </div>
-                        <div class="payment-info">
-                            <p class="amount">RM <%= String.format("%.2f", payment.getAmount())%></p>
-                            <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().replace(" ", "") : ""%>">
-                                <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
-                            </span>
-                            <div class="action-buttons">
-                                <% if ("Pending".equals(payment.getPaymentStatus())) {%>
-                                <button class="action-btn verify-btn" onclick="confirmAction('verify', '<%= payment.getPaymentID()%>')">Verify</button>
-                                <button class="action-btn reject-btn" onclick="confirmAction('reject', '<%= payment.getPaymentID()%>')">Reject</button>
-                                <% if ("Bank Transfer".equals(payment.getPaymentType())) {%>
-                                <button class="action-btn view-proof-btn" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')">View Proof</button>
-                                <% } %>
-                                <% } else { %>
-                                <button class="action-btn verify-btn" disabled>Verified</button>
-                                <% } %>
+                        <div class="payment-header">
+                            <div class="payment-details">
+                                <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
+                                <p><strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
+                                <p><strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
+                            </div>
+                            <div class="payment-info">
+                                <p class="amount">RM <%= String.format("%.2f", payment.getAmount())%></p>
+                                <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().toLowerCase().replace(" ", "-") : ""%>">
+                                    <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                </span>
+                                <div class="action-buttons">
+                                    <% if ("Pending".equals(payment.getPaymentStatus())) {%>
+                                    <button class="action-btn verify-btn" onclick="confirmAction('verify', '<%= payment.getPaymentID()%>')">Verify</button>
+                                    <button class="action-btn reject-btn" onclick="confirmAction('reject', '<%= payment.getPaymentID()%>')">Reject</button>
+                                    <% if ("Bank Transfer".equals(payment.getPaymentType())) {%>
+                                    <button class="action-btn view-proof-btn" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')">View Proof</button>
+                                    <% } %>
+                                    <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
+                                    <button class="action-btn verify-btn" disabled>Verified</button>
+                                    <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
+                                    <button class="action-btn cancel-btn" disabled>Cancelled</button>
+                                    <% } %>
+                                </div>
                             </div>
                         </div>
                     </li>
@@ -413,7 +437,7 @@
                 <% }%>
 
                 <div class="timestamp">Last updated: <%= currentDateTime%></div>
-            </div>  
+            </div>
         </div>
 
         <%@ include file="../include/scripts.html" %>
@@ -424,7 +448,6 @@
                 const paymentCards = document.querySelectorAll('#paymentCardsList .payment-item');
                 const searchInput = document.getElementById('searchInput');
 
-                // Function to filter cards by status
                 function filterCards(status) {
                     paymentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status');
@@ -436,7 +459,6 @@
                     });
                 }
 
-                // Function to search cards
                 function searchCards(searchText) {
                     paymentCards.forEach(card => {
                         const text = card.textContent.toLowerCase();
@@ -448,7 +470,6 @@
                     });
                 }
 
-                // Filter button click handlers
                 filterButtons.forEach(button => {
                     button.addEventListener('click', function () {
                         const status = this.getAttribute('data-status');
@@ -458,28 +479,23 @@
                     });
                 });
 
-                // Search input handler
-                searchInput.addEventListener('keyup', function () {
+                searchInput.addEventListener('input', function () {
                     const searchText = this.value;
                     searchCards(searchText);
                 });
 
-                // Initial load: show only pending
                 filterCards('Pending');
             });
 
-            // Confirmation for Verify/Reject actions
             function confirmAction(action, paymentId) {
                 const message = action === 'verify'
                         ? `Are you sure you want to verify payment ${paymentId}?`
                         : `Are you sure you want to reject payment ${paymentId}?`;
                 if (confirm(message)) {
-                    // Placeholder for actual action (e.g., form submission or AJAX call)
                     alert(`${action.charAt(0).toUpperCase() + action.slice(1)}ed payment ${paymentId}`);
                             }
                         }
 
-                        // Function to view proof of payment
                         function viewProofOfPayment(proofUrl) {
                             if (proofUrl) {
                                 window.open(proofUrl, '_blank');

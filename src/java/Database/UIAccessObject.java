@@ -151,8 +151,8 @@ public class UIAccessObject {
             connection = DatabaseConnection.getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT b.startDate, b.endDate FROM Booking b "
-                            + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
-                            + "WHERE vb.vehicleID = ? AND b.bookingStatus != 'Cancelled'");
+                    + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
+                    + "WHERE vb.vehicleID = ? AND b.bookingStatus != 'Cancelled'");
             preparedStatement.setInt(1, vehicleId);
             LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
@@ -173,7 +173,7 @@ public class UIAccessObject {
                 }
             }
             LOGGER.log(Level.INFO, "Retrieved {0} booked dates for vehicle ID: {1}",
-                    new Object[] { bookedDates.size(), vehicleId });
+                    new Object[]{bookedDates.size(), vehicleId});
         } finally {
             // Close resources
             try {
@@ -202,8 +202,8 @@ public class UIAccessObject {
             connection = DatabaseConnection.getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT b.*, vb.vehicleID FROM Booking b "
-                            + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
-                            + "WHERE b.bookingID = ?");
+                    + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
+                    + "WHERE b.bookingID = ?");
             preparedStatement.setInt(1, bookingId);
             LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
@@ -243,8 +243,8 @@ public class UIAccessObject {
             connection = DatabaseConnection.getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT b.*, vb.vehicleID FROM Booking b "
-                            + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
-                            + "WHERE b.bookingID = ?");
+                    + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
+                    + "WHERE b.bookingID = ?");
             preparedStatement.setString(1, bookingId);
             LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
@@ -460,8 +460,8 @@ public class UIAccessObject {
             connection = DatabaseConnection.getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT * FROM Payment p JOIN Booking b ON p.bookingID = b.bookingID "
-                            + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
-                            + "WHERE b.clientID = ?");
+                    + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
+                    + "WHERE b.clientID = ?");
             preparedStatement.setString(1, clientID);
             LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
@@ -482,7 +482,7 @@ public class UIAccessObject {
                 bookingList.add(booking);
             }
             LOGGER.log(Level.INFO, "Retrieved {0} booking details for client ID: {1}",
-                    new Object[] { bookingList.size(), clientID });
+                    new Object[]{bookingList.size(), clientID});
         } catch (SQLException | ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving booking details: " + e.getMessage());
@@ -554,7 +554,7 @@ public class UIAccessObject {
                 paymentList.add(payment);
             }
             LOGGER.log(Level.INFO, "Retrieved {0} payment details for client ID: {1}",
-                    new Object[] { paymentList.size(), clientID });
+                    new Object[]{paymentList.size(), clientID});
         } catch (SQLException | ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, "Database error while retrieving payment details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving payment details: " + e.getMessage());
@@ -834,15 +834,15 @@ public class UIAccessObject {
         try {
             connection = DatabaseConnection.getConnection();
             preparedStatement = connection.prepareStatement(
-                    "SELECT p.paymentID, p.paymentType, p.amount, p.paymentStatus, " +
-                            "p.referenceNo, p.paymentDate, p.invoiceNumber, p.handledBy, p.proofOfPayment, " +
-                            "b.bookingID, b.clientID, b.bookingDate, b.startDate, b.endDate, " +
-                            "b.actualReturnDate, b.totalCost, b.bookingStatus, " +
-                            "bv.vehicleID, bv.assignedDate " +
-                            "FROM Payment p " +
-                            "JOIN Booking b ON p.bookingID = b.bookingID " +
-                            "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID " +
-                            "WHERE p.paymentType IN ('Cash', 'Bank Transfer');");
+                    "SELECT p.paymentID, p.paymentType, p.amount, p.paymentStatus, "
+                    + "p.referenceNo, p.paymentDate, p.invoiceNumber, p.handledBy, p.proofOfPayment, "
+                    + "b.bookingID, b.clientID, b.bookingDate, b.startDate, b.endDate, "
+                    + "b.actualReturnDate, b.totalCost, b.bookingStatus, "
+                    + "bv.vehicleID, bv.assignedDate "
+                    + "FROM Payment p "
+                    + "JOIN Booking b ON p.bookingID = b.bookingID "
+                    + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
+                    + "WHERE p.paymentType IN ('Cash', 'Bank Transfer');");
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Payment payment = new Payment();
@@ -886,7 +886,10 @@ public class UIAccessObject {
         Booking booking = null;
         try {
             connection = DatabaseConnection.getConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM Booking WHERE bookingID = ?");
+            preparedStatement = connection.prepareStatement(
+                    "SELECT b.*, bv.* FROM Booking b "
+                    + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
+                    + "WHERE b.bookingID = ?");
             preparedStatement.setString(1, bookingID);
             LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
