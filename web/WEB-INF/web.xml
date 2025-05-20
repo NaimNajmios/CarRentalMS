@@ -12,6 +12,10 @@
         <servlet-name>GetBookingDetailsServlet</servlet-name>
         <servlet-class>GetBookingDetailsServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdatePaymentStatusServlet</servlet-name>
+        <servlet-class>UpdatePaymentStatusServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>GetBookingDetailsServlet</servlet-name>
         <url-pattern>/getBookingDetails</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdatePaymentStatusServlet</servlet-name>
+        <url-pattern>/UpdatePaymentStatus</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -347,36 +347,8 @@
             <%@ include file="../include/admin-header.jsp" %>
         </header>
 
-        <div class="wrapper">
-            <nav class="sidebar">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin-dashboard.jsp">
-                            <i class="fa fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin-users.jsp">
-                            <i class="fa fa-users"></i> User Management
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin-vehicles.jsp">
-                            <i class="fa fa-car"></i> Vehicle Management
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin-bookings.jsp">
-                            <i class="fa fa-calendar-check"></i> Booking Management
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin-payment-verification.jsp">
-                            <i class="fa fa-credit-card"></i> Payment Verification
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            <div class="wrapper">
+                <%@ include file="../include/admin-sidebar.jsp" %>
 
             <div class="main-content">
                 <% if (errorMessage != null) {%>
@@ -424,8 +396,16 @@
                                 </span>
                                 <div class="action-buttons">
                                     <% if ("Pending".equals(payment.getPaymentStatus())) {%>
-                                    <button class="action-btn verify-btn" onclick="confirmAction('verify', '<%= payment.getPaymentID()%>')">Verify</button>
-                                    <button class="action-btn reject-btn" onclick="confirmAction('reject', '<%= payment.getPaymentID()%>')">Reject</button>
+                                    <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="display:inline;">
+                                        <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
+                                        <input type="hidden" name="paymentStatus" value="Completed">
+                                        <button type="submit" class="action-btn verify-btn" onclick="return confirm('Are you sure you want to verify payment <%= payment.getPaymentID()%>?')">Verify</button>
+                                    </form>
+                                    <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="display:inline;">
+                                        <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
+                                        <input type="hidden" name="paymentStatus" value="Cancelled">
+                                        <button type="submit" class="action-btn reject-btn" onclick="return confirm('Are you sure you want to reject payment <%= payment.getPaymentID()%>?')">Reject</button>
+                                    </form>
                                     <% if ("Bank Transfer".equals(payment.getPaymentType())) {%>
                                     <button class="action-btn view-proof-btn" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')">View Proof</button>
                                     <% } %>
@@ -506,22 +486,13 @@
                 filterCards('Pending');
             });
 
-            function confirmAction(action, paymentId) {
-                const message = action === 'verify'
-                        ? `Are you sure you want to verify payment ${paymentId}?`
-                        : `Are you sure you want to reject payment ${paymentId}?`;
-                if (confirm(message)) {
-                    alert(`${action.charAt(0).toUpperCase() + action.slice(1)}ed payment ${paymentId}`);
-                            }
-                        }
-
-                        function viewProofOfPayment(proofUrl) {
-                            if (proofUrl) {
-                                window.open(proofUrl, '_blank');
-                            } else {
-                                alert('No proof of payment available.');
-                            }
-                        }
+            function viewProofOfPayment(proofUrl) {
+                if (proofUrl) {
+                    window.open(proofUrl, '_blank');
+                } else {
+                    alert('No proof of payment available.');
+                }
+            }
         </script>
     </body>
 </html>

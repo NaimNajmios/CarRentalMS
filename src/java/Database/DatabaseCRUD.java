@@ -196,4 +196,57 @@ public class DatabaseCRUD {
             }
         }
     }
+
+    // Method to update payment status in the database, returning boolean for success
+    public boolean updatePaymentStatus(String paymentId, String paymentStatus) throws SQLException, ClassNotFoundException {
+        LOGGER.info("Starting updatePaymentStatus method");
+        try {
+            LOGGER.info("Attempting to update payment status for payment ID: " + paymentId);
+            connection = DatabaseConnection.getConnection(); 
+            connection.setAutoCommit(false);
+            LOGGER.info("Database connection established and auto-commit set to false");
+
+            String paymentQuery = "UPDATE payment SET paymentStatus = ? WHERE paymentID = ?";
+
+            try (PreparedStatement paymentStatement = connection.prepareStatement(paymentQuery)) {
+                LOGGER.info("Preparing PAYMENT table update query");
+                paymentStatement.setString(1, paymentStatus);
+                paymentStatement.setString(2, paymentId);
+
+                LOGGER.info("Executing PAYMENT table update query");
+                int paymentRowsAffected = paymentStatement.executeUpdate();
+
+                if (paymentRowsAffected > 0) {
+                    LOGGER.info("PAYMENT table update successful. Committing transaction");
+                    connection.commit();
+                    LOGGER.info("Transaction committed successfully");
+                    return true; 
+                } else {
+                    LOGGER.warning("PAYMENT table update failed. Rolling back transaction");
+                    connection.rollback();
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error updating payment status in the database", e);
+            if (connection != null) {
+                try {
+                    LOGGER.warning("Rolling back transaction due to error");
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.SEVERE, "Error rolling back transaction", ex);
+                }
+            }
+            throw e;
+        } finally {
+            if (connection != null) {
+                try {
+                    LOGGER.info("Closing database connection"); 
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing database connection", e);
+                }
+            } 
+        } 
+    }
 }
