@@ -68,8 +68,165 @@
                 margin-right: 0.75rem;
             }
 
-            .sidebar .nav-item {
+            .sidebar .nav-item#pragma once
+            {
                 margin-bottom: 0.5rem;
+            }
+
+            .dashboard-content {
+                flex-grow: 1;
+                padding: 2rem;
+                background-color: #f4f4f4;
+            }
+
+            .dashboard-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+            }
+
+            .dashboard-header h2 {
+                font-size: 1.75rem;
+                color: #333;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .search-box {
+                position: relative;
+                max-width: 300px;
+            }
+
+            .search-box input {
+                padding: 0.6rem 1rem 0.6rem 2.2rem;
+                border: 1px solid #ced4da;
+                border-radius: 0.375rem;
+                width: 100%;
+                font-size: 0.9rem;
+                transition: border-color 0.2s;
+            }
+
+            .search-box input:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+
+            .search-box i {
+                position: absolute;
+                left: 0.75rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #6c757d;
+            }
+
+            .filter-buttons {
+                margin-bottom: 1.5rem;
+            }
+
+            .filter-buttons button {
+                padding: 0.5rem 1rem;
+                margin-right: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                cursor: pointer;
+                background-color: #f8f9fa;
+                color: #333;
+                font-size: 0.9rem;
+                transition: background-color 0.15s ease-in-out;
+            }
+
+            .filter-buttons button:hover {
+                background-color: #e9ecef;
+            }
+
+            .filter-buttons button.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+
+            .booking-table {
+                width: 100%;
+                border-collapse: collapse;
+                background-color: #fff;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                margin-top: 1rem;
+            }
+
+            .booking-table th, .booking-table td {
+                padding: 1rem;
+                text-align: left;
+                font-size: 0.95rem;
+                color: #555;
+            }
+
+            .booking-table th {
+                background-color: #f8f9fa;
+                color: #34495e;
+                font-weight: 600;
+                border-bottom: 2px solid #dee2e6;
+            }
+
+            .booking-table td {
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .booking-table tr:hover {
+                background-color: #f1f3f5;
+            }
+
+            .booking-table .status-Pending {
+                color: #85640a;
+                background-color: #fff3cd;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .booking-table .status-Completed {
+                color: #155724;
+                background-color: #d4edda;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .booking-table .status-Cancelled {
+                color: #721c24;
+                background-color: #f8d7da;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .alert {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border: 1px solid transparent;
+                border-radius: 0.375rem;
+            }
+
+            .alert-danger {
+                color: #721c24;
+                background-color: #f8d7da;
+                border-color: #f5c6cb;
+            }
+
+            .timestamp {
+                font-size: 0.9rem;
+                color: #7f8c8d;
+                text-align: right;
+                margin-top: 1rem;
+            }
+
+            .hidden {
+                display: none !important;
             }
 
             @media (max-width: 768px) {
@@ -84,8 +241,38 @@
                     margin-bottom: 1rem;
                     padding: 15px;
                 }
+                .dashboard-content {
+                    padding: 1.5rem;
+                }
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+                .search-box {
+                    max-width: 100%;
+                }
+                .booking-table {
+                    display: block;
+                    overflow-x: auto;
+                    white-space: nowrap;
+                }
+                .booking-table thead, .booking-table tbody, .booking-table tr {
+                    display: block;
+                }
+                .booking-table th, .booking-table td {
+                    display: inline-block;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+                .booking-table th {
+                    position: sticky;
+                    top: 0;
+                    background-color: #f8f9fa;
+                }
             }
-        </style>    </head>
+        </style>
+    </head>
     <body>
         <header>
             <%@ include file="../include/admin-header.jsp" %>
@@ -95,10 +282,119 @@
             <%@ include file="../include/admin-sidebar.jsp" %>
 
             <main class="dashboard-content">
-                <!-- Main content removed as per instructions -->
+                <div class="dashboard-header">
+                    <h2>Booking Management</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search bookings..." class="form-control">
+                    </div>
+                </div>
+
+                <div class="filter-buttons">
+                    <button class="active" onclick="filterBookings('all')">All</button>
+                    <button onclick="filterBookings('Pending')">Pending</button>
+                    <button onclick="filterBookings('Completed')">Completed</button>
+                    <button onclick="filterBookings('Cancelled')">Cancelled</button>
+                </div>
+
+                <%
+                    UIAccessObject uiAccessObject = new UIAccessObject();
+                    List<Booking> bookings = new ArrayList<>();
+                    String errorMessage = null;
+                    try {
+                        bookings = uiAccessObject.getAllBookingDetails();
+                    } catch (Exception e) {
+                        errorMessage = "An error occurred while fetching bookings: " + e.getMessage();
+                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error fetching bookings", e);
+                    }
+
+                    if (errorMessage != null) {
+                %>
+                <div class="alert alert-danger">
+                    <%= errorMessage%>
+                </div>
+                <%
+                } else {
+                %>
+                <table class="booking-table">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Client ID</th>
+                            <th>Vehicle ID</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Total Cost</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingTableBody">
+                        <% for (Booking booking : bookings) {%>
+                        <tr class="booking-row" data-status="<%= booking.getBookingStatus()%>">
+                            <td><%= booking.getBookingId()%></td>
+                            <td><%= booking.getClientId()%></td>
+                            <td><%= booking.getVehicleId()%></td>
+                            <td><%= booking.getBookingStartDate()%></td>
+                            <td><%= booking.getBookingEndDate()%></td>
+                            <td><%= booking.getTotalCost()%></td>
+                            <td><span class="status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>"><%= booking.getBookingStatus()%></span></td>
+                        </tr>
+                        <% }%>
+                    </tbody>
+                </table>
+                <div class="timestamp">Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date())%></div>
+                <%
+                    }
+                %>
             </main>
         </div>
 
         <%@ include file="../include/scripts.html" %>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const filterButtons = document.querySelectorAll('.filter-buttons button');
+                const bookingRows = document.querySelectorAll('.booking-row');
+                const searchInput = document.getElementById('searchInput');
+
+                function filterBookings(status) {
+                    bookingRows.forEach(row => {
+                        const rowStatus = row.getAttribute('data-status');
+                        if (status === 'all' || rowStatus === status) {
+                            row.classList.remove('hidden');
+                        } else {
+                            row.classList.add('hidden');
+                        }
+                    });
+                }
+
+                function searchBookings(searchText) {
+                    bookingRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(searchText.toLowerCase())) {
+                            row.classList.remove('hidden');
+                        } else {
+                            row.classList.add('hidden');
+                        }
+                    });
+                }
+
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const status = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        filterBookings(status);
+                    });
+                });
+
+                searchInput.addEventListener('input', function () {
+                    const searchText = this.value;
+                    searchBookings(searchText);
+                });
+
+                // Initial filter
+                filterBookings('all');
+            });
+        </script>
     </body>
 </html>

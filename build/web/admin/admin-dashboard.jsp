@@ -119,6 +119,17 @@
                 color: #6c757d;
             }
 
+            .stats-section {
+                margin-bottom: 2rem;
+            }
+
+            .stats-section h3 {
+                font-size: 1.25rem;
+                color: #333;
+                font-weight: 600;
+                margin-bottom: 1rem;
+            }
+
             .stats-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -133,10 +144,8 @@
                 padding: 1.5rem;
                 transition: transform 0.1s ease-in-out;
                 display: flex;
-                flex-direction: column;
-                justify-content: space-between;
                 align-items: center;
-                text-align: center;
+                text-align: left;
             }
 
             .dashboard-card:hover {
@@ -144,23 +153,121 @@
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
 
+            .dashboard-card .icon {
+                font-size: 2rem;
+                color: #2563eb;
+                margin-right: 1rem;
+            }
+
+            .card-content {
+                flex-grow: 1;
+            }
+
             .card-title {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
                 font-weight: 600;
                 color: #34495e;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.3rem;
             }
 
             .card-value {
-                font-size: 2rem;
+                font-size: 1.5rem;
                 font-weight: 700;
                 color: #2563eb;
-                margin: 0.5rem 0;
+            }
+
+            .card-value.large {
+                font-size: 2rem;
             }
 
             .card-subtitle {
                 font-size: 0.9rem;
                 color: #7f8c8d;
+            }
+
+            .filter-buttons {
+                margin-bottom: 1.5rem;
+            }
+
+            .filter-buttons button {
+                padding: 0.5rem 1rem;
+                margin-right: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                cursor: pointer;
+                background-color: #f8f9fa;
+                color: #333;
+                font-size: 0.9rem;
+                transition: background-color 0.15s ease-in-out;
+            }
+
+            .filter-buttons button:hover {
+                background-color: #e9ecef;
+            }
+
+            .filter-buttons button.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+
+            .booking-table {
+                width: 100%;
+                border-collapse: collapse;
+                background-color: #fff;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                margin-top: 1rem;
+            }
+
+            .booking-table th, .booking-table td {
+                padding: 1rem;
+                text-align: left;
+                font-size: 0.95rem;
+                color: #555;
+            }
+
+            .booking-table th {
+                background-color: #f8f9fa;
+                color: #34495e;
+                font-weight: 600;
+                border-bottom: 2px solid #dee2e6;
+            }
+
+            .booking-table td {
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .booking-table tr:hover {
+                background-color: #f1f3f5;
+            }
+
+            .booking-table .status-Pending {
+                color: #85640a;
+                background-color: #fff3cd;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .booking-table .status-Completed {
+                color: #155724;
+                background-color: #d4edda;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .booking-table .status-Cancelled {
+                color: #721c24;
+                background-color: #f8d7da;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
             }
 
             .alert {
@@ -222,8 +329,27 @@
                 .dashboard-card {
                     padding: 1rem;
                 }
+                .booking-table {
+                    display: block;
+                    overflow-x: auto;
+                    white-space: nowrap;
+                }
+                .booking-table thead, .booking-table tbody, .booking-table tr {
+                    display: block;
+                }
+                .booking-table th, .booking-table td {
+                    display: inline-block;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+                .booking-table th {
+                    position: sticky;
+                    top: 0;
+                    background-color: #f8f9fa;
+                }
             }
-        </style>    </head>
+        </style>
+    </head>
     <body>
         <header>
             <%@ include file="../include/admin-header.jsp" %>
@@ -233,10 +359,15 @@
             <%@ include file="../include/admin-sidebar.jsp" %>
 
             <main class="dashboard-content">
-                <h2>Admin Dashboard</h2>
+                <div class="dashboard-header">
+                    <h2>Admin Dashboard</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search dashboard..." class="form-control">
+                    </div>
+                </div>
 
                 <%
-                    // Instantiate UIAccessObject (this needs to be properly managed, e.g., via dependency injection or a factory)
                     UIAccessObject dao = new UIAccessObject();
                     DecimalFormat currencyFormat = new DecimalFormat("#,##0.00");
                     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -277,46 +408,136 @@
                     }
                 %>
 
-                <div class="stats-grid">
-                    <div class="dashboard-card">
-                        <div class="card-title"><i class="fas fa-book"></i> Total Bookings</div>
-                        <div class="card-value"><%= totalBookings%></div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-title"><i class="fas fa-check-circle"></i> Completed Bookings</div>
-                        <div class="card-value"><%= completedBookings%></div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-title"><i class="fas fa-clock"></i> Pending Bookings</div>
-                        <div class="card-value"><%= pendingBookings%></div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-title"><i class="fas fa-times-circle"></i> Cancelled Bookings</div>
-                        <div class="card-value"><%= cancelledBookings%></div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-title"><i class="fas fa-dollar-sign"></i> Total Revenue</div>
-                        <div class="card-value">RM <%= currencyFormat.format(totalRevenue)%></div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-title"><i class="fas fa-car"></i> Total Vehicles</div>
-                        <div class="card-value"><%= totalVehicles%></div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-title"><i class="fas fa-car-side"></i> Available Vehicles</div>
-                        <div class="card-value"><%= availableVehicles%></div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-title"><i class="fas fa-users"></i> Total Clients</div>
-                        <div class="card-value"><%= totalClients%></div>
+                <!-- Stats Section -->
+                <div class="stats-section">
+                    <h3>Overview</h3>
+                    <div class="stats-grid">
+                        <div class="dashboard-card">
+                            <i class="fas fa-book icon"></i>
+                            <div class="card-content">
+                                <div class="card-title">Total Bookings</div>
+                                <div class="card-value large"><%= totalBookings%></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fas fa-check-circle icon"></i>
+                            <div class="card-content">
+                                <div class="card-title">Completed Bookings</div>
+                                <div class="card-value"><%= completedBookings%></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fas fa-clock icon"></i>
+                            <div class="card-content">
+                                <div class="card-title">Pending Bookings</div>
+                                <div class="card-value"><%= pendingBookings%></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fas fa-times-circle icon"></i>
+                            <div class="card-content">
+                                <div class="card-title">Cancelled Bookings</div>
+                                <div class="card-value"><%= cancelledBookings%></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fas fa-dollar-sign icon"></i>
+                            <div class="card-content">
+                                <div class="card-title">Total Revenue</div>
+                                <div class="card-value large">RM <%= currencyFormat.format(totalRevenue)%></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fas fa-car icon"></i>
+                            <div class="card-content">
+                                <div class="card-title">Total Vehicles</div>
+                                <div class="card-value"><%= totalVehicles%></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fas fa-car-side icon"></i>
+                            <div class="card-content">
+                                <div class="card-title">Available Vehicles</div>
+                                <div class="card-value"><%= availableVehicles%></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fas fa-users icon"></i>
+                            <div class="card-content">
+                                <div class="card-title">Total Clients</div>
+                                <div class="card-value"><%= totalClients%></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <%-- Add more sections for other statistics as needed --%>
-
+                <div class="timestamp">Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date())%></div>
             </main>
         </div>
 
         <%@ include file="../include/scripts.html" %>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Search functionality for dashboard cards
+                const searchInput = document.getElementById('searchInput');
+                const dashboardCards = document.querySelectorAll('.dashboard-card');
+
+                searchInput.addEventListener('input', function () {
+                    const searchText = this.value.toLowerCase();
+                    dashboardCards.forEach(card => {
+                        const text = card.textContent.toLowerCase();
+                        if (text.includes(searchText)) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                });
+
+                // Booking table search and filter functionality
+                const bookingSearchInput = document.getElementById('bookingSearchInput');
+                const filterButtons = document.querySelectorAll('.filter-buttons button');
+                const bookingRows = document.querySelectorAll('.booking-row');
+
+                function filterBookings(status) {
+                    bookingRows.forEach(row => {
+                        const rowStatus = row.getAttribute('data-status');
+                        if (status === 'all' || rowStatus === status) {
+                            row.classList.remove('hidden');
+                        } else {
+                            row.classList.add('hidden');
+                        }
+                    });
+                }
+
+                function searchBookings(searchText) {
+                    bookingRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(searchText.toLowerCase())) {
+                            row.classList.remove('hidden');
+                        } else {
+                            row.classList.add('hidden');
+                        }
+                    });
+                }
+
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const status = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        filterBookings(status);
+                    });
+                });
+
+                bookingSearchInput.addEventListener('input', function () {
+                    const searchText = this.value;
+                    searchBookings(searchText);
+                });
+
+                // Initial filter for bookings
+                filterBookings('all');
+            });
+        </script>
     </body>
 </html>

@@ -38,7 +38,7 @@
         // Check for success or error messages in URL parameters
         String success = request.getParameter("success");
         String error = request.getParameter("error");
-        
+
         if ("true".equals(success)) {
             successMessage = "Status updated successfully.";
         } else if (error != null && !error.isEmpty()) {
@@ -358,8 +358,8 @@
             <%@ include file="../include/admin-header.jsp" %>
         </header>
 
-            <div class="wrapper">
-                <%@ include file="../include/admin-sidebar.jsp" %>
+        <div class="wrapper">
+            <%@ include file="../include/admin-sidebar.jsp" %>
 
             <div class="main-content">
                 <% if (errorMessage != null) {%>
@@ -455,8 +455,8 @@
                     paymentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status');
                         const cardType = card.getAttribute('data-type');
-                        if (status === 'all' || 
-                            (cardStatus === status && (type === 'All' || cardType === type))) {
+                        if (status === 'all' ||
+                                (cardStatus === status && (type === 'All' || cardType === type))) {
                             card.classList.remove('hidden');
                         } else {
                             card.classList.add('hidden');
@@ -490,7 +490,7 @@
                     });
                 });
 
-                pendingFilter.addEventListener('change', function() {
+                pendingFilter.addEventListener('change', function () {
                     filterCards('Pending', this.value);
                 });
 
