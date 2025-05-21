@@ -69,7 +69,7 @@ public class VehicleBookingServlet extends HttpServlet {
             request.setAttribute("booking", booking);
             // Forward to the booking confirmation page instead of redirect to preserve
             // request attributes
-            request.getRequestDispatcher("client-payment.jsp").forward(request, response);
+            request.getRequestDispatcher("mybooking.jsp").forward(request, response);
             // Log the forward message
             LOGGER.info("Forwarding to client payment page");
         } else {
