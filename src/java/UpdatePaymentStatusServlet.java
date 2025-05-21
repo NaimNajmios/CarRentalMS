@@ -47,7 +47,7 @@ public class UpdatePaymentStatusServlet extends HttpServlet {
             if (success) {
                 LOGGER.info("Payment status update successful");
                 // Update successful, redirect to the same page
-                response.sendRedirect(request.getContextPath() + "/admin/admin-payment-verification.jsp");
+                response.sendRedirect(request.getContextPath() + "/admin/admin-payment-verification.jsp?success=true");
             } else {
                 LOGGER.warning("Payment status update failed");
                 // Update failed, redirect to the same page with an error message

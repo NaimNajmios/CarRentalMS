@@ -15,6 +15,7 @@
 
     List<Payment> allPayments = new ArrayList<>();
     String errorMessage = null;
+    String successMessage = null;
     String currentDateTime = "";
 
     try {
@@ -33,6 +34,16 @@
         currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date());
 
         logger.log(Level.INFO, "Retrieved {0} payments", new Object[]{allPayments.size()});
+
+        // Check for success or error messages in URL parameters
+        String success = request.getParameter("success");
+        String error = request.getParameter("error");
+        
+        if ("true".equals(success)) {
+            successMessage = "Status updated successfully.";
+        } else if (error != null && !error.isEmpty()) {
+            errorMessage = "An error occurred: " + error;
+        }
 
     } catch (Exception e) {
         errorMessage = "An error occurred while processing payment data: " + e.getMessage();
@@ -354,6 +365,11 @@
                 <% if (errorMessage != null) {%>
                 <div style="color: #721c24; background-color: #f8d7da; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
                     <strong>Error:</strong> <%= errorMessage%>
+                </div>
+                <% } %>
+                <% if (successMessage != null) {%>
+                <div style="color: #155724; background-color: #d4edda; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                    <strong>Success:</strong> <%= successMessage%>
                 </div>
                 <% } %>
                 <div class="dashboard-header">
