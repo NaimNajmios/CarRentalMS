@@ -223,8 +223,7 @@
                     padding: 1rem;
                 }
             }
-        </style>
-    </head>
+        </style>    </head>
     <body>
         <header>
             <%@ include file="../include/admin-header.jsp" %>
@@ -234,15 +233,10 @@
             <%@ include file="../include/admin-sidebar.jsp" %>
 
             <main class="dashboard-content">
-                <div class="dashboard-header">
-                    <h2>Admin Dashboard</h2>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search dashboard..." class="form-control">
-                    </div>
-                </div>
+                <h2>Admin Dashboard</h2>
 
                 <%
+                    // Instantiate UIAccessObject (this needs to be properly managed, e.g., via dependency injection or a factory)
                     UIAccessObject dao = new UIAccessObject();
                     DecimalFormat currencyFormat = new DecimalFormat("#,##0.00");
                     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -285,40 +279,41 @@
 
                 <div class="stats-grid">
                     <div class="dashboard-card">
-                        <div class="card-title">Total Bookings</div>
+                        <div class="card-title"><i class="fas fa-book"></i> Total Bookings</div>
                         <div class="card-value"><%= totalBookings%></div>
                     </div>
                     <div class="dashboard-card">
-                        <div class="card-title">Completed Bookings</div>
+                        <div class="card-title"><i class="fas fa-check-circle"></i> Completed Bookings</div>
                         <div class="card-value"><%= completedBookings%></div>
                     </div>
                     <div class="dashboard-card">
-                        <div class="card-title">Pending Bookings</div>
+                        <div class="card-title"><i class="fas fa-clock"></i> Pending Bookings</div>
                         <div class="card-value"><%= pendingBookings%></div>
                     </div>
                     <div class="dashboard-card">
-                        <div class="card-title">Cancelled Bookings</div>
+                        <div class="card-title"><i class="fas fa-times-circle"></i> Cancelled Bookings</div>
                         <div class="card-value"><%= cancelledBookings%></div>
                     </div>
                     <div class="dashboard-card">
-                        <div class="card-title">Total Revenue</div>
+                        <div class="card-title"><i class="fas fa-dollar-sign"></i> Total Revenue</div>
                         <div class="card-value">RM <%= currencyFormat.format(totalRevenue)%></div>
                     </div>
                     <div class="dashboard-card">
-                        <div class="card-title">Total Vehicles</div>
+                        <div class="card-title"><i class="fas fa-car"></i> Total Vehicles</div>
                         <div class="card-value"><%= totalVehicles%></div>
                     </div>
                     <div class="dashboard-card">
-                        <div class="card-title">Available Vehicles</div>
+                        <div class="card-title"><i class="fas fa-car-side"></i> Available Vehicles</div>
                         <div class="card-value"><%= availableVehicles%></div>
                     </div>
                     <div class="dashboard-card">
-                        <div class="card-title">Total Clients</div>
+                        <div class="card-title"><i class="fas fa-users"></i> Total Clients</div>
                         <div class="card-value"><%= totalClients%></div>
                     </div>
                 </div>
 
-                <div class="timestamp">Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date())%></div>
+                <%-- Add more sections for other statistics as needed --%>
+
             </main>
         </div>
 
