@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <welcome-file-list>
+        <welcome-file>cars.jsp</welcome-file>
+    </welcome-file-list>
     <servlet>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <servlet-class>VehicleBookingServlet</servlet-class>
@@ -16,6 +19,14 @@
         <servlet-name>UpdatePaymentStatusServlet</servlet-name>
         <servlet-class>UpdatePaymentStatusServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddVehicleServlet</servlet-name>
+        <servlet-class>AddVehicleServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditVehicleServlet</servlet-name>
+        <servlet-class>EditVehicleServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
@@ -31,6 +42,14 @@
     <servlet-mapping>
         <servlet-name>UpdatePaymentStatusServlet</servlet-name>
         <url-pattern>/UpdatePaymentStatus</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddVehicleServlet</servlet-name>
+        <url-pattern>/AddVehicle</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditVehicleServlet</servlet-name>
+        <url-pattern>/EditVehicle</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
