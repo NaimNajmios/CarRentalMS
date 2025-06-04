@@ -150,4 +150,21 @@ public class vehicleDAO {
         return v;
     }
 
+    public static String getVehicleImagePath(String vehicleID) {
+        String imagePath = null;
+        try {
+            Connection con = DatabaseConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT vehicleImagePath FROM vehicles WHERE vehicleID=?");
+            ps.setString(1, vehicleID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                imagePath = rs.getString(1);
+            }
+            con.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return imagePath;
+    }
+
 }

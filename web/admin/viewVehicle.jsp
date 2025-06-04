@@ -197,7 +197,7 @@
                 <div class="vehicle-card">
                     <div class="row g-0">
                         <div class="col-md-5">
-                            <img src="<%= vehicle.getVehicleImagePath()%>" class="vehicle-image" alt="Vehicle Image">
+                            <img src="${pageContext.request.contextPath}/<%= vehicle.getVehicleImagePath()%>" class="vehicle-image" alt="Vehicle Image">
                         </div>
                         <div class="col-md-7">
                             <div class="vehicle-details p-4">

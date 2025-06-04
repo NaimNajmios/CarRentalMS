@@ -27,6 +27,10 @@
         <servlet-name>EditVehicleServlet</servlet-name>
         <servlet-class>EditVehicleServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ExtendedVehicleUpdateServlet</servlet-name>
+        <servlet-class>ExtendedVehicleUpdateServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
@@ -50,6 +54,10 @@
     <servlet-mapping>
         <servlet-name>EditVehicleServlet</servlet-name>
         <url-pattern>/EditVehicle</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExtendedVehicleUpdateServlet</servlet-name>
+        <url-pattern>/ExtendedVehicleUpdate</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

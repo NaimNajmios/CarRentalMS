@@ -172,10 +172,43 @@
 
                 <% if (vehicle != null) { %>
                 <div class="edit-form-card">
-                    <form action="${pageContext.request.contextPath}/EditVehicle" method="post">
+                    <form action="${pageContext.request.contextPath}/ExtendedVehicleUpdate" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="vehicleID" value="<%= vehicle.getVehicleID()%>">
                         
+                        <!-- Image Upload Section -->
                         <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="text-center mb-4">
+                                    <img src="${pageContext.request.contextPath}/<%= vehicle.getVehicleImagePath() != null && !vehicle.getVehicleImagePath().isEmpty() ? vehicle.getVehicleImagePath() : "images/vehicles/default_vehicle.jpg"%>" 
+                                         alt="Vehicle Image" 
+                                         class="rounded vehicle-preview mb-3" 
+                                         id="vehiclePreview" 
+                                         style="max-width: 400px; height: 250px; object-fit: cover; cursor: pointer;"
+                                         onclick="document.getElementById('vehicleImage').click()">
+                                    <div class="mb-2">
+                                        <input type="file" class="form-control-file" id="vehicleImage" 
+                                               name="vehicleImage" accept="image/*" 
+                                               onchange="previewVehicleImage(this)" style="display: none;">
+                                        <input type="hidden" name="currentImagePath" value="<%= vehicle.getVehicleImagePath()%>">
+                                        <button type="button" class="btn btn-outline-primary btn-sm me-2" 
+                                                onclick="document.getElementById('vehicleImage').click()">
+                                            <i class="fas fa-camera me-2"></i>Change Image
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                                onclick="resetVehicleImage()">
+                                            <i class="fas fa-undo me-2"></i>Reset
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">Recommended size: 800x600 pixels. Max file size: 5MB</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vehicle Details Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="section-title mb-3">Vehicle Details</h4>
+                            </div>
                             <div class="col-md-6">
                                 <label for="model" class="form-label">Model</label>
                                 <input type="text" name="model" id="model" class="form-control" value="<%= vehicle.getModel()%>" required>
@@ -240,21 +273,16 @@
                                 <input type="text" name="registrationNo" id="registrationNo" class="form-control" value="<%= vehicle.getRegistrationNo()%>" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="vehicleImagePath" class="form-label">Image Path</label>
-                                <input type="text" name="vehicleImagePath" id="vehicleImagePath" class="form-control" value="<%= vehicle.getVehicleImagePath()%>" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Availability</label>
-                            <div class="mt-2">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="availability" id="available" value="true" <%= vehicle.isAvailability() ? "checked" : ""%>>
-                                    <label class="form-check-label" for="available">Available</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="availability" id="notAvailable" value="false" <%= !vehicle.isAvailability() ? "checked" : ""%>>
-                                    <label class="form-check-label" for="notAvailable">Not Available</label>
+                                <label class="form-label">Availability</label>
+                                <div class="mt-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="availability" id="available" value="true" <%= vehicle.isAvailability() ? "checked" : ""%>>
+                                        <label class="form-check-label" for="available">Available</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="availability" id="notAvailable" value="false" <%= !vehicle.isAvailability() ? "checked" : ""%>>
+                                        <label class="form-check-label" for="notAvailable">Not Available</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -278,5 +306,22 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function previewVehicleImage(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('vehiclePreview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            function resetVehicleImage() {
+                const defaultImage = '${pageContext.request.contextPath}/<%= vehicle.getVehicleImagePath() != null && !vehicle.getVehicleImagePath().isEmpty() ? vehicle.getVehicleImagePath() : "images/vehicles/default_vehicle.jpg"%>';
+                document.getElementById('vehiclePreview').src = defaultImage;
+                document.getElementById('vehicleImage').value = '';
+            }
+        </script>
     </body>
 </html> 
