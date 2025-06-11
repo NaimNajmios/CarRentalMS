@@ -47,6 +47,10 @@
         <servlet-name>UpdateClientServlet</servlet-name>
         <servlet-class>UpdateClientServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>LogoutServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
@@ -90,6 +94,10 @@
     <servlet-mapping>
         <servlet-name>UpdateClientServlet</servlet-name>
         <url-pattern>/UpdateClientServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

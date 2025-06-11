@@ -9,7 +9,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="logout.jsp"><i class="fa fa-sign-out-alt"></i> Logout</a>
+                        <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="${pageContext.request.contextPath}/Logout"><i class="fa fa-sign-out-alt"></i> Logout</a>
                     </li>
                 </ul>
             </div>
