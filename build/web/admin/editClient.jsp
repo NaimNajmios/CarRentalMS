@@ -190,7 +190,7 @@
                 </div>
 
                 <div class="edit-form-card">
-                    <form action="UpdateClientServlet" method="post">
+                    <form action="${pageContext.request.contextPath}/UpdateClientServlet" method="post">
                         <input type="hidden" name="userID" value="<%= userId%>">
                         
                         <div class="row mb-3">

@@ -151,6 +151,18 @@
             <%@ include file="../include/admin-sidebar.jsp" %>
             
             <div class="dashboard-content">
+                <%
+                    String message = request.getParameter("message");
+                    String messageType = request.getParameter("type");
+                    if (message != null && messageType != null) {
+                %>
+                <div class="alert alert-<%= messageType%> alert-dismissible fade show" role="alert">
+                    <%= message%>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <%
+                    }
+                %>
                 <% 
                     String userId = request.getParameter("userID");
                     Connection con = null;
