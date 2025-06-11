@@ -81,6 +81,39 @@
                 border-radius: 8px 8px 0 0;
             }
 
+            .image-section {
+                position: relative;
+                background-color: #f8f9fa;
+                padding: 1rem;
+                border-radius: 8px;
+                margin-bottom: 1.5rem;
+            }
+
+            .image-container {
+                position: relative;
+                width: 100%;
+                height: 400px;
+                overflow: hidden;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .image-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+                padding: 1rem;
+                color: white;
+            }
+
+            .image-overlay h4 {
+                margin: 0;
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+
             .vehicle-details {
                 padding: 2rem;
             }
@@ -197,7 +230,14 @@
                 <div class="vehicle-card">
                     <div class="row g-0">
                         <div class="col-md-5">
-                            <img src="${pageContext.request.contextPath}/<%= vehicle.getVehicleImagePath()%>" class="vehicle-image" alt="Vehicle Image">
+                            <div class="image-section">
+                                <div class="image-container">
+                                    <img src="${pageContext.request.contextPath}/<%= vehicle.getVehicleImagePath()%>" class="vehicle-image" alt="<%= vehicle.getBrand()%> <%= vehicle.getModel()%>">
+                                    <div class="image-overlay">
+                                        <h4><%= vehicle.getBrand()%> <%= vehicle.getModel()%></h4>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-7">
                             <div class="vehicle-details p-4">

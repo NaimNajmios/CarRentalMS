@@ -31,6 +31,14 @@
         <servlet-name>ExtendedVehicleUpdateServlet</servlet-name>
         <servlet-class>ExtendedVehicleUpdateServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteClientServlet</servlet-name>
+        <servlet-class>DeleteClientServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteAdminServlet</servlet-name>
+        <servlet-class>DeleteAdminServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
@@ -58,6 +66,14 @@
     <servlet-mapping>
         <servlet-name>ExtendedVehicleUpdateServlet</servlet-name>
         <url-pattern>/ExtendedVehicleUpdate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteClientServlet</servlet-name>
+        <url-pattern>/DeleteClientServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteAdminServlet</servlet-name>
+        <url-pattern>/DeleteAdminServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
