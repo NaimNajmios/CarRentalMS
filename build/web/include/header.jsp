@@ -9,7 +9,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('main') ? 'active' : ''}" href="main.jsp">Main</a>
+                        <a class="nav-link ${pageContext.request.requestURI.contains('main') ? 'active' : ''}" href="client-main.jsp">Main</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ${pageContext.request.requestURI.contains('cars') || pageContext.request.requestURI.contains('vehicle-details') ? 'active' : ''}" href="cars.jsp">Cars</a>

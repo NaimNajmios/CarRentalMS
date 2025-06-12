@@ -116,7 +116,7 @@
     <div class="form-container">
         <h2>CarRent Login</h2>
         <p class="text-muted mb-4">Manage your vehicle rentals efficiently.</p>
-        <form action="loginServlet" method="post" onsubmit="return validateLoginForm();">
+        <form action="LoginServlet" method="post" onsubmit="return validateLoginForm();">
             <div class="mb-3">
                 <label for="username" class="form-label">Username:</label>
                 <input type="text" class="form-control" id="username" name="username" required>
