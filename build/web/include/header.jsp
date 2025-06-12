@@ -24,7 +24,7 @@
                         <a class="nav-link ${pageContext.request.requestURI.contains('profile') || pageContext.request.requestURI.contains('edit-profile') ? 'active' : ''}" href="profile.jsp">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="logout.jsp">Logout</a>
+                        <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="Logout">Logout</a>
                     </li>
                 </ul>
             </div>

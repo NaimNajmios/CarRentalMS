@@ -18,8 +18,21 @@
     <%@ include file="include/header.jsp" %>
 
     <main class="container mt-5 pt-5">
-        <h2>Welcome Client!</h2>
-        <p>You have successfully logged in as a client.</p>
+        <% 
+            String loggedInUsername = (String) session.getAttribute("loggedInUsername");
+            if (loggedInUsername == null) {
+                // Redirect to login if not logged in
+                response.sendRedirect("login.jsp");
+                return;
+            }
+        %>
+        <h2 class="display-4 mb-4">Welcome, <%= loggedInUsername %>!</h2>
+        <p class="lead mb-5">Explore our wide range of vehicles and book your perfect car today.</p>
+        <div class="d-grid gap-3 col-md-6 mx-auto">
+            <a href="cars.jsp" class="btn btn-primary btn-lg">Browse Available Cars</a>
+            <a href="mybooking.jsp" class="btn btn-outline-secondary btn-lg">View My Bookings</a>
+            <a href="profile.jsp" class="btn btn-outline-info btn-lg">Manage Profile</a>
+        </div>
     </main>
 
     <%@ include file="include/footer.jsp" %>

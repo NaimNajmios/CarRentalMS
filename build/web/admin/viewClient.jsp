@@ -107,6 +107,22 @@
                 font-size: 1rem;
             }
 
+            .profile-image-container {
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                overflow: hidden;
+                margin: 0 auto 1.5rem auto;
+                border: 3px solid #eee;
+                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            }
+
+            .profile-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
             .action-buttons {
                 margin-top: 2rem;
                 display: flex;
@@ -193,6 +209,20 @@
                 </div>
 
                 <div class="detail-card">
+                    <div class="profile-image-container">
+                        <% 
+                            String profilePicPath = rs.getString("profileImagePath");
+                            if (profilePicPath != null && !profilePicPath.isEmpty()) {
+                        %>
+                                <img src="<%= request.getContextPath() %>/uploads/profile_pics/<%= profilePicPath %>" alt="Profile Picture" class="profile-image">
+                        <% 
+                            } else {
+                        %>
+                                <img src="<%= request.getContextPath() %>/images/profilepic/default_profile.jpg" alt="Default Profile Picture" class="profile-image">
+                        <% 
+                            }
+                        %>
+                    </div>
                     <h3 class="detail-title"><%= rs.getString("name") %></h3>
                     
                     <div class="details-grid">
