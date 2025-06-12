@@ -11,6 +11,13 @@ public class Admin {
     public Admin() {
     }
 
+    public Admin(String userID, String adminID, String name, String email, String profileImagePath) {
+        this.userID = userID;
+        this.adminID = adminID;
+        this.name = name;
+        this.email = email;
+        this.profileImagePath = profileImagePath;
+    }
 
     public String getUserID() {
         return this.userID;

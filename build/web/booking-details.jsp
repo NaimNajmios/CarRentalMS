@@ -222,7 +222,7 @@
                                 Date startDate = sdf.parse(booking.getBookingStartDate());
                                 Date endDate = sdf.parse(booking.getBookingEndDate());
                                 long diff = endDate.getTime() - startDate.getTime();
-                                long days = diff / (24 * 60 * 60 * 1000);
+                                long days = diff / (24 * 60 * 60 * 1000) + 1; // Add 1 to include both start and end dates
                                 out.print(days + (days == 1 ? " day" : " days"));
                             } catch (Exception e) {
                                 out.print("N/A");
@@ -233,6 +233,10 @@
                     %>
                 </p>
                 <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
+                
+                <% if (booking.getBookingStatus() != null && "Completed".equalsIgnoreCase(booking.getBookingStatus().trim())) { %>
+                    <p class="text-success mt-3"><strong>Your booking is completed! You may now pick up your vehicle.</strong></p>
+                <% } %>
             </div>
 
             <div class="vehicle-info-card">

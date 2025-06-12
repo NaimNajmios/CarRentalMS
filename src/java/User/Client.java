@@ -22,6 +22,15 @@ public class Client {
         this.email = email;
     }
 
+    public Client(String userID, String clientID, String name, String address, String phoneNumber, String email, String profileImagePath) {
+        this.userID = userID;
+        this.clientID = clientID;
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.profileImagePath = profileImagePath;
+    }
 
     public String getUserID() {
         return this.userID;

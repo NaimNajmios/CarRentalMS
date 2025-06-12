@@ -6,12 +6,23 @@
 <%@ page import="java.util.List"%>
 <%@ page import="java.time.LocalDate"%>
 <%@ page import="java.time.temporal.ChronoUnit"%>
+<%@ page import="User.User" %>
+<%@ page import="User.Client" %>
 
 <%
+    // Retrieve user and client objects from session
+    User loggedInUser = (User) session.getAttribute("loggedInUser");
+    Client loggedInClient = (Client) session.getAttribute("loggedInClient");
+
+    // Redirect to login if user or client not logged in
+    if (loggedInUser == null || loggedInClient == null || loggedInUser.getUserID() == null || loggedInUser.getUserID().isEmpty()) {
+        response.sendRedirect(request.getContextPath() + "/login.jsp?message=Please+log+in+to+make+a+booking.&type=warning");
+        return;
+    }
+
     // Get vehicleId from query parameter, parse to int
     String vehicleId = request.getParameter("vehicleId");
     int vehicleIdInt = 0;
-    String userid = "2000";
 
     if (vehicleId == null || vehicleId.trim().isEmpty()) {
         response.sendRedirect("cars.jsp");
@@ -45,11 +56,9 @@
             ? vehicle.getVehicleImagePath()
             : "images/default-vehicle.jpg";
 
-    // Assume createdBy is set from session (e.g., logged-in user ID), if not, set null
-    String createdBy = (session.getAttribute("userId") != null) ? (String) session.getAttribute("userId") : null;
-    if (createdBy == null) {
-        createdBy = userid; // Fallback to the hardcoded userid if session is not set
-    }
+    // Use dynamic user and client IDs from session
+    String clientId = loggedInClient.getClientID();
+    String createdBy = loggedInUser.getUserID();
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String currentDate = sdf.format(new Date());
@@ -195,7 +204,7 @@
                         <form action="booking-confirmation.jsp" method="post" onsubmit="return validateForm()">
                             <input type="hidden" name="vehicleId" value="<%= vehicleId%>">
                             <input type="hidden" name="assignedDate" value="<%= currentDate%>">
-                            <input type="hidden" name="clientId" value="<%= userid%>">
+                            <input type="hidden" name="clientId" value="<%= clientId%>">
                             <input type="hidden" name="createdBy" value="<%= createdBy%>">
                             <div class="form-group">
                                 <label for="bookingDate">Booking Date</label>

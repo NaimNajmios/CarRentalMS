@@ -6,17 +6,21 @@
 <%@ page import="Vehicle.Vehicle"%>
 <%@ page import="java.text.SimpleDateFormat"%>
 <%@ page import="java.util.Date"%>
+<%@ page import="User.User" %>
+<%@ page import="User.Client" %>
 
 <%
-    String clientId = (String) session.getAttribute("userId");
+    // Retrieve user and client objects from session
+    User loggedInUser = (User) session.getAttribute("loggedInUser");
+    Client loggedInClient = (Client) session.getAttribute("loggedInClient");
 
-    // Temporary client ID for testing
-    clientId = "2000";
-
-    if (clientId == null || clientId.trim().isEmpty()) {
-        response.sendRedirect("login.jsp"); // Redirect to login if no client ID
+    // Redirect to login if user or client not logged in
+    if (loggedInUser == null || loggedInClient == null || loggedInClient.getClientID() == null || loggedInClient.getClientID().isEmpty()) {
+        response.sendRedirect(request.getContextPath() + "/login.jsp?message=Please+log+in+to+view+your+bookings.&type=warning");
         return;
     }
+
+    String clientId = loggedInClient.getClientID();
 
     UIAccessObject uiAccessObject = new UIAccessObject();
 
@@ -245,14 +249,12 @@
                         }
                     });
 
-                    if (visibleCardsCount === 0 && allBookingsExist()) {
+                    if (visibleCardsCount === 0) {
                         noBookingsMessage.style.display = 'block';
                         bookingCardsList.style.display = 'none';
-                    } else if (allBookingsExist()) {
+                    } else {
                         noBookingsMessage.style.display = 'none';
                         bookingCardsList.style.display = 'block';
-                    } else {
-                        bookingCardsList.style.display = 'none';
                     }
                 }
 
@@ -264,10 +266,6 @@
                         filterCards(status);
                     });
                 });
-
-                function allBookingsExist() {
-                    return document.querySelectorAll('#bookingCardsList .booking-item').length > 0;
-                }
 
                 // Initial load: show only pending
                 filterCards('Pending');

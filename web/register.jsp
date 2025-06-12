@@ -127,6 +127,16 @@
     <div class="form-container">
         <h2>CarRent Register</h2>
         <p class="text-muted mb-4">Create your account to manage your vehicle rentals.</p>
+        <% 
+            String errorMessage = request.getParameter("message");
+            if (errorMessage != null) {
+        %>
+                <div class="alert alert-danger" role="alert">
+                    <%= errorMessage %>
+                </div>
+        <% 
+            }
+        %>
         <form action="RegisterServlet" method="post" onsubmit="return validateForm()">
             <div class="mb-3">
                 <label for="username" class="form-label">Username:</label>

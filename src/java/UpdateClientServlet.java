@@ -173,12 +173,24 @@ public class UpdateClientServlet extends HttpServlet {
             ps.setString(6, userID);
             int status = ps.executeUpdate();
 
+            // Determine the original page from which the request originated
+            String referer = request.getHeader("Referer");
+            boolean isClientProfileUpdate = referer != null && referer.contains("client-profile.jsp");
+
             if (status > 0) {
                 LOGGER.log(Level.INFO, "Client details updated successfully for User ID: {0}", userID);
-                response.sendRedirect(request.getContextPath() + "/admin/viewClient.jsp?userID=" + userID + "&message=Client+updated+successfully.&type=success");
+                if (isClientProfileUpdate) {
+                    response.sendRedirect(request.getContextPath() + "/client-profile.jsp?message=Profile+updated+successfully.&type=success");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/admin/viewClient.jsp?userID=" + userID + "&message=Client+updated+successfully.&type=success");
+                }
             } else {
                 LOGGER.log(Level.WARNING, "Failed to update client details for User ID: {0}", userID);
-                response.sendRedirect(request.getContextPath() + "/admin/editClient.jsp?userID=" + userID + "&message=Error+updating+client+details.&type=danger");
+                if (isClientProfileUpdate) {
+                    response.sendRedirect(request.getContextPath() + "/client-profile.jsp?message=Error+updating+profile+details.&type=danger");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/admin/editClient.jsp?userID=" + userID + "&message=Error+updating+client+details.&type=danger");
+                }
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Database error during client update for User ID: {0}: {1}", new Object[]{userID, e.getMessage()});

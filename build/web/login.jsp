@@ -116,6 +116,16 @@
     <div class="form-container">
         <h2>CarRent Login</h2>
         <p class="text-muted mb-4">Manage your vehicle rentals efficiently.</p>
+        <% 
+            String message = request.getParameter("message");
+            if (message != null) {
+        %>
+                <div class="alert alert-info" role="alert">
+                    <%= message %>
+                </div>
+        <% 
+            }
+        %>
         <form action="LoginServlet" method="post" onsubmit="return validateLoginForm();">
             <div class="mb-3">
                 <label for="username" class="form-label">Username:</label>
