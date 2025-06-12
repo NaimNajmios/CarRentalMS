@@ -103,36 +103,74 @@
                 margin-top: 1rem;
                 padding: 1.5rem;
                 display: grid;
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
             }
-            .detail-section {
-                padding: 0;
-                border: none;
+            .booking-section-wrapper {
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 2rem;
+                background-color: #f8f9fa;
+                border-radius: 8px;
+                border: 1px solid #e9ecef;
+                overflow: hidden;
+            }
+            .detail-section.booking-info-only {
+                grid-column: 1;
                 background-color: transparent;
+                border: none;
                 box-shadow: none;
+                padding: 1.5rem;
+            }
+            .vehicle-image-section {
+                grid-column: 2;
+                padding: 1.5rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: #fff;
+                border-left: 1px solid #e9ecef;
+            }
+            .vehicle-image-section img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .vehicle-image-section .no-image {
+                text-align: center;
+                color: #6c757d;
+                padding: 2rem;
+                background-color: #f8f9fa;
+                border-radius: 8px;
+                width: 100%;
             }
             .detail-section h3 {
                 font-size: 1.4rem;
                 color: #333;
-                margin-bottom: 1rem;
-                padding-bottom: 0.5rem;
-                border-bottom: 1px solid #e0e0e0;
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 2px solid #e0e0e0;
             }
             .detail-section p {
-                margin-bottom: 0.8rem;
+                margin-bottom: 1rem;
                 font-size: 1rem;
                 color: #555;
+                line-height: 1.5;
             }
             .detail-section strong {
                 color: #333;
+                font-weight: 600;
             }
             .status-badge {
                 display: inline-block;
-                padding: 0.3rem 0.6rem;
+                padding: 0.4rem 0.8rem;
                 border-radius: 20px;
                 font-size: 0.9rem;
-                font-weight: bold;
+                font-weight: 600;
+                text-transform: uppercase;
             }
             .status-Confirmed {
                 background-color: #d4edda;
@@ -163,12 +201,13 @@
             .no-info {
                 color: #777;
             }
-            @media (min-width: 768px) {
-                .details-card-wrapper {
-                    grid-template-columns: 1fr 1fr;
+            @media (max-width: 992px) {
+                .booking-section-wrapper {
+                    grid-template-columns: 1fr;
                 }
-                .detail-section.booking-info-only {
-                    grid-column: 1 / -1;
+                .vehicle-image-section {
+                    border-left: none;
+                    border-top: 1px solid #e9ecef;
                 }
             }
             @media (max-width: 768px) {
@@ -247,30 +286,42 @@
                 </div>
                 <% if (booking != null) {%>
                 <div class="details-card-wrapper">
-                    <div class="detail-section booking-info-only">
-                        <h3>Booking Information</h3>
-                        <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
-                        <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
-                        <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
-                        <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
-                        <p><strong>Duration:</strong>
-                            <% if (booking.getBookingStartDate() != null && booking.getBookingEndDate() != null) {
-                                    try {
-                                        Date startDate = sdf.parse(booking.getBookingStartDate());
-                                        Date endDate = sdf.parse(booking.getBookingEndDate());
-                                        long diff = endDate.getTime() - startDate.getTime();
-                                        long days = diff / (24 * 60 * 60 * 1000) + 1;
-                                        out.print(days + (days == 1 ? " day" : " days"));
-                                    } catch (Exception e) {
+                    <div class="booking-section-wrapper">
+                        <div class="detail-section booking-info-only">
+                            <h3>Booking Information</h3>
+                            <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
+                            <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                            <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
+                            <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
+                            <p><strong>Duration:</strong>
+                                <% if (booking.getBookingStartDate() != null && booking.getBookingEndDate() != null) {
+                                        try {
+                                            Date startDate = sdf.parse(booking.getBookingStartDate());
+                                            Date endDate = sdf.parse(booking.getBookingEndDate());
+                                            long diff = endDate.getTime() - startDate.getTime();
+                                            long days = diff / (24 * 60 * 60 * 1000) + 1;
+                                            out.print(days + (days == 1 ? " day" : " days"));
+                                        } catch (Exception e) {
+                                            out.print("N/A");
+                                        }
+                                    } else {
                                         out.print("N/A");
                                     }
-                                } else {
-                                    out.print("N/A");
-                                }
-                            %>
-                        </p>
-                        <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? booking.getTotalCost() : "N/A"%></p>
-                        <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
+                                %>
+                            </p>
+                            <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? booking.getTotalCost() : "N/A"%></p>
+                            <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
+                        </div>
+                        <div class="vehicle-image-section">
+                            <% if (vehicle != null && vehicle.getVehicleImagePath() != null && !vehicle.getVehicleImagePath().isEmpty()) { %>
+                                <img src="${pageContext.request.contextPath}/<%= vehicle.getVehicleImagePath() %>" alt="<%= vehicle.getVehicleBrand() %> <%= vehicle.getVehicleModel() %>" class="img-fluid">
+                            <% } else { %>
+                                <div class="no-image">
+                                    <i class="fas fa-car fa-3x mb-3"></i>
+                                    <p>No vehicle image available</p>
+                                </div>
+                            <% } %>
+                        </div>
                     </div>
                     <div class="detail-section client-details-card">
                         <h3>Client Information</h3>
@@ -296,7 +347,6 @@
                             <p><strong>Type:</strong> <%= vehicle.getVehicleCategory()%></p>
                             <p><strong>License Plate:</strong> <%= vehicle.getVehicleRegistrationNo()%></p>
                             <p><strong>Rental Rate:</strong> RM <%= vehicle.getVehicleRatePerDay()%></p>
-                            <p><strong>Availability:</strong> <%= vehicle.getVehicleAvailablity()%></p>
                         </div>
                         <% } else { %>
                         <div class="alert alert-warning">
