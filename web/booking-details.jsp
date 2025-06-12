@@ -187,6 +187,21 @@
             .proceed-button:hover {
                 background-color: #218838;
             }
+            .cancel-button {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 1rem 2rem;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1.1rem;
+                font-weight: bold;
+                text-decoration: none;
+                margin-left: 1rem; /* Space between buttons */
+            }
+            .cancel-button:hover {
+                background-color: #c82333;
+            }
             .timestamp {
                 grid-column: 1 / -1;
                 text-align: right;
@@ -276,11 +291,21 @@
                 <% } %>
             </div>
 
-            <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
+            <% 
+                String bookingStatus = booking.getBookingStatus() != null ? booking.getBookingStatus().trim() : "";
+                boolean isPending = "Pending".equalsIgnoreCase(bookingStatus);
+                boolean isConfirmed = "Confirmed".equalsIgnoreCase(bookingStatus);
+                boolean isPaymentPending = (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()));
+            %>
+
             <div class="proceed-button-container">
-                <a href="booking-payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button">Proceed to Payment</a>
+                <% if (isPending && isPaymentPending) { %>
+                    <a href="booking-payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button">Proceed to Payment</a>
+                <% } %>
+                <% if (isPending || isConfirmed) { %>
+                    <a href="CancelBookingServlet?bookingId=<%= booking.getBookingId()%>&returnPage=booking-details.jsp" class="cancel-button">Cancel Booking</a>
+                <% } %>
             </div>
-            <% }%>
 
             <div class="timestamp">Last updated: <%= currentDateTime%></div>
         </div>
