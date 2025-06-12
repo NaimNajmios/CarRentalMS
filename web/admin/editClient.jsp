@@ -110,6 +110,15 @@
                 margin-right: 0.5rem;
             }
 
+            .profile-preview {
+                max-width: 200px;
+                height: 200px;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 3px solid #eee;
+                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            }
+
             .btn-primary {
                 background-color: #007bff;
                 border-color: #007bff;
@@ -190,9 +199,35 @@
                 </div>
 
                 <div class="edit-form-card">
-                    <form action="${pageContext.request.contextPath}/UpdateClientServlet" method="post">
+                    <form action="${pageContext.request.contextPath}/UpdateClientServlet" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="userID" value="<%= userId%>">
+                        <input type="hidden" name="currentImagePath" value="<%= rs.getString("profileImagePath") != null ? rs.getString("profileImagePath") : "" %>">
                         
+                        <!-- Image Upload Section -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <img src="<%= rs.getString("profileImagePath") != null && !rs.getString("profileImagePath").isEmpty() ? request.getContextPath() + "/uploads/profile_pics/" + rs.getString("profileImagePath") : request.getContextPath() + "/images/profilepic/default_profile.jpg"%>"
+                                     alt="Profile Picture" 
+                                     class="rounded-circle profile-preview mb-3" 
+                                     id="profilePreview"
+                                     onclick="document.getElementById('profileImage').click()">
+                                <div class="mb-2">
+                                    <input type="file" class="form-control-file" id="profileImage" 
+                                           name="profileImage" accept="image/*" 
+                                           onchange="previewProfileImage(this)" style="display: none;">
+                                    <button type="button" class="btn btn-outline-primary btn-sm me-2" 
+                                            onclick="document.getElementById('profileImage').click()">
+                                        <i class="fas fa-camera me-2"></i>Change Image
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                            onclick="resetProfileImage('<%= request.getContextPath() + "/images/profilepic/default_profile.jpg" %>')">
+                                        <i class="fas fa-undo me-2"></i>Reset
+                                    </button>
+                                </div>
+                                <small class="text-muted">Recommended size: 200x200 pixels. Max file size: 2MB</small>
+                            </div>
+                        </div>
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -243,5 +278,21 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function previewProfileImage(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('profilePreview').src = e.target.result;
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            function resetProfileImage(defaultPath) {
+                document.getElementById('profilePreview').src = defaultPath;
+                document.getElementById('profileImage').value = ''; // Clear the file input
+            }
+        </script>
     </body>
 </html> 
