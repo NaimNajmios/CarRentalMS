@@ -1,8 +1,7 @@
-package Servlet;
-
 import Database.DatabaseConnection;
 import Database.UIAccessObject;
 import Booking.Booking;
+import Database.DatabaseCRUD;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -55,8 +54,6 @@ public class CancelBookingServlet extends HttpServlet {
         }
 
         UIAccessObject uiAccessObject = new UIAccessObject();
-        Connection con = null;
-        PreparedStatement ps = null;
         String message = "";
         String messageType = "danger"; // Default to danger
 
@@ -73,31 +70,11 @@ public class CancelBookingServlet extends HttpServlet {
 
                 if ("Pending".equalsIgnoreCase(currentStatus) || "Confirmed".equalsIgnoreCase(currentStatus)) {
                     LOGGER.log(Level.INFO, LOG_PREFIX + "Proceeding with cancellation for booking ID: {0}", bookingId);
-                    con = DatabaseConnection.getConnection();
-                    String updateBookingQuery = "UPDATE booking SET bookingStatus = ? WHERE bookingID = ?";
-                    ps = con.prepareStatement(updateBookingQuery);
-                    ps.setString(1, "Cancelled");
-                    ps.setString(2, bookingId);
-
-                    int bookingUpdateStatus = ps.executeUpdate();
-
-                    if (bookingUpdateStatus > 0) {
-                        LOGGER.log(Level.INFO, LOG_PREFIX + "Successfully updated booking status to Cancelled");
-                        String updatePaymentQuery = "UPDATE payment SET paymentStatus = ? WHERE bookingID = ?";
-                        try (PreparedStatement psPayment = con.prepareStatement(updatePaymentQuery)) {
-                            psPayment.setString(1, "Refund Initiated");
-                            psPayment.setString(2, bookingId);
-                            int paymentUpdateStatus = psPayment.executeUpdate();
-                            if (paymentUpdateStatus > 0) {
-                                LOGGER.log(Level.INFO, LOG_PREFIX + "Booking {0} cancelled and payment status updated successfully.", bookingId);
-                                message = "Booking cancelled successfully and payment refund initiated.";
-                                messageType = "success";
-                            } else {
-                                LOGGER.log(Level.WARNING, LOG_PREFIX + "Booking {0} cancelled, but failed to update payment status.", bookingId);
-                                message = "Booking cancelled successfully, but payment update failed. Please contact support.";
-                                messageType = "warning";
-                            }
-                        }
+                    DatabaseCRUD dbCRUD = new DatabaseCRUD();
+                    if (dbCRUD.cancelBooking(bookingId)) {
+                        LOGGER.log(Level.INFO, LOG_PREFIX + "Booking {0} cancelled and payment status updated successfully.", bookingId);
+                        message = "Booking cancelled successfully and payment refund initiated.";
+                        messageType = "success";
                     } else {
                         LOGGER.log(Level.WARNING, LOG_PREFIX + "Failed to cancel booking {0}.", bookingId);
                         message = "Failed to cancel booking. Please try again.";
@@ -116,25 +93,18 @@ public class CancelBookingServlet extends HttpServlet {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, LOG_PREFIX + "Database error during booking cancellation for ID {0}: {1}", new Object[]{bookingId, e.getMessage()});
             message = "Database error during cancellation.";
+        } catch (ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, LOG_PREFIX + "Driver not found error during booking cancellation for ID {0}: {1}", new Object[]{bookingId, e.getMessage()});
+            message = "System error during cancellation: Driver not found.";
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, LOG_PREFIX + "Unexpected error during booking cancellation for ID {0}: {1}", new Object[]{bookingId, e.getMessage()});
             message = "An unexpected error occurred during cancellation.";
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-                LOGGER.log(Level.INFO, LOG_PREFIX + "Database resources closed successfully");
-            } catch (SQLException ex) {
-                LOGGER.log(Level.SEVERE, LOG_PREFIX + "Error closing database resources after booking cancellation: {0}", ex.getMessage());
-            }
         }
 
-        LOGGER.log(Level.INFO, LOG_PREFIX + "Redirecting to {0} with message: {1}", new Object[]{returnPage, message});
-        response.sendRedirect(request.getContextPath() + "/" + returnPage + "?message=" + java.net.URLEncoder.encode(message, "UTF-8") + "&type=" + messageType);
+        LOGGER.log(Level.INFO, LOG_PREFIX + "Forwarding to {0} with message: {1}", new Object[]{returnPage, message});
+        request.setAttribute("message", message);
+        request.setAttribute("type", messageType);
+        request.getRequestDispatcher("/" + returnPage).forward(request, response);
     }
 
     /**

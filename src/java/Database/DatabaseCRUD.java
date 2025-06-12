@@ -24,24 +24,25 @@ public class DatabaseCRUD {
     // Logger to log the messages
     private static final Logger LOGGER = Logger.getLogger(DatabaseCRUD.class.getName());
 
-    // Connection to the database
-    private Connection connection;
-
     // Constructor to initialize the connection
-    public DatabaseCRUD() throws SQLException, ClassNotFoundException {
+    public DatabaseCRUD() {
         LOGGER.info("Initializing DatabaseCRUD");
-        connection = DatabaseConnection.getConnection();
         LOGGER.info("DatabaseCRUD initialized successfully");
+    }
+
+    private Connection getConnection() throws SQLException, ClassNotFoundException {
+        return DatabaseConnection.getConnection();
     }
 
     // Method to add booking to the database, returning boolean for success
     public boolean addBooking(Booking booking) throws SQLException, ClassNotFoundException {
         LOGGER.info("Starting addBooking method");
         long newBookingId = -1;
+        Connection connection = null;
 
         try {
             LOGGER.info("Attempting to add new booking to the database");
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             connection.setAutoCommit(false);
             LOGGER.info("Database connection established and auto-commit set to false");
 
@@ -144,8 +145,12 @@ public class DatabaseCRUD {
             throw e; // Re-throw the SQLException to be handled by the caller
         } finally {
             if (connection != null) {
-                LOGGER.info("Closing database connection");
-                connection.close();
+                try {
+                    LOGGER.info("Closing database connection");
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing database connection", e);
+                }
             }
         }
     }
@@ -156,9 +161,10 @@ public class DatabaseCRUD {
             String invoiceNumber, String proofOfPayment)
             throws SQLException, ClassNotFoundException {
         LOGGER.info("Starting submitPayment method");
+        Connection connection = null;
         try {
             LOGGER.info("Attempting to submit payment for payment ID: " + paymentId);
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             connection.setAutoCommit(false);
             LOGGER.info("Database connection established and auto-commit set to false");
 
@@ -189,11 +195,23 @@ public class DatabaseCRUD {
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error submitting payment to the database", e);
+            if (connection != null) {
+                try {
+                    LOGGER.warning("Rolling back transaction due to error");
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.SEVERE, "Error rolling back transaction", ex);
+                }
+            }
             throw e;
         } finally {
             if (connection != null) {
-                LOGGER.info("Closing database connection");
-                connection.close();
+                try {
+                    LOGGER.info("Closing database connection");
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing database connection", e);
+                }
             }
         }
     }
@@ -203,9 +221,10 @@ public class DatabaseCRUD {
     public boolean updatePaymentStatus(String paymentId, String paymentStatus)
             throws SQLException, ClassNotFoundException {
         LOGGER.info("Starting updatePaymentStatus method");
+        Connection connection = null;
         try {
             LOGGER.info("Attempting to update payment status for payment ID: " + paymentId);
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             connection.setAutoCommit(false);
             LOGGER.info("Database connection established and auto-commit set to false");
 
@@ -243,6 +262,75 @@ public class DatabaseCRUD {
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error updating payment and booking status in the database", e);
+            if (connection != null) {
+                try {
+                    LOGGER.warning("Rolling back transaction due to error");
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.SEVERE, "Error rolling back transaction", ex);
+                }
+            }
+            throw e;
+        } finally {
+            if (connection != null) {
+                try {
+                    LOGGER.info("Closing database connection");
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing database connection", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Cancels a booking based on the provided booking ID.
+     * Updates both the booking and payment status to "Cancelled".
+     *
+     * @param bookingId The ID of the booking to cancel
+     * @return true if the cancellation was successful, false otherwise
+     * @throws SQLException if there is an error accessing the database
+     */
+    public boolean cancelBooking(String bookingId) throws SQLException, ClassNotFoundException {
+        Connection connection = null;
+        try {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+
+            // Prepare statements for updating both booking and payment tables
+            String bookingUpdateQuery = "UPDATE booking SET bookingStatus = ? WHERE bookingID = ?";
+            String paymentUpdateQuery = "UPDATE payment SET paymentStatus = ? WHERE bookingID = ?";
+
+            try (PreparedStatement bookingStatement = connection.prepareStatement(bookingUpdateQuery);
+                 PreparedStatement paymentStatement = connection.prepareStatement(paymentUpdateQuery)) {
+
+                LOGGER.info("Preparing BOOKING table update query for cancellation");
+                bookingStatement.setString(1, "Cancelled");
+                bookingStatement.setString(2, bookingId);
+
+                LOGGER.info("Preparing PAYMENT table update query for cancellation");
+                paymentStatement.setString(1, "Pending");
+                paymentStatement.setString(2, bookingId);
+
+                LOGGER.info("Executing BOOKING table update query");
+                int bookingRowsAffected = bookingStatement.executeUpdate();
+
+                LOGGER.info("Executing PAYMENT table update query");
+                int paymentRowsAffected = paymentStatement.executeUpdate();
+
+                if (bookingRowsAffected > 0 && paymentRowsAffected > 0) {
+                    LOGGER.info("Booking cancellation successful. Committing transaction");
+                    connection.commit();
+                    LOGGER.info("Transaction committed successfully");
+                    return true;
+                } else {
+                    LOGGER.warning("Booking cancellation failed. Rolling back transaction");
+                    connection.rollback();
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error cancelling booking in the database", e);
             if (connection != null) {
                 try {
                     LOGGER.warning("Rolling back transaction due to error");

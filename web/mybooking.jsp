@@ -173,6 +173,17 @@
 
         <section class="booking-history-section">
             <div class="container">
+                <%-- Message Display Area --%>
+                <% String message = request.getParameter("message");
+                   String messageType = request.getParameter("type");
+                   if (message != null && !message.isEmpty()) {
+                %>
+                <div class="alert alert-<%= messageType != null ? messageType : "info" %> alert-dismissible fade show" role="alert">
+                    <%= message %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+
                 <div class="booking-history-container">
                     <div class="booking-history-header">
                         <h2>My Bookings</h2>
