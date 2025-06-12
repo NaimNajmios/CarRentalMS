@@ -214,7 +214,7 @@
                             String profilePicPath = rs.getString("profileImagePath");
                             if (profilePicPath != null && !profilePicPath.isEmpty()) {
                         %>
-                                <img src="<%= request.getContextPath() %>/uploads/profile_pics/<%= profilePicPath %>" alt="Profile Picture" class="profile-image">
+                                <img src="<%= request.getContextPath() %>/<%= profilePicPath %>" alt="Profile Picture" class="profile-image">
                         <% 
                             } else {
                         %>

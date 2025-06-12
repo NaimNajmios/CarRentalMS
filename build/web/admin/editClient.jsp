@@ -206,7 +206,7 @@
                         <!-- Image Upload Section -->
                         <div class="row mb-4">
                             <div class="col-12 text-center">
-                                <img src="<%= rs.getString("profileImagePath") != null && !rs.getString("profileImagePath").isEmpty() ? request.getContextPath() + "/uploads/profile_pics/" + rs.getString("profileImagePath") : request.getContextPath() + "/images/profilepic/default_profile.jpg"%>"
+                                <img src="<%= rs.getString("profileImagePath") != null && !rs.getString("profileImagePath").isEmpty() ? request.getContextPath() + "/" + rs.getString("profileImagePath") : request.getContextPath() + "/images/profilepic/default_profile.jpg"%>"
                                      alt="Profile Picture" 
                                      class="rounded-circle profile-preview mb-3" 
                                      id="profilePreview"
