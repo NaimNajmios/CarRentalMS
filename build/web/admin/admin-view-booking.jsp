@@ -1,0 +1,338 @@
+<%@ page import="Booking.Booking"%>
+<%@ page import="Database.UIAccessObject"%>
+<%@ page import="Vehicle.Vehicle"%>
+<%@ page import="User.Client"%>
+<%@ page import="Payment.Payment"%>
+<%@ page import="java.text.SimpleDateFormat"%>
+<%@ page import="java.util.Date"%>
+<%@ page import="java.util.logging.Logger"%>
+<%@ page import="java.util.logging.Level"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CarRent - View Booking Details</title>
+        <%@ include file="../include/admin-css.html" %>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #f4f4f4;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+                margin: 0;
+                padding-top: 56px;
+            }
+            header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1000;
+            }
+            .wrapper {
+                display: flex;
+                flex-grow: 1;
+            }
+            .sidebar {
+                width: 250px;
+                background-color: #f8f9fa;
+                padding: 20px;
+                flex-shrink: 0;
+            }
+            .sidebar .nav-link {
+                color: #4b5563;
+                padding: 0.75rem 1rem;
+                transition: color 0.2s;
+                display: block;
+                text-decoration: none;
+            }
+            .sidebar .nav-link:hover {
+                color: #2563eb;
+                background-color: #e9ecef;
+            }
+            .sidebar .nav-link i {
+                margin-right: 0.75rem;
+            }
+            .dashboard-content {
+                flex-grow: 1;
+                padding: 2rem;
+                background-color: #f4f4f4;
+            }
+            .dashboard-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+            }
+            .dashboard-header h2 {
+                font-size: 1.75rem;
+                color: #333;
+                font-weight: 700;
+                margin: 0;
+            }
+            .back-link {
+                text-decoration: none;
+                color: #fff;
+                font-weight: bold;
+                padding: 0.5rem 1rem;
+                background-color: #007bff;
+                border-radius: 4px;
+                transition: background-color 0.15s ease-in-out;
+            }
+            .back-link:hover {
+                background-color: #0056b3;
+            }
+            .alert {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border: 1px solid transparent;
+                border-radius: 0.375rem;
+            }
+            .details-card-wrapper {
+                width: 100%;
+                border-collapse: collapse;
+                background-color: #fff;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                margin-top: 1rem;
+                padding: 1.5rem;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .detail-section {
+                padding: 0;
+                border: none;
+                background-color: transparent;
+                box-shadow: none;
+            }
+            .detail-section h3 {
+                font-size: 1.4rem;
+                color: #333;
+                margin-bottom: 1rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .detail-section p {
+                margin-bottom: 0.8rem;
+                font-size: 1rem;
+                color: #555;
+            }
+            .detail-section strong {
+                color: #333;
+            }
+            .status-badge {
+                display: inline-block;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: bold;
+            }
+            .status-Confirmed {
+                background-color: #d4edda;
+                color: #155724;
+            }
+            .status-Pending {
+                background-color: #fff3cd;
+                color: #856404;
+            }
+            .status-Cancelled {
+                background-color: #f8d7da;
+                color: #721c24;
+            }
+            .status-Completed {
+                background-color: #cce5ff;
+                color: #004085;
+            }
+            .vehicle-image-container {
+                display: none;
+            }
+            .timestamp {
+                text-align: right;
+                font-size: 0.9rem;
+                color: #7f8c8d;
+                margin-top: 1rem;
+                grid-column: 1 / -1;
+            }
+            .no-info {
+                color: #777;
+            }
+            @media (min-width: 768px) {
+                .details-card-wrapper {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .detail-section.booking-info-only {
+                    grid-column: 1 / -1;
+                }
+            }
+            @media (max-width: 768px) {
+                body {
+                    padding-top: 69px;
+                }
+                .wrapper {
+                    flex-direction: column;
+                }
+                .sidebar {
+                    width: 100%;
+                    margin-bottom: 1rem;
+                    padding: 15px;
+                }
+                .dashboard-content {
+                    padding: 1.5rem;
+                }
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <%@ include file="../include/admin-header.jsp" %>
+        </header>
+        <div class="wrapper">
+            <%@ include file="../include/admin-sidebar.jsp" %>
+            <div class="dashboard-content">
+                <%
+                    Logger logger = Logger.getLogger("admin-view-booking.jsp");
+                    String bookingId = request.getParameter("bookingId");
+                    Booking booking = null;
+                    Vehicle vehicle = null;
+                    Client client = null;
+                    Payment payment = null;
+                    String errorMessage = null;
+
+                    if (bookingId != null && !bookingId.trim().isEmpty()) {
+                        UIAccessObject uiAccessObject = new UIAccessObject();
+                        try {
+                            booking = uiAccessObject.getBookingByBookingId(bookingId);
+                            if (booking != null) {
+                                if (booking.getVehicleId() != null && !booking.getVehicleId().isEmpty()) {
+                                    vehicle = uiAccessObject.getVehicleById(Integer.parseInt(booking.getVehicleId()));
+                                }
+                                if (booking.getClientId() != null && !booking.getClientId().isEmpty()) {
+                                    client = uiAccessObject.getClientDataByClientID(booking.getClientId());
+                                }
+                                payment = uiAccessObject.getPaymentByBookingId(bookingId);
+                            } else {
+                                errorMessage = "Booking with ID " + bookingId + " not found.";
+                            }
+                        } catch (Exception e) {
+                            errorMessage = "Error fetching booking details: " + e.getMessage();
+                            logger.log(Level.SEVERE, "Error fetching booking details", e);
+                        }
+                    } else {
+                        errorMessage = "Booking ID not provided.";
+                    }
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                %>
+                <% if (errorMessage != null) {%>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= errorMessage%>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+                <div class="dashboard-header">
+                    <h2>Booking Details</h2>
+                    <a href="admin-bookings.jsp" class="back-link"><i class="fas fa-arrow-left"></i> Back to Bookings</a>
+                </div>
+                <% if (booking != null) {%>
+                <div class="details-card-wrapper">
+                    <div class="detail-section booking-info-only">
+                        <h3>Booking Information</h3>
+                        <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
+                        <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                        <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
+                        <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
+                        <p><strong>Duration:</strong>
+                            <% if (booking.getBookingStartDate() != null && booking.getBookingEndDate() != null) {
+                                    try {
+                                        Date startDate = sdf.parse(booking.getBookingStartDate());
+                                        Date endDate = sdf.parse(booking.getBookingEndDate());
+                                        long diff = endDate.getTime() - startDate.getTime();
+                                        long days = diff / (24 * 60 * 60 * 1000) + 1;
+                                        out.print(days + (days == 1 ? " day" : " days"));
+                                    } catch (Exception e) {
+                                        out.print("N/A");
+                                    }
+                                } else {
+                                    out.print("N/A");
+                                }
+                            %>
+                        </p>
+                        <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? booking.getTotalCost() : "N/A"%></p>
+                        <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
+                    </div>
+                    <div class="detail-section client-details-card">
+                        <h3>Client Information</h3>
+                        <% if (client != null) {%>
+                        <p><strong>Client ID:</strong> <%= client.getClientID()%></p>
+                        <p><strong>Name:</strong> <%= client.getName()%></p>
+                        <p><strong>Email:</strong> <%= client.getEmail()%></p>
+                        <p><strong>Phone:</strong> <%= client.getPhoneNumber()%></p>
+                        <% } else { %>
+                        <div class="alert alert-warning">
+                            Client information not available.
+                        </div>
+                        <% } %>
+                    </div>
+                    <div class="detail-section vehicle-info-card">
+                        <h3>Vehicle Information</h3>
+                        <% if (vehicle != null) {%>
+                        <div class="vehicle-details-card">
+                            <p><strong>Vehicle ID:</strong> <%= vehicle.getVehicleId()%></p>
+                            <p><strong>Brand:</strong> <%= vehicle.getVehicleBrand()%></p>
+                            <p><strong>Model:</strong> <%= vehicle.getVehicleModel()%></p>
+                            <p><strong>Year:</strong> <%= vehicle.getVehicleYear()%></p>
+                            <p><strong>Type:</strong> <%= vehicle.getVehicleCategory()%></p>
+                            <p><strong>License Plate:</strong> <%= vehicle.getVehicleRegistrationNo()%></p>
+                            <p><strong>Rental Rate:</strong> RM <%= vehicle.getVehicleRatePerDay()%></p>
+                            <p><strong>Availability:</strong> <%= vehicle.getVehicleAvailablity()%></p>
+                        </div>
+                        <% } else { %>
+                        <div class="alert alert-warning">
+                            Vehicle information not available.
+                        </div>
+                        <% } %>
+                    </div>
+                    <div class="detail-section payment-info-card">
+                        <h3>Payment Information</h3>
+                        <% if (payment != null) {%>
+                        <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
+                        <p><strong>Payment Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
+                        <p><strong>Amount:</strong> RM <%= payment.getAmount()%></p>
+                        <p><strong>Payment Status:</strong> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%></p>
+                        <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? payment.getPaymentDate() : "N/A"%></p>
+                        <p><strong>Reference No:</strong> <%= payment.getReferenceNo() != null ? payment.getReferenceNo() : "N/A"%></p>
+                        <p><strong>Invoice Number:</strong> <%= payment.getInvoiceNumber() != null ? payment.getInvoiceNumber() : "N/A"%></p>
+                        <p><strong>Handled By:</strong> <%= payment.getHandledBy() != null ? payment.getHandledBy() : "N/A"%></p>
+                        <p><strong>Proof of Payment:</strong> <%= payment.getProofOfPayment() != null ? payment.getProofOfPayment() : "N/A"%></p>
+                        <% } else { %>
+                        <div class="alert alert-warning">
+                            Payment information not available.
+                        </div>
+                        <% }%>
+                    </div>
+                    <div class="timestamp">
+                        Last updated: <%= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date())%>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="alert alert-info">
+                    No booking details to display.
+                </div>
+                <% }%>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

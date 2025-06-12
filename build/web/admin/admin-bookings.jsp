@@ -330,7 +330,7 @@
                     </thead>
                     <tbody id="bookingTableBody">
                         <% for (Booking booking : bookings) {%>
-                        <tr class="booking-row" data-status="<%= booking.getBookingStatus()%>">
+                        <tr class="booking-row" data-status="<%= booking.getBookingStatus()%>" onclick="window.location='admin-view-booking.jsp?bookingId=<%= booking.getBookingId() %>'" style="cursor: pointer;">
                             <td><%= booking.getBookingId()%></td>
                             <td><%= booking.getClientId()%></td>
                             <td><%= booking.getVehicleId()%></td>
