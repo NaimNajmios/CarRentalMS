@@ -106,6 +106,118 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 2rem;
             }
+            .action-section {
+                padding: 1.5rem;
+                border: 1px solid #e9ecef;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                min-height: 300px;
+            }
+            .action-section h3 {
+                color: #333;
+                margin-bottom: 1.5rem;
+                font-size: 1.2rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 2px solid #e0e0e0;
+            }
+            .action-group {
+                margin-bottom: 1.5rem;
+            }
+            .action-group h4 {
+                font-size: 1rem;
+                color: #495057;
+                margin-bottom: 0.75rem;
+            }
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .action-btn {
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 1rem;
+                border: none;
+                border-radius: 6px;
+                font-weight: 500;
+                text-decoration: none;
+                transition: all 0.2s ease;
+                cursor: pointer;
+                width: 100%;
+            }
+            .action-btn i {
+                margin-right: 0.75rem;
+                font-size: 1.1rem;
+            }
+            .action-btn.edit {
+                background-color: #fff3cd;
+                color: #856404;
+            }
+            .action-btn.edit:hover {
+                background-color: #ffeeba;
+            }
+            .action-btn.print {
+                background-color: #e2e3e5;
+                color: #383d41;
+            }
+            .action-btn.print:hover {
+                background-color: #d6d8db;
+            }
+            .status-select {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 1rem;
+                color: #495057;
+                background-color: #fff;
+                cursor: pointer;
+                transition: border-color 0.15s ease-in-out;
+            }
+            .status-select:focus {
+                border-color: #80bdff;
+                outline: 0;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+            .status-select option {
+                padding: 0.5rem;
+            }
+            .status-select option[value="Pending"] {
+                color: #856404;
+                background-color: #fff3cd;
+            }
+            .status-select option[value="Confirmed"] {
+                color: #155724;
+                background-color: #d4edda;
+            }
+            .status-select option[value="Cancelled"] {
+                color: #721c24;
+                background-color: #f8d7da;
+            }
+            .status-select option[value="Completed"] {
+                color: #004085;
+                background-color: #cce5ff;
+            }
+            .update-status-btn {
+                margin-top: 1rem;
+                padding: 0.75rem 1rem;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.15s ease-in-out;
+                width: 100%;
+            }
+            .update-status-btn:hover {
+                background-color: #0056b3;
+            }
+            .update-status-btn:disabled {
+                background-color: #6c757d;
+                cursor: not-allowed;
+            }
             .booking-section-wrapper {
                 grid-column: 1 / -1;
                 display: grid;
@@ -229,6 +341,34 @@
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 1rem;
+                }
+            }
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 4px;
+                color: #fff;
+                font-weight: 500;
+                z-index: 1000;
+                display: none;
+                animation: slideIn 0.5s ease-out;
+            }
+            .notification.success {
+                background-color: #28a745;
+            }
+            .notification.error {
+                background-color: #dc3545;
+            }
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
                 }
             }
         </style>
@@ -372,6 +512,38 @@
                         </div>
                         <% }%>
                     </div>
+                    <div class="action-section">
+                        <h3>Booking Actions</h3>
+                        <% if (booking != null) { %>
+                            <div class="action-group">
+                                <h4>Change Status</h4>
+                                <select class="status-select" id="bookingStatus">
+                                    <option value="Pending" <%= "Pending".equals(booking.getBookingStatus()) ? "selected" : "" %>>Pending</option>
+                                    <option value="Confirmed" <%= "Confirmed".equals(booking.getBookingStatus()) ? "selected" : "" %>>Confirmed</option>
+                                    <option value="Cancelled" <%= "Cancelled".equals(booking.getBookingStatus()) ? "selected" : "" %>>Cancelled</option>
+                                    <option value="Completed" <%= "Completed".equals(booking.getBookingStatus()) ? "selected" : "" %>>Completed</option>
+                                </select>
+                                <button class="update-status-btn" onclick="updateBookingStatus('<%= booking.getBookingId() %>')">
+                                    <i class="fas fa-sync-alt"></i> Update Status
+                                </button>
+                            </div>
+                            <div class="action-group">
+                                <h4>Other Actions</h4>
+                                <div class="action-buttons">
+                                    <button class="action-btn edit" onclick="window.location.href='edit-booking.jsp?bookingId=<%= booking.getBookingId() %>'">
+                                        <i class="fas fa-edit"></i> Edit Booking Details
+                                    </button>
+                                    <button class="action-btn print" onclick="window.print()">
+                                        <i class="fas fa-print"></i> Print Booking Details
+                                    </button>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div class="alert alert-warning">
+                                No booking available for actions.
+                            </div>
+                        <% } %>
+                    </div>
                     <div class="timestamp">
                         Last updated: <%= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date())%>
                     </div>
@@ -384,5 +556,47 @@
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <div id="notification" class="notification"></div>
+        <script>
+            function showNotification(message, isSuccess) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = 'notification ' + (isSuccess ? 'success' : 'error');
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+
+            function updateBookingStatus(bookingId) {
+                const newStatus = document.getElementById('bookingStatus').value;
+                if (confirm('Are you sure you want to change the booking status to ' + newStatus + '?')) {
+                    fetch('update-booking-status.jsp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'bookingId=' + bookingId + '&status=' + newStatus
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification(data.message, true);
+                            // Reload the page after a short delay to show the notification
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            showNotification(data.message, false);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Error updating booking status. Please try again.', false);
+                    });
+                }
+            }
+        </script>
     </body>
 </html>

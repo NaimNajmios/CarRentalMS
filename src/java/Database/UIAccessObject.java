@@ -5,6 +5,7 @@
 package Database;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +31,7 @@ import java.time.LocalDate;
 public class UIAccessObject {
 
     // Logger for debugging
-    private static final Logger LOGGER = Logger.getLogger(UIAccessObject.class.getName());
+    private static final Logger logger = Logger.getLogger(UIAccessObject.class.getName());
 
     // Instance of DatabaseConnection to manage database connections
     Connection connection = null;
@@ -38,16 +39,21 @@ public class UIAccessObject {
     ResultSet resultSet = null;
 
     public UIAccessObject() {
-        LOGGER.log(Level.INFO, "UIAccessObject instance created");
+        logger.log(Level.INFO, "UIAccessObject instance created");
+    }
+
+    private Connection getConnection() throws SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalms", "root", "admin");
     }
 
     // Fetch list of vehicles from the database in ArrayList, return ArrayList
     public ArrayList<Vehicle> getVehicleList() throws ClassNotFoundException, SQLException {
         ArrayList<Vehicle> vehicleList = new ArrayList<>();
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM vehicles");
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Vehicle vehicle = new Vehicle(); // Create a new Vehicle object for each row
@@ -64,11 +70,11 @@ public class UIAccessObject {
                 vehicle.setVehicleRegistrationNo(resultSet.getString("registrationNo"));
                 vehicle.setVehicleImagePath(resultSet.getString("vehicleImagePath"));
                 vehicleList.add(vehicle);
-                LOGGER.log(Level.FINE, "Retrieved vehicle: {0}", vehicle.getVehicleId());
+                logger.log(Level.FINE, "Retrieved vehicle: {0}", vehicle.getVehicleId());
             }
-            LOGGER.log(Level.INFO, "Successfully retrieved {0} vehicles.", vehicleList.size());
+            logger.log(Level.INFO, "Successfully retrieved {0} vehicles.", vehicleList.size());
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error fetching vehicle list from the database", e);
+            logger.log(Level.SEVERE, "Error fetching vehicle list from the database", e);
         } finally {
             // Close resources in a finally block to ensure they are always closed
             try {
@@ -81,9 +87,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return vehicleList;
@@ -92,10 +98,10 @@ public class UIAccessObject {
     public Vehicle getVehicleById(int vehicleId) throws ClassNotFoundException, SQLException {
         Vehicle vehicle = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM vehicles WHERE vehicleID = ?");
             preparedStatement.setInt(1, vehicleId);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 vehicle = new Vehicle();
@@ -111,9 +117,9 @@ public class UIAccessObject {
                 vehicle.setVehicleRatePerDay(resultSet.getString("ratePerDay"));
                 vehicle.setVehicleRegistrationNo(resultSet.getString("registrationNo"));
                 vehicle.setVehicleImagePath(resultSet.getString("vehicleImagePath"));
-                LOGGER.log(Level.INFO, "Retrieved vehicle with ID: {0}", vehicleId);
+                logger.log(Level.INFO, "Retrieved vehicle with ID: {0}", vehicleId);
             } else {
-                LOGGER.log(Level.WARNING, "No vehicle found with ID: {0}", vehicleId);
+                logger.log(Level.WARNING, "No vehicle found with ID: {0}", vehicleId);
             }
         } finally {
             // Close resources in a finally block to ensure they are always closed
@@ -127,9 +133,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return vehicle;
@@ -144,13 +150,13 @@ public class UIAccessObject {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT b.startDate, b.endDate FROM Booking b "
                     + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
                     + "WHERE vb.vehicleID = ? AND b.bookingStatus != 'Cancelled'");
             preparedStatement.setInt(1, vehicleId);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -168,7 +174,7 @@ public class UIAccessObject {
                     }
                 }
             }
-            LOGGER.log(Level.INFO, "Retrieved {0} booked dates for vehicle ID: {1}",
+            logger.log(Level.INFO, "Retrieved {0} booked dates for vehicle ID: {1}",
                     new Object[]{bookedDates.size(), vehicleId});
         } finally {
             // Close resources
@@ -182,9 +188,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return bookedDates;
@@ -195,21 +201,21 @@ public class UIAccessObject {
     public Booking getBookingDetails(int bookingId) throws ClassNotFoundException, SQLException {
         Booking booking = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT b.*, vb.vehicleID FROM Booking b "
                     + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
                     + "WHERE b.bookingID = ?");
             preparedStatement.setInt(1, bookingId);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 booking = new Booking();
                 booking.setBookingId(resultSet.getString("bookingID"));
                 booking.setVehicleId(resultSet.getString("vehicleID"));
-                LOGGER.log(Level.INFO, "Retrieved booking details for booking ID: {0}", bookingId);
+                logger.log(Level.INFO, "Retrieved booking details for booking ID: {0}", bookingId);
             } else {
-                LOGGER.log(Level.WARNING, "No booking found with ID: {0}", bookingId);
+                logger.log(Level.WARNING, "No booking found with ID: {0}", bookingId);
             }
         } finally {
             // Close resources
@@ -223,9 +229,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return booking;
@@ -236,21 +242,21 @@ public class UIAccessObject {
     public Booking getBookingDetails(String bookingId) throws ClassNotFoundException, SQLException {
         Booking booking = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT b.*, vb.vehicleID FROM Booking b "
                     + "JOIN bookingvehicle vb ON b.bookingID = vb.bookingID "
                     + "WHERE b.bookingID = ?");
             preparedStatement.setString(1, bookingId);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 booking = new Booking();
                 booking.setBookingId(resultSet.getString("bookingID"));
                 booking.setVehicleId(resultSet.getString("vehicleID"));
-                LOGGER.log(Level.INFO, "Retrieved booking details for booking ID: {0}", bookingId);
+                logger.log(Level.INFO, "Retrieved booking details for booking ID: {0}", bookingId);
             } else {
-                LOGGER.log(Level.WARNING, "No booking found with ID: {0}", bookingId);
+                logger.log(Level.WARNING, "No booking found with ID: {0}", bookingId);
             }
         } finally {
             // Close resources
@@ -264,9 +270,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return booking;
@@ -281,13 +287,13 @@ public class UIAccessObject {
 
         try {
             // Get database connection
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
 
             // SQL query to retrieve user information by userID
             String sql = "SELECT * FROM user WHERE userID = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, userID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
 
             // Execute the query
             resultSet = preparedStatement.executeQuery();
@@ -298,13 +304,13 @@ public class UIAccessObject {
                 user.setUserID(resultSet.getString("userID"));
                 user.setUsername(resultSet.getString("username"));
                 user.setRole(resultSet.getString("role"));
-                LOGGER.log(Level.INFO, "Retrieved user data for user ID: {0}", userID);
+                logger.log(Level.INFO, "Retrieved user data for user ID: {0}", userID);
             } else {
-                LOGGER.log(Level.WARNING, "No user found with userID: {0}", userID);
+                logger.log(Level.WARNING, "No user found with userID: {0}", userID);
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving user: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving user: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving user: " + e.getMessage());
         } finally {
             // Close resources
@@ -316,11 +322,11 @@ public class UIAccessObject {
                     preparedStatement.close();
                 }
                 if (connection != null) {
-                    DatabaseConnection.closeConnection(connection);
+                    connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error closing database resources: {0}", e.getMessage());
+                logger.log(Level.WARNING, "Error closing database resources: {0}", e.getMessage());
                 throw new RuntimeException("Error closing database resources: " + e.getMessage());
             }
         }
@@ -336,13 +342,13 @@ public class UIAccessObject {
 
         try {
             // Get database connection
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
 
             // SQL query to retrieve user information by userID
             String sql = "SELECT * FROM client WHERE userID = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, userID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
 
             // Execute the query
             resultSet = preparedStatement.executeQuery();
@@ -356,13 +362,13 @@ public class UIAccessObject {
                 client.setAddress(resultSet.getString("address"));
                 client.setPhoneNumber(resultSet.getString("phoneNumber"));
                 client.setEmail(resultSet.getString("email"));
-                LOGGER.log(Level.INFO, "Retrieved client data for user ID: {0}", userID);
+                logger.log(Level.INFO, "Retrieved client data for user ID: {0}", userID);
             } else {
-                LOGGER.log(Level.WARNING, "No user found with userID: {0}", userID);
+                logger.log(Level.WARNING, "No user found with userID: {0}", userID);
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving user: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving user: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving user: " + e.getMessage());
         } finally {
             // Close resources
@@ -374,11 +380,11 @@ public class UIAccessObject {
                     preparedStatement.close();
                 }
                 if (connection != null) {
-                    DatabaseConnection.closeConnection(connection);
+                    connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error closing database resources: {0}", e.getMessage());
+                logger.log(Level.WARNING, "Error closing database resources: {0}", e.getMessage());
                 throw new RuntimeException("Error closing database resources: " + e.getMessage());
             }
         }
@@ -395,13 +401,13 @@ public class UIAccessObject {
 
         try {
             // Get database connection
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
 
             // SQL query to retrieve client information by clientID
             String sql = "SELECT * FROM client WHERE clientID = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, clientID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
 
             // Execute the query
             resultSet = preparedStatement.executeQuery();
@@ -415,13 +421,13 @@ public class UIAccessObject {
                 client.setAddress(resultSet.getString("address"));
                 client.setPhoneNumber(resultSet.getString("phoneNumber"));
                 client.setEmail(resultSet.getString("email"));
-                LOGGER.log(Level.INFO, "Retrieved client data for client ID: {0}", clientID);
+                logger.log(Level.INFO, "Retrieved client data for client ID: {0}", clientID);
             } else {
-                LOGGER.log(Level.WARNING, "No client found with clientID: {0}", clientID);
+                logger.log(Level.WARNING, "No client found with clientID: {0}", clientID);
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving client: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving client: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving client: " + e.getMessage());
         } finally {
             // Close resources
@@ -433,11 +439,11 @@ public class UIAccessObject {
                     preparedStatement.close();
                 }
                 if (connection != null) {
-                    DatabaseConnection.closeConnection(connection);
+                    connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error closing database resources: {0}", e.getMessage());
+                logger.log(Level.WARNING, "Error closing database resources: {0}", e.getMessage());
                 throw new RuntimeException("Error closing database resources: " + e.getMessage());
             }
         }
@@ -453,13 +459,13 @@ public class UIAccessObject {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT * FROM Payment p JOIN Booking b ON p.bookingID = b.bookingID "
                     + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
                     + "WHERE b.clientID = ?");
             preparedStatement.setString(1, clientID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -477,10 +483,10 @@ public class UIAccessObject {
                 booking.setCreatedBy(resultSet.getString("createdBy"));
                 bookingList.add(booking);
             }
-            LOGGER.log(Level.INFO, "Retrieved {0} booking details for client ID: {1}",
+            logger.log(Level.INFO, "Retrieved {0} booking details for client ID: {1}",
                     new Object[]{bookingList.size(), clientID});
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving booking details: " + e.getMessage());
         } finally {
             // Close resources
@@ -494,9 +500,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return bookingList;
@@ -510,7 +516,7 @@ public class UIAccessObject {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT "
                     + "p.paymentID, "
                     + "p.bookingID, "
@@ -532,7 +538,7 @@ public class UIAccessObject {
                     + "JOIN Booking b ON p.bookingID = b.bookingID "
                     + "WHERE b.clientID = ?");
             preparedStatement.setString(1, clientID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -549,10 +555,10 @@ public class UIAccessObject {
                 payment.setProofOfPayment(resultSet.getString("proofOfPayment"));
                 paymentList.add(payment);
             }
-            LOGGER.log(Level.INFO, "Retrieved {0} payment details for client ID: {1}",
+            logger.log(Level.INFO, "Retrieved {0} payment details for client ID: {1}",
                     new Object[]{paymentList.size(), clientID});
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving payment details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving payment details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving payment details: " + e.getMessage());
         } finally {
             // Close resources
@@ -566,9 +572,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return paymentList;
@@ -578,7 +584,7 @@ public class UIAccessObject {
     public Payment getPaymentById(String paymentID) {
         Payment payment = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection
                     .prepareStatement("SELECT p.paymentID, p.paymentType, p.amount, p.paymentStatus, p.referenceNo, "
                             + "p.paymentDate, p.invoiceNumber, p.handledBy, p.proofOfPayment, "
@@ -590,7 +596,7 @@ public class UIAccessObject {
                             + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
                             + "WHERE p.paymentID = ?");
             preparedStatement.setString(1, paymentID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 payment = new Payment();
@@ -604,13 +610,13 @@ public class UIAccessObject {
                 payment.setInvoiceNumber(resultSet.getString("invoiceNumber"));
                 payment.setHandledBy(resultSet.getString("handledBy"));
                 payment.setProofOfPayment(resultSet.getString("proofOfPayment"));
-                LOGGER.log(Level.INFO, "Retrieved payment details for payment ID: {0}", paymentID);
+                logger.log(Level.INFO, "Retrieved payment details for payment ID: {0}", paymentID);
             } else {
-                LOGGER.log(Level.WARNING, "No payment found with payment ID: {0}", paymentID);
+                logger.log(Level.WARNING, "No payment found with payment ID: {0}", paymentID);
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving payment details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving payment details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving payment details: " + e.getMessage());
         } finally {
             // Close resources
@@ -624,9 +630,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return payment;
@@ -636,7 +642,7 @@ public class UIAccessObject {
     public Booking getBookingByBookingId(String bookingID) {
         Booking booking = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection
                     .prepareStatement("SELECT p.paymentID, p.paymentType, p.amount, p.paymentStatus, p.referenceNo, "
                             + "p.paymentDate, p.invoiceNumber, p.handledBy, p.proofOfPayment, "
@@ -648,7 +654,7 @@ public class UIAccessObject {
                             + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
                             + "WHERE p.bookingID = ?");
             preparedStatement.setString(1, bookingID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 booking = new Booking();
@@ -664,7 +670,7 @@ public class UIAccessObject {
                 booking.setBookingStatus(resultSet.getString("bookingStatus"));
             }
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving payment details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving payment details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving payment details: " + e.getMessage());
         } finally {
             // Close resources
@@ -678,9 +684,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return booking;
@@ -690,7 +696,7 @@ public class UIAccessObject {
     public ArrayList<Booking> getAllBookingDetails() {
         ArrayList<Booking> bookingList = new ArrayList<>();
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             // From booking table, booking vehicle table, and payment table
             preparedStatement = connection.prepareStatement("SELECT * FROM Booking b "
                     + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
@@ -711,7 +717,7 @@ public class UIAccessObject {
                 bookingList.add(booking);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving all booking details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving all booking details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving all booking details: " + e.getMessage());
         } finally {
             // Close resources
@@ -725,9 +731,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return bookingList;
@@ -737,7 +743,7 @@ public class UIAccessObject {
     public Booking getBookingByPaymentId(String paymentID) {
         Booking booking = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM Booking b "
                     + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
                     + "JOIN Payment p ON b.bookingID = p.bookingID "
@@ -758,7 +764,7 @@ public class UIAccessObject {
                 booking.setBookingStatus(resultSet.getString("bookingStatus"));
             }
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving booking details: " + e.getMessage());
         } finally {
             // Close resources
@@ -772,9 +778,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return booking;
@@ -784,7 +790,7 @@ public class UIAccessObject {
     public Payment getPaymentByBookingId(String bookingID) {
         Payment payment = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM Payment WHERE bookingID = ?");
             preparedStatement.setString(1, bookingID);
             resultSet = preparedStatement.executeQuery();
@@ -802,7 +808,7 @@ public class UIAccessObject {
                 payment.setProofOfPayment(resultSet.getString("proofOfPayment"));
             }
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving payment ID: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving payment ID: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving payment ID: " + e.getMessage());
         } finally {
             // Close resources
@@ -816,9 +822,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return payment;
@@ -828,7 +834,7 @@ public class UIAccessObject {
     public ArrayList<Payment> getAllPaymentDetails() {
         ArrayList<Payment> paymentList = new ArrayList<>();
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT p.paymentID, p.paymentType, p.amount, p.paymentStatus, "
                     + "p.referenceNo, p.paymentDate, p.invoiceNumber, p.handledBy, p.proofOfPayment, "
@@ -855,7 +861,7 @@ public class UIAccessObject {
                 paymentList.add(payment);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving all payment details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving all payment details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving all payment details: " + e.getMessage());
         } finally {
             // Close resources
@@ -869,9 +875,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return paymentList;
@@ -881,13 +887,13 @@ public class UIAccessObject {
     public Booking getBookingById(String bookingID) {
         Booking booking = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT b.*, bv.* FROM Booking b "
                     + "JOIN BookingVehicle bv ON b.bookingID = bv.bookingID "
                     + "WHERE b.bookingID = ?");
             preparedStatement.setString(1, bookingID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 booking = new Booking();
@@ -902,12 +908,12 @@ public class UIAccessObject {
                 booking.setTotalCost(resultSet.getString("totalCost"));
                 booking.setBookingStatus(resultSet.getString("bookingStatus"));
                 booking.setCreatedBy(resultSet.getString("createdBy"));
-                LOGGER.log(Level.INFO, "Retrieved booking details for booking ID: {0}", bookingID);
+                logger.log(Level.INFO, "Retrieved booking details for booking ID: {0}", bookingID);
             } else {
-                LOGGER.log(Level.WARNING, "No booking found with booking ID: {0}", bookingID);
+                logger.log(Level.WARNING, "No booking found with booking ID: {0}", bookingID);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving booking details: " + e.getMessage());
         } finally {
             // Close resources
@@ -921,9 +927,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return booking;
@@ -934,22 +940,22 @@ public class UIAccessObject {
     public BookingVehicle getBookingVehicleByBookingId(String bookingID) {
         BookingVehicle bookingVehicle = null;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM BookingVehicle WHERE bookingID = ?");
             preparedStatement.setString(1, bookingID);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 bookingVehicle = new BookingVehicle();
                 bookingVehicle.setBookingID(resultSet.getString("bookingID"));
                 bookingVehicle.setVehicleID(resultSet.getString("vehicleID"));
                 bookingVehicle.setAssignedDate(resultSet.getString("assignedDate"));
-                LOGGER.log(Level.INFO, "Retrieved booking vehicle details for booking ID: {0}", bookingID);
+                logger.log(Level.INFO, "Retrieved booking vehicle details for booking ID: {0}", bookingID);
             } else {
-                LOGGER.log(Level.WARNING, "No booking vehicle found with booking ID: {0}", bookingID);
+                logger.log(Level.WARNING, "No booking vehicle found with booking ID: {0}", bookingID);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving booking vehicle details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving booking vehicle details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving booking vehicle details: " + e.getMessage());
         } finally {
             // Close resources
@@ -963,9 +969,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return bookingVehicle;
@@ -975,7 +981,7 @@ public class UIAccessObject {
     public ArrayList<Booking> getAllBookingDetailsByBookingId(String bookingID) {
         ArrayList<Booking> bookingList = new ArrayList<>();
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM Booking WHERE bookingID = ?");
             preparedStatement.setString(1, bookingID);
             resultSet = preparedStatement.executeQuery();
@@ -994,7 +1000,7 @@ public class UIAccessObject {
                 bookingList.add(booking);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Database error while retrieving booking details: {0}", e.getMessage());
             throw new RuntimeException("Database error while retrieving booking details: " + e.getMessage());
         } finally {
             // Close resources
@@ -1008,9 +1014,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return bookingList;
@@ -1021,13 +1027,13 @@ public class UIAccessObject {
     public int getTotalBookings() throws SQLException, ClassNotFoundException {
         int total = 0;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM booking");
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 total = resultSet.getInt(1);
-                LOGGER.log(Level.INFO, "Retrieved total bookings count: {0}", total);
+                logger.log(Level.INFO, "Retrieved total bookings count: {0}", total);
             }
         } finally {
             try {
@@ -1040,9 +1046,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return total;
@@ -1052,14 +1058,14 @@ public class UIAccessObject {
     public int getBookingsByStatus(String status) throws SQLException, ClassNotFoundException {
         int count = 0;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM booking WHERE bookingStatus = ?");
             preparedStatement.setString(1, status);
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 count = resultSet.getInt(1);
-                LOGGER.log(Level.INFO, "Retrieved {0} bookings count: {1}", new Object[]{status, count});
+                logger.log(Level.INFO, "Retrieved {0} bookings count: {1}", new Object[]{status, count});
             }
         } finally {
             try {
@@ -1072,9 +1078,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return count;
@@ -1084,14 +1090,14 @@ public class UIAccessObject {
     public double getTotalRevenue() throws SQLException, ClassNotFoundException {
         double revenue = 0.0;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement(
                     "SELECT SUM(CAST(totalCost AS DECIMAL(10,2))) FROM booking WHERE bookingStatus = 'Completed'");
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 revenue = resultSet.getDouble(1);
-                LOGGER.log(Level.INFO, "Retrieved total revenue: {0}", revenue);
+                logger.log(Level.INFO, "Retrieved total revenue: {0}", revenue);
             }
         } finally {
             try {
@@ -1104,9 +1110,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return revenue;
@@ -1116,13 +1122,13 @@ public class UIAccessObject {
     public int getTotalVehicles() throws SQLException, ClassNotFoundException {
         int total = 0;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM vehicles");
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 total = resultSet.getInt(1);
-                LOGGER.log(Level.INFO, "Retrieved total vehicles count: {0}", total);
+                logger.log(Level.INFO, "Retrieved total vehicles count: {0}", total);
             }
         } finally {
             try {
@@ -1135,9 +1141,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return total;
@@ -1147,13 +1153,13 @@ public class UIAccessObject {
     public int getAvailableVehicles() throws SQLException, ClassNotFoundException {
         int available = 0;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM vehicles WHERE availability = true");
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 available = resultSet.getInt(1);
-                LOGGER.log(Level.INFO, "Retrieved available vehicles count: {0}", available);
+                logger.log(Level.INFO, "Retrieved available vehicles count: {0}", available);
             }
         } finally {
             try {
@@ -1166,9 +1172,9 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return available;
@@ -1178,13 +1184,13 @@ public class UIAccessObject {
     public int getTotalClients() throws SQLException, ClassNotFoundException {
         int total = 0;
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = getConnection();
             preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM user WHERE role = 'client'");
-            LOGGER.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 total = resultSet.getInt(1);
-                LOGGER.log(Level.INFO, "Retrieved total clients count: {0}", total);
+                logger.log(Level.INFO, "Retrieved total clients count: {0}", total);
             }
         } finally {
             try {
@@ -1197,12 +1203,114 @@ public class UIAccessObject {
                 if (connection != null) {
                     connection.close();
                 }
-                LOGGER.log(Level.FINE, "Database resources closed.");
+                logger.log(Level.FINE, "Database resources closed.");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", ex);
+                logger.log(Level.WARNING, "Error closing database resources", ex);
             }
         }
         return total;
+    }
+
+    public boolean updateBookingStatus(String bookingId, String newStatus) {
+        boolean success = false;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        
+        try {
+            connection = getConnection();
+            preparedStatement = connection.prepareStatement(
+                "UPDATE Booking SET bookingStatus = ? WHERE bookingID = ?"
+            );
+            preparedStatement.setString(1, newStatus);
+            preparedStatement.setString(2, bookingId);
+            
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            int rowsAffected = preparedStatement.executeUpdate();
+            success = rowsAffected > 0;
+            
+            if (success) {
+                logger.log(Level.INFO, "Successfully updated booking {0} status to {1}", 
+                    new Object[]{bookingId, newStatus});
+            } else {
+                logger.log(Level.WARNING, "No booking found with ID: {0}", bookingId);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            logger.log(Level.SEVERE, "Error updating booking status: {0}", e.getMessage());
+            throw new RuntimeException("Error updating booking status: " + e.getMessage());
+        } finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+                logger.log(Level.FINE, "Database resources closed.");
+            } catch (SQLException ex) {
+                logger.log(Level.WARNING, "Error closing database resources", ex);
+            }
+        }
+        return success;
+    }
+
+    public boolean updateBooking(String bookingId, String startDate, String endDate, String totalCost) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        boolean success = false;
+        
+        try {
+            conn = getConnection();
+            // Start transaction
+            conn.setAutoCommit(false);
+            
+            // Update booking
+            String bookingSql = "UPDATE Booking SET BookingStartDate = ?, BookingEndDate = ?, TotalCost = ? WHERE BookingId = ?";
+            pstmt = conn.prepareStatement(bookingSql);
+            pstmt.setString(1, startDate);
+            pstmt.setString(2, endDate);
+            pstmt.setString(3, totalCost);
+            pstmt.setString(4, bookingId);
+            
+            int bookingRowsAffected = pstmt.executeUpdate();
+            
+            // Update payment if total cost changed
+            if (bookingRowsAffected > 0) {
+                String paymentSql = "UPDATE Payment SET Amount = ? WHERE BookingId = ?";
+                pstmt = conn.prepareStatement(paymentSql);
+                pstmt.setString(1, totalCost);
+                pstmt.setString(2, bookingId);
+                pstmt.executeUpdate();
+            }
+            
+            // Commit transaction
+            conn.commit();
+            success = bookingRowsAffected > 0;
+            
+            logger.log(Level.INFO, "Booking and payment update executed. Booking rows affected: {0}", bookingRowsAffected);
+        } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                logger.log(Level.SEVERE, "Error rolling back transaction", ex);
+            }
+            logger.log(Level.SEVERE, "Error updating booking and payment", e);
+        } catch (ClassNotFoundException e) {
+            logger.log(Level.SEVERE, "Database driver not found", e);
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Error closing database resources", e);
+            }
+        }
+        
+        return success;
     }
 
 }
