@@ -52,7 +52,7 @@ public class UIAccessObject {
         ArrayList<Vehicle> vehicleList = new ArrayList<>();
         try {
             connection = getConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM vehicles");
+            preparedStatement = connection.prepareStatement("SELECT * FROM vehicles WHERE isDeleted = 0");
             logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {

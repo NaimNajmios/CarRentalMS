@@ -95,7 +95,7 @@ public class vehicleDAO {
 
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("select * from vehicles");
+            PreparedStatement ps = con.prepareStatement("select * from vehicles where isDeleted = 0");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Vehicles e = new Vehicles();
@@ -165,6 +165,21 @@ public class vehicleDAO {
             ex.printStackTrace();
         }
         return imagePath;
+    }
+
+    public static boolean softDeleteVehicle(String vehicleID) {
+        boolean success = false;
+        try {
+            Connection con = DatabaseConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement("UPDATE vehicles SET isDeleted = 1 WHERE vehicleID = ?");
+            ps.setString(1, vehicleID);
+            int rowsAffected = ps.executeUpdate();
+            success = rowsAffected > 0;
+            con.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return success;
     }
 
 }
