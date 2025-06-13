@@ -313,14 +313,6 @@
 
                 <div class="dashboard-header">
                     <h2>My Profile</h2>
-                    <div class="action-buttons">
-                        <button type="button" id="editProfileBtn" class="btn btn-primary">
-                            <i class="fas fa-edit"></i> Edit Profile
-                        </button>
-                        <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display: none;">
-                            <i class="fas fa-times"></i> Cancel Edit
-                        </button>
-                    </div>
                 </div>
 
                 <div class="profile-card">
@@ -400,7 +392,18 @@
                         </div>
 
                         <div class="text-center mt-4">
-                             <button type="submit" id="updateBtn" class="btn btn-success" style="display: none;"><i class="fas fa-save"></i> Update Profile</button>
+                            <button type="button" id="editProfileBtn" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </button>
+                            <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display: none;">
+                                <i class="fas fa-times"></i> Cancel Edit
+                            </button>
+                            <button type="submit" id="updateBtn" class="btn btn-success" style="display: none;">
+                                <i class="fas fa-save"></i> Update Profile
+                            </button>
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -416,6 +419,44 @@
                         if (con != null) try { con.close(); } catch (SQLException ignore) { /* ignore */ }
                     }
                 %>
+            </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="changePasswordForm" action="${pageContext.request.contextPath}/ChangePasswordServlet" method="post">
+                            <input type="hidden" name="userID" value="<%= loggedInUser.getUserID()%>">
+                            
+                            <div class="mb-3">
+                                <label for="oldPassword" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            </div>
+
+                            <div class="alert alert-danger" id="passwordError" style="display: none;"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="submitPasswordChange">Change Password</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -480,6 +521,38 @@
                 });
 
                 setEditMode(false);
+
+                // Password change form validation
+                const changePasswordForm = document.getElementById('changePasswordForm');
+                const submitPasswordChange = document.getElementById('submitPasswordChange');
+                const passwordError = document.getElementById('passwordError');
+
+                submitPasswordChange.addEventListener('click', function() {
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    
+                    // Reset error message
+                    passwordError.style.display = 'none';
+                    passwordError.textContent = '';
+
+                    // Validate password match
+                    if (newPassword !== confirmPassword) {
+                        passwordError.textContent = 'New passwords do not match!';
+                        passwordError.style.display = 'block';
+                        return;
+                    }
+
+                    // Submit the form if validation passes
+                    changePasswordForm.submit();
+                });
+
+                // Clear form and error message when modal is closed
+                const changePasswordModal = document.getElementById('changePasswordModal');
+                changePasswordModal.addEventListener('hidden.bs.modal', function () {
+                    changePasswordForm.reset();
+                    passwordError.style.display = 'none';
+                    passwordError.textContent = '';
+                });
             });
 
             function previewProfileImage(input) {

@@ -138,9 +138,6 @@
                 <span id="passwordError" class="text-danger"></span>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
-            <div class="forgot-password-container">
-                <a href="#" class="forgot-password-link">Forgot password?</a>
-            </div>
         </form>
         <div class="register-link-container">
             <a href="register.jsp">Register here</a>

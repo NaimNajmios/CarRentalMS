@@ -593,4 +593,69 @@ public class DatabaseCRUD {
         }
         return success;
     }
+
+    /**
+     * Changes a user's password after verifying the old password.
+     * 
+     * @param userID The ID of the user whose password is being changed
+     * @param oldPassword The current password for verification
+     * @param newPassword The new password to set
+     * @return true if password was changed successfully, false if old password is incorrect
+     * @throws SQLException if there is an error accessing the database
+     */
+    public boolean changePassword(String userID, String oldPassword, String newPassword) 
+            throws SQLException, ClassNotFoundException {
+        LOGGER.info("Starting changePassword method for userID: " + userID);
+        Connection connection = null;
+        boolean success = false;
+
+        try {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+            LOGGER.info("Database connection established and auto-commit set to false");
+
+            // First verify the old password
+            String verifySql = "SELECT COUNT(*) FROM user WHERE userID = ? AND password = ?";
+            PreparedStatement verifyStmt = connection.prepareStatement(verifySql);
+            verifyStmt.setString(1, userID);
+            verifyStmt.setString(2, oldPassword);
+            ResultSet rs = verifyStmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                // Old password is correct, proceed with password change
+                String updateSql = "UPDATE user SET password = ? WHERE userID = ?";
+                PreparedStatement updateStmt = connection.prepareStatement(updateSql);
+                updateStmt.setString(1, newPassword);
+                updateStmt.setString(2, userID);
+                
+                int rowsAffected = updateStmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    connection.commit();
+                    success = true;
+                    LOGGER.info("Password changed successfully for userID: " + userID);
+                }
+            } else {
+                LOGGER.warning("Password change failed - Incorrect old password for userID: " + userID);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error changing password", e);
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.SEVERE, "Error rolling back transaction", ex);
+                }
+            }
+            throw e;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing connection", e);
+                }
+            }
+        }
+        return success;
+    }
 }
