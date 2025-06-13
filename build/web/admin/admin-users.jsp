@@ -1,17 +1,11 @@
-<%@ page import="Booking.Booking"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="Database.UIAccessObject"%>
-<%@ page import="Payment.Payment"%>
 <%@ page import="java.text.SimpleDateFormat"%>
 <%@ page import="java.util.Date"%>
-<%@ page import="java.text.DecimalFormat"%>
-<%@ page import="java.util.Map"%>
-<%@ page import="java.util.logging.Logger"%>
-<%@ page import="java.util.logging.Level"%>
-<%@ page import="java.sql.*" %>
-<%@ page import="Database.DatabaseConnection" %>
+<%@ page import="java.sql.*"%>
+<%@ page import="Database.DatabaseConnection"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +26,6 @@
                 margin: 0;
                 padding-top: 56px;
             }
-
             header {
                 position: fixed;
                 top: 0;
@@ -40,19 +33,16 @@
                 width: 100%;
                 z-index: 1000;
             }
-
             .wrapper {
                 display: flex;
                 flex-grow: 1;
             }
-
             .sidebar {
                 width: 250px;
                 background-color: #f8f9fa;
                 padding: 20px;
                 flex-shrink: 0;
             }
-
             .sidebar .nav-link {
                 color: #4b5563;
                 padding: 0.75rem 1rem;
@@ -60,46 +50,60 @@
                 display: block;
                 text-decoration: none;
             }
-
             .sidebar .nav-link:hover {
                 color: #2563eb;
                 background-color: #e9ecef;
             }
-
             .sidebar .nav-link i {
                 margin-right: 0.75rem;
             }
-
             .sidebar .nav-item {
                 margin-bottom: 0.5rem;
             }
-
             .dashboard-content {
                 flex-grow: 1;
                 padding: 2rem;
                 background-color: #f4f4f4;
             }
-
             .dashboard-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 2rem;
             }
-
             .dashboard-header h2 {
                 font-size: 1.75rem;
                 color: #333;
                 font-weight: 700;
                 margin: 0;
             }
-
-            /* Tabs Styling */
+            .search-box {
+                position: relative;
+                max-width: 300px;
+            }
+            .search-box input {
+                padding: 0.6rem 1rem 0.6rem 2.2rem;
+                border: 1px solid #ced4da;
+                border-radius: 0.375rem;
+                width: 100%;
+                font-size: 0.9rem;
+                transition: border-color 0.2s;
+            }
+            .search-box input:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+            .search-box i {
+                position: absolute;
+                left: 0.75rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #6c757d;
+            }
             .nav-tabs {
                 border-bottom: 1px solid #dee2e6;
                 margin-bottom: 1.5rem;
             }
-
             .nav-tabs .nav-link {
                 border: 1px solid transparent;
                 border-top-left-radius: 0.25rem;
@@ -112,94 +116,104 @@
                 cursor: pointer;
                 text-decoration: none;
             }
-
             .nav-tabs .nav-link:hover {
                 border-color: #e9ecef #e9ecef #dee2e6;
                 background-color: #e9ecef;
             }
-
             .nav-tabs .nav-link.active {
                 color: #495057;
                 background-color: #fff;
                 border-color: #dee2e6 #dee2e6 #fff;
                 font-weight: 600;
             }
-
             .tab-content .tab-pane {
                 display: none;
-                padding-top: 1rem; /* Space between tabs and content */
+                padding-top: 1rem;
             }
-
             .tab-content .tab-pane.active {
                 display: block;
             }
-
             .data-table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-bottom: 0;
                 background-color: #fff;
                 border: 1px solid #dee2e6;
                 border-radius: 8px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                margin-top: 1rem;
             }
-
-            .data-table th,
-            .data-table td {
+            .data-table th, .data-table td {
                 padding: 1rem;
                 text-align: left;
                 font-size: 0.95rem;
                 color: #555;
             }
-
             .data-table th {
                 background-color: #f8f9fa;
                 color: #34495e;
                 font-weight: 600;
-                text-transform: capitalize;
                 border-bottom: 2px solid #dee2e6;
             }
-
             .data-table td {
-                 border-bottom: 1px solid #dee2e6;
+                border-bottom: 1px solid #dee2e6;
             }
-
-            .data-table tbody tr:hover {
+            .data-table tr:hover {
                 background-color: #f1f3f5;
             }
-
-            .action-buttons .btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.85rem;
-                font-weight: 500;
-                border-radius: 5px;
-                text-decoration: none;
-                display: inline-block;
-                margin-right: 0.5rem;
+            .btn-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+                margin: 0 0.2rem;
             }
-
+            .btn-info {
+                background-color: #17a2b8;
+                color: #fff;
+                border: 1px solid #17a2b8;
+            }
+            .btn-info:hover {
+                background-color: #138496;
+                border-color: #117a8b;
+            }
             .btn-warning {
                 background-color: #ffc107;
                 color: #212529;
                 border: 1px solid #ffc107;
             }
-
             .btn-warning:hover {
                 background-color: #e0a800;
                 border-color: #d39e00;
             }
-
             .btn-danger {
                 background-color: #dc3545;
                 color: #fff;
                 border: 1px solid #dc3545;
             }
-
             .btn-danger:hover {
                 background-color: #c82333;
                 border-color: #bd2130;
             }
-
+            .alert {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border: 1px solid transparent;
+                border-radius: 0.375rem;
+            }
+            .alert-success {
+                color: #155724;
+                background-color: #d4edda;
+                border-color: #c3e6cb;
+            }
+            .alert-danger {
+                color: #721c24;
+                background-color: #f8d7da;
+                border-color: #f5c6cb;
+            }
+            .timestamp {
+                font-size: 0.9rem;
+                color: #7f8c8d;
+                text-align: right;
+                margin-top: 1rem;
+            }
             @media (max-width: 768px) {
                 body {
                     padding-top: 69px;
@@ -212,60 +226,79 @@
                     margin-bottom: 1rem;
                     padding: 15px;
                 }
+                .dashboard-content {
+                    padding: 1.5rem;
+                }
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+                .search-box {
+                    max-width: 100%;
+                }
+                .data-table {
+                    display: block;
+                    overflow-x: auto;
+                    white-space: nowrap;
+                }
+                .data-table thead, .data-table tbody, .data-table tr {
+                    display: block;
+                }
+                .data-table th, .data-table td {
+                    display: inline-block;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+                .data-table th {
+                    position: sticky;
+                    top: 0;
+                    background-color: #f8f9fa;
+                }
             }
-        </style>    </head>
+        </style>
+    </head>
     <body>
         <header>
             <%@ include file="../include/admin-header.jsp" %>
         </header>
-
         <div class="wrapper">
             <%@ include file="../include/admin-sidebar.jsp" %>
-
             <main class="dashboard-content">
                 <%
                     String message = request.getParameter("message");
                     String messageType = request.getParameter("type");
                     if (message != null && messageType != null) {
                 %>
-                <div class="alert alert-<%= messageType%> alert-dismissible fade show" role="alert">
-                    <%= message%>
+                <div class="alert alert-<%= messageType %> alert-dismissible fade show" role="alert">
+                    <%= message %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <%
                     }
                 %>
-                <%-- 
-                    Document   : adminPage
-                    Created on : 11 Jun 2025, 11:57:08?am
-                    Author     : khair
-                --%>
-
-                <%
-                    String userRole = (String) session.getAttribute("loggedInRole");
-                %>
-
                 <div class="dashboard-header">
                     <h2>User Management</h2>
+                    <a href="addUser.jsp" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add New User
+                    </a>
                 </div>
-
                 <ul class="nav nav-tabs" id="userTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" type="button" role="tab" aria-controls="client" aria-selected="true">Clients</a>
+                        <a class="nav-link active" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" role="tab" aria-controls="client" aria-selected="true">Clients</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab" aria-controls="admin" aria-selected="false">Administrators</a>
+                        <a class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" role="tab" aria-controls="admin" aria-selected="false">Administrators</a>
                     </li>
                 </ul>
-
                 <div class="tab-content" id="userTabsContent">
                     <div class="tab-pane fade show active" id="client" role="tabpanel" aria-labelledby="client-tab">
-                        <div class="dashboard-header d-flex justify-content-end mb-3">
-                             
+                        <div class="search-box mb-3">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="clientSearchInput" placeholder="Search by ID, name, phone, email..." onkeyup="filterTable('clientTable')">
                         </div>
-
                         <div class="table-responsive">
-                            <table class="data-table">
+                            <table class="data-table" id="clientTable">
                                 <thead>
                                     <tr>
                                         <th>Client Id</th>
@@ -277,8 +310,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <%-- This scriptlet retrieves and displays client data from the database. --%>
-                                    <% 
+                                    <%
                                         Connection conClient = null;
                                         PreparedStatement psClient = null;
                                         ResultSet rsClient = null;
@@ -289,48 +321,49 @@
                                             while (rsClient.next()) {
                                     %>
                                     <tr>
-                                        <td><%= rsClient.getString("clientID")%></td>
-                                        <td><%= rsClient.getString("userID")%></td>
-                                        <td><%= rsClient.getString("name")%></td>
-                                        <td><%= rsClient.getString("phoneNumber")%></td>
-                                        <td><%= rsClient.getString("email")%></td>
+                                        <td><%= rsClient.getString("clientID") %></td>
+                                        <td><%= rsClient.getString("userID") %></td>
+                                        <td><%= rsClient.getString("name") %></td>
+                                        <td><%= rsClient.getString("phoneNumber") %></td>
+                                        <td><%= rsClient.getString("email") %></td>
                                         <td class="text-center">
-                                            <a href="viewClient.jsp?userID=<%= rsClient.getString("userID")%>" class="btn btn-info me-2" title="View Details">
+                                            <a href="viewClient.jsp?userID=<%= rsClient.getString("userID") %>" class="btn btn-info btn-sm" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="editClient.jsp?userID=<%= rsClient.getString("userID")%>" class="btn btn-warning me-2" title="Edit">
+                                            <a href="editClient.jsp?userID=<%= rsClient.getString("userID") %>" class="btn btn-warning btn-sm" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="${pageContext.request.contextPath}/DeleteClientServlet?userID=<%= rsClient.getString("userID")%>" 
-                                               class="btn btn-danger" 
+                                            <a href="${pageContext.request.contextPath}/DeleteClientServlet?userID=<%= rsClient.getString("userID") %>" 
+                                               class="btn btn-danger btn-sm" 
                                                onclick="return confirm('Are you sure you want to delete this client?');" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>
                                     </tr>
-                                    <% 
+                                    <%
                                             }
                                         } catch (SQLException e) {
-                                            e.printStackTrace(); // Log the exception for debugging
+                                            e.printStackTrace();
                                         } finally {
-                                            // Close resources in a finally block to ensure they are closed even if an exception occurs
-                                            if (rsClient != null) try { rsClient.close(); } catch (SQLException ignore) { /* ignore */ }
-                                            if (psClient != null) try { psClient.close(); } catch (SQLException ignore) { /* ignore */ }
-                                            if (conClient != null) try { conClient.close(); } catch (SQLException ignore) { /* ignore */ }
+                                            if (rsClient != null) try { rsClient.close(); } catch (SQLException ignore) {}
+                                            if (psClient != null) try { psClient.close(); } catch (SQLException ignore) {}
+                                            if (conClient != null) try { conClient.close(); } catch (SQLException ignore) {}
                                         }
                                     %>
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
-                        <div class="dashboard-header d-flex justify-content-end mb-3">
-                             
+                        <div class="timestamp">
+                            Last updated: <%= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) %>
                         </div>
-
+                    </div>
+                    <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
+                        <div class="search-box mb-3">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="adminSearchInput" placeholder="Search by ID, name, phone, email..." onkeyup="filterTable('adminTable')">
+                        </div>
                         <div class="table-responsive">
-                            <table class="data-table">
+                            <table class="data-table" id="adminTable">
                                 <thead>
                                     <tr>
                                         <th>Admin Id</th>
@@ -342,8 +375,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <%-- This scriptlet retrieves and displays administrator data from the database. --%>
-                                    <% 
+                                    <%
                                         Connection con = null;
                                         Statement stmt = null;
                                         ResultSet rs = null;
@@ -360,38 +392,62 @@
                                         <td><%= rs.getString("email") %></td>
                                         <td><%= rs.getString("phoneNumber") %></td>
                                         <td class="text-center">
-                                            <a href="viewAdmin.jsp?userID=<%= rs.getString("userID")%>" class="btn btn-info me-2" title="View Details">
+                                            <a href="viewAdmin.jsp?userID=<%= rs.getString("userID") %>" class="btn btn-info btn-sm" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="editAdmin.jsp?userID=<%= rs.getString("userID") %>" class="btn btn-warning me-2" title="Edit">
+                                            <a href="editAdmin.jsp?userID=<%= rs.getString("userID") %>" class="btn btn-warning btn-sm" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <a href="${pageContext.request.contextPath}/DeleteAdminServlet?userID=<%= rs.getString("userID") %>" 
-                                               class="btn btn-danger" 
+                                               class="btn btn-danger btn-sm" 
                                                onclick="return confirm('Are you sure you want to delete this administrator?');" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>
                                     </tr>
-                                    <% 
+                                    <%
                                             }
                                         } catch (SQLException e) {
-                                            e.printStackTrace(); // Log the exception for debugging
+                                            e.printStackTrace();
                                         } finally {
-                                            // Close resources in a finally block to ensure they are closed even if an exception occurs
-                                            if (rs != null) try { rs.close(); } catch (SQLException ignore) { /* ignore */ }
-                                            if (stmt != null) try { stmt.close(); } catch (SQLException ignore) { /* ignore */ }
-                                            if (con != null) try { con.close(); } catch (SQLException ignore) { /* ignore */ }
+                                            if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+                                            if (stmt != null) try { stmt.close(); } catch (SQLException ignore) {}
+                                            if (con != null) try { con.close(); } catch (SQLException ignore) {}
                                         }
                                     %>
                                 </tbody>
                             </table>
                         </div>
+                        <div class="timestamp">
+                            Last updated: <%= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) %>
+                        </div>
                     </div>
                 </div>
             </main>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function filterTable(tableId) {
+                var input = document.getElementById(tableId === 'clientTable' ? 'clientSearchInput' : 'adminSearchInput');
+                var filter = input.value.toUpperCase();
+                var table = document.getElementById(tableId);
+                var tr = table.getElementsByTagName("tr");
 
-        <%@ include file="../include/scripts.html" %>
+                for (var i = 1; i < tr.length; i++) {
+                    var td = tr[i].getElementsByTagName("td");
+                    var found = false;
+                    for (var j = 0; j < td.length - 1; j++) {
+                        if (td[j]) {
+                            var txtValue = td[j].textContent || td[j].innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    tr[i].style.display = found ? "" : "none";
+                }
+            }
+        </script>
     </body>
 </html>

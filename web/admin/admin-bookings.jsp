@@ -265,23 +265,25 @@
             }
 
             .new-booking-btn {
-                padding: 0.6rem 1.2rem;
+                padding: 0.5rem 1rem;
                 background-color: #28a745;
                 color: white;
                 border: none;
-                border-radius: 0.375rem;
+                border-radius: 4px;
                 font-size: 0.9rem;
                 font-weight: 500;
                 cursor: pointer;
-                transition: background-color 0.2s;
+                transition: all 0.2s ease;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                margin-left: 1rem;
+                text-decoration: none;
             }
 
             .new-booking-btn:hover {
                 background-color: #218838;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
 
             .new-booking-btn i {
