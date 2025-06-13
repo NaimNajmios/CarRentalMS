@@ -511,7 +511,7 @@
                             </button>
                         </p>
                         <% } else { %>
-                        <p><strong>Proof of Payment:</strong> Not available</p>
+                        <p><strong>Proof of Payment:</strong> Not submitted yet</p>
                         <% } %>
                         <% } else { %>
                         <div class="alert alert-warning">
