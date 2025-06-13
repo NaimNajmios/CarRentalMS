@@ -122,11 +122,18 @@
 
             .filter-buttons {
                 margin-bottom: 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .filter-buttons .left-buttons {
+                display: flex;
+                gap: 0.5rem;
             }
 
             .filter-buttons button {
                 padding: 0.5rem 1rem;
-                margin-right: 0.5rem;
                 border: 1px solid #ccc;
                 border-radius: 4px;
                 cursor: pointer;
@@ -229,6 +236,30 @@
                 display: none !important;
             }
 
+            .new-booking-btn {
+                padding: 0.6rem 1.2rem;
+                background-color: #28a745;
+                color: white;
+                border: none;
+                border-radius: 0.375rem;
+                font-size: 0.9rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-left: 1rem;
+            }
+
+            .new-booking-btn:hover {
+                background-color: #218838;
+            }
+
+            .new-booking-btn i {
+                font-size: 0.9rem;
+            }
+
             @media (max-width: 768px) {
                 body {
                     padding-top: 69px;
@@ -291,10 +322,16 @@
                 </div>
 
                 <div class="filter-buttons">
-                    <button class="active" onclick="filterBookings('all')">All</button>
-                    <button onclick="filterBookings('Pending')">Pending</button>
-                    <button onclick="filterBookings('Completed')">Completed</button>
-                    <button onclick="filterBookings('Cancelled')">Cancelled</button>
+                    <div class="left-buttons">
+                        <button class="active" onclick="filterBookings('all')">All</button>
+                        <button onclick="filterBookings('Pending')">Pending</button>
+                        <button onclick="filterBookings('Completed')">Completed</button>
+                        <button onclick="filterBookings('Cancelled')">Cancelled</button>
+                    </div>
+                    <a href="admin-create-booking.jsp" class="new-booking-btn">
+                        <i class="fas fa-plus"></i>
+                        New Booking
+                    </a>
                 </div>
 
                 <%

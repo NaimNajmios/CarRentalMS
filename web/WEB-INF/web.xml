@@ -63,6 +63,14 @@
         <servlet-name>CancelBookingServlet</servlet-name>
         <servlet-class>CancelBookingServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetVehicleBookedDates</servlet-name>
+        <servlet-class>Servlet.GetVehicleBookedDates</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateBookingServlet</servlet-name>
+        <servlet-class>CreateBookingServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
@@ -122,6 +130,14 @@
     <servlet-mapping>
         <servlet-name>CancelBookingServlet</servlet-name>
         <url-pattern>/CancelBookingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetVehicleBookedDates</servlet-name>
+        <url-pattern>/GetVehicleBookedDates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateBookingServlet</servlet-name>
+        <url-pattern>/CreateBooking</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

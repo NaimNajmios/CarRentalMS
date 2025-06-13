@@ -236,65 +236,137 @@
         <%@ include file="include/scripts.html" %>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script>
-                            const startDateInput = document.getElementById("startDate");
-                            const endDateInput = document.getElementById("endDate");
-                            const totalCostInput = document.getElementById("totalCost");
-                            const ratePerDay = <%= vehicle.getVehicleRatePerDay()%>;
-                            const bookedDates = JSON.parse('<%= bookedDatesJson%>');
+            const startDateInput = document.getElementById("startDate");
+            const endDateInput = document.getElementById("endDate");
+            const totalCostInput = document.getElementById("totalCost");
+            const ratePerDay = <%= vehicle.getVehicleRatePerDay()%>;
+            const bookedDates = JSON.parse('<%= bookedDatesJson%>');
+            const MAX_BOOKING_DAYS = 30; // Maximum booking duration in days
 
-                            flatpickr(startDateInput, {
-                                enableTime: false,
-                                dateFormat: "Y-m-d",
-                                minDate: "<%= currentDate%>",
-                                disable: bookedDates,
-                                onChange: function (selectedDates, dateStr, instance) {
-                                    endDatePicker.set("minDate", dateStr);
-                                    calculateTotalCost();
-                                }
-                            });
+            // Function to validate date selection
+            function validateDateSelection(startDate, endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
-                            const endDatePicker = flatpickr(endDateInput, {
-                                enableTime: false,
-                                dateFormat: "Y-m-d",
-                                minDate: "<%= currentDate%>",
-                                disable: bookedDates,
-                                onChange: calculateTotalCost
-                            });
+                // Check if dates are valid
+                if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                    return { valid: false, message: "Please select valid dates" };
+                }
 
-                            function calculateTotalCost() {
-                                const startDateValue = startDateInput.value;
-                                const endDateValue = endDateInput.value;
+                // Check if start date is in the past
+                if (start < today) {
+                    return { valid: false, message: "Start date cannot be in the past" };
+                }
 
-                                if (startDateValue && endDateValue) {
-                                    const startDate = new Date(startDateValue);
-                                    const endDate = new Date(endDateValue);
+                // Check if end date is before start date
+                if (end < start) {
+                    return { valid: false, message: "End date must be after start date" };
+                }
 
-                                    if (startDate <= endDate) {
-                                        const timeDifference = endDate.getTime() - startDate.getTime();
-                                        const numberOfDays = Math.ceil(timeDifference / (1000 * 3600 * 24)) + 1; // Include both start and end date
-                                        const total = numberOfDays * ratePerDay;
-                                        totalCostInput.value = total.toFixed(2);
-                                    } else {
-                                        totalCostInput.value = "";
-                                    }
-                                } else {
-                                    totalCostInput.value = "";
-                                }
-                            }
+                // Check booking duration
+                const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                if (daysDiff > MAX_BOOKING_DAYS) {
+                    return { valid: false, message: `Maximum booking duration is ${MAX_BOOKING_DAYS} days` };
+                }
 
-                            function validateForm() {
-                                const startDate = new Date(startDateInput.value);
-                                const endDate = new Date(endDateInput.value);
-                                if (startDate > endDate) {
-                                    alert("Start date must be before or on the end date.");
-                                    return false;
-                                }
-                                if (!totalCostInput.value) {
-                                    alert("Please select a valid start and end date to calculate the total cost.");
-                                    return false;
-                                }
-                                return true;
-                            }
+                // Check if any selected dates are booked
+                const selectedDates = [];
+                let currentDate = new Date(start);
+                while (currentDate <= end) {
+                    selectedDates.push(currentDate.toISOString().split('T')[0]);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                const hasBookedDates = selectedDates.some(date => bookedDates.includes(date));
+                if (hasBookedDates) {
+                    return { valid: false, message: "Selected dates include unavailable dates" };
+                }
+
+                return { valid: true };
+            }
+
+            // Function to calculate total cost
+            function calculateTotalCost() {
+                const startDateValue = startDateInput.value;
+                const endDateValue = endDateInput.value;
+
+                if (startDateValue && endDateValue) {
+                    const validation = validateDateSelection(startDateValue, endDateValue);
+                    if (!validation.valid) {
+                        totalCostInput.value = "";
+                        showError(validation.message);
+                        return;
+                    }
+
+                    const startDate = new Date(startDateValue);
+                    const endDate = new Date(endDateValue);
+                    const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                    const totalCost = daysDiff * ratePerDay;
+                    totalCostInput.value = totalCost.toFixed(2);
+                    hideError();
+                }
+            }
+
+            // Function to show error message
+            function showError(message) {
+                let errorDiv = document.getElementById("dateError");
+                if (!errorDiv) {
+                    errorDiv = document.createElement("div");
+                    errorDiv.id = "dateError";
+                    errorDiv.className = "alert alert-danger mt-2";
+                    startDateInput.parentNode.appendChild(errorDiv);
+                }
+                errorDiv.textContent = message;
+            }
+
+            // Function to hide error message
+            function hideError() {
+                const errorDiv = document.getElementById("dateError");
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+            }
+
+            // Initialize Flatpickr for start date
+            flatpickr(startDateInput, {
+                enableTime: false,
+                dateFormat: "Y-m-d",
+                minDate: "<%= currentDate%>",
+                disable: bookedDates,
+                onChange: function (selectedDates, dateStr, instance) {
+                    endDatePicker.set("minDate", dateStr);
+                    calculateTotalCost();
+                }
+            });
+
+            // Initialize Flatpickr for end date
+            const endDatePicker = flatpickr(endDateInput, {
+                enableTime: false,
+                dateFormat: "Y-m-d",
+                minDate: "<%= currentDate%>",
+                disable: bookedDates,
+                onChange: calculateTotalCost
+            });
+
+            // Add form validation
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const startDateValue = startDateInput.value;
+                const endDateValue = endDateInput.value;
+
+                if (!startDateValue || !endDateValue) {
+                    e.preventDefault();
+                    showError("Please select both start and end dates");
+                    return;
+                }
+
+                const validation = validateDateSelection(startDateValue, endDateValue);
+                if (!validation.valid) {
+                    e.preventDefault();
+                    showError(validation.message);
+                }
+            });
         </script>
     </body>
 </html>

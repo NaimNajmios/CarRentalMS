@@ -163,6 +163,10 @@ public class UpdateClientServlet extends HttpServlet {
             profileImagePath = "images/profilepic/default_profile.jpg";
         }
 
+        // Determine the original page from which the request originated
+        String referer = request.getHeader("Referer");
+        boolean isClientProfileUpdate = referer != null && referer.contains("client-profile.jsp");
+
         try (Connection con = DatabaseConnection.getConnection()) {
             String query = "UPDATE client SET name=?, address=?, phoneNumber=?, email=?, profileImagePath=? WHERE userID=?";
             PreparedStatement ps = con.prepareStatement(query);
@@ -173,10 +177,6 @@ public class UpdateClientServlet extends HttpServlet {
             ps.setString(5, profileImagePath);
             ps.setString(6, userID);
             int status = ps.executeUpdate();
-
-            // Determine the original page from which the request originated
-            String referer = request.getHeader("Referer");
-            boolean isClientProfileUpdate = referer != null && referer.contains("client-profile.jsp");
 
             if (status > 0) {
                 LOGGER.log(Level.INFO, "Client details updated successfully for User ID: {0}", userID);
@@ -206,7 +206,7 @@ public class UpdateClientServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/admin/editClient.jsp?userID=" + userID + "&message=Error+updating+client+details.&type=danger");
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Database error during client update for User ID: {0}: {1}", new Object[]{userID, e.getMessage()});
             if (isClientProfileUpdate) {
                 request.getSession().setAttribute("errorMessage", "Error updating profile: " + e.getMessage());
@@ -214,6 +214,8 @@ public class UpdateClientServlet extends HttpServlet {
             } else {
                 response.sendRedirect(request.getContextPath() + "/admin/editClient.jsp?userID=" + userID + "&message=Error+updating+client:+" + e.getMessage() + "&type=danger");
             }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UpdateClientServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

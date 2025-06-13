@@ -352,4 +352,41 @@ public class DatabaseCRUD {
             }
         }
     }
+
+    public String getLatestBookingId(String clientId) throws SQLException, ClassNotFoundException {
+        LOGGER.info("Getting latest booking ID for client: " + clientId);
+        String bookingId = null;
+        Connection connection = null;
+
+        try {
+            connection = getConnection();
+            String query = "SELECT bookingID FROM BOOKING WHERE clientID = ? ORDER BY bookingID DESC LIMIT 1";
+            
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, clientId);
+                
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        bookingId = resultSet.getString("bookingID");
+                        LOGGER.info("Found latest booking ID: " + bookingId);
+                    } else {
+                        LOGGER.warning("No booking found for client: " + clientId);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting latest booking ID", e);
+            throw e;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing connection", e);
+                }
+            }
+        }
+        
+        return bookingId;
+    }
 }

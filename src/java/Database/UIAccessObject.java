@@ -1314,4 +1314,47 @@ public class UIAccessObject {
         return success;
     }
 
+    public ArrayList<Client> getClientList() throws SQLException, ClassNotFoundException {
+        ArrayList<Client> clientList = new ArrayList<>();
+        try {
+            connection = getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM client");
+            logger.log(Level.INFO, "Executing SQL query: {0}", preparedStatement.toString());
+            resultSet = preparedStatement.executeQuery();
+            
+            while (resultSet.next()) {
+                Client client = new Client();
+                client.setUserID(resultSet.getString("userID"));
+                client.setClientID(resultSet.getString("clientID"));
+                client.setName(resultSet.getString("name"));
+                client.setAddress(resultSet.getString("address"));
+                client.setPhoneNumber(resultSet.getString("phoneNumber"));
+                client.setEmail(resultSet.getString("email"));
+                client.setProfileImagePath(resultSet.getString("profileImagePath"));
+                clientList.add(client);
+                logger.log(Level.FINE, "Retrieved client: {0}", client.getClientID());
+            }
+            logger.log(Level.INFO, "Successfully retrieved {0} clients.", clientList.size());
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error fetching client list from the database", e);
+            throw e;
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+                logger.log(Level.FINE, "Database resources closed.");
+            } catch (SQLException ex) {
+                logger.log(Level.WARNING, "Error closing database resources", ex);
+            }
+        }
+        return clientList;
+    }
+
 }
