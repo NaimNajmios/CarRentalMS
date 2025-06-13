@@ -1,3 +1,18 @@
+<%@ page import="User.User"%>
+<%@ page import="User.Client"%>
+
+<%
+    // Check if user is logged in
+    if (session.getAttribute("loggedInUser") == null || session.getAttribute("loggedInClient") == null) {
+        response.sendRedirect(request.getContextPath() + "/login.jsp?message=Please+log+in+to+access+client+area.&type=warning");
+        return;
+    }
+    
+    // Get logged in user and client
+    User loggedUser = (User) session.getAttribute("loggedInUser");
+    Client loggedClient = (Client) session.getAttribute("loggedInClient");
+%>
+
 <%-- header.jsp --%>
 <header>
     <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top">
@@ -32,6 +47,11 @@
                         <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="Logout">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link text-primary">
+                            <i class="fas fa-user-circle"></i> <%= loggedClient.getName() %>
+                        </span>
                     </li>
                 </ul>
             </div>
