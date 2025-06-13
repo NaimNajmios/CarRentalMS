@@ -1253,7 +1253,7 @@ public class UIAccessObject {
         return success;
     }
 
-    public boolean updateBooking(String bookingId, String startDate, String endDate, String totalCost) {
+    public boolean updateBooking(String bookingId, String startDate, String endDate, String totalCost, String adminid) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         boolean success = false;
@@ -1264,7 +1264,7 @@ public class UIAccessObject {
             conn.setAutoCommit(false);
             
             // Update booking
-            String bookingSql = "UPDATE Booking SET BookingStartDate = ?, BookingEndDate = ?, TotalCost = ? WHERE BookingId = ?";
+            String bookingSql = "UPDATE Booking SET StartDate = ?, EndDate = ?, TotalCost = ? WHERE BookingId = ?";
             pstmt = conn.prepareStatement(bookingSql);
             pstmt.setString(1, startDate);
             pstmt.setString(2, endDate);
@@ -1275,10 +1275,11 @@ public class UIAccessObject {
             
             // Update payment if total cost changed
             if (bookingRowsAffected > 0) {
-                String paymentSql = "UPDATE Payment SET Amount = ? WHERE BookingId = ?";
+                String paymentSql = "UPDATE Payment SET Amount = ?, handledBy = ? WHERE BookingId = ?";
                 pstmt = conn.prepareStatement(paymentSql);
                 pstmt.setString(1, totalCost);
-                pstmt.setString(2, bookingId);
+                pstmt.setString(2, adminid);
+                pstmt.setString(3, bookingId);
                 pstmt.executeUpdate();
             }
             

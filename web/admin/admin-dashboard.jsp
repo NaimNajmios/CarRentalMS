@@ -10,6 +10,27 @@
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.logging.Logger"%>
 <%@ page import="java.util.logging.Level"%>
+<%@ page import="User.User"%>
+<%@ page import="User.Admin"%>
+
+<%
+    Logger logger = Logger.getLogger("admin-dashboard.jsp");
+    
+    // Get session attributes
+    User loggedInUser = (User) session.getAttribute("loggedInUser");
+    Admin loggedInAdmin = (Admin) session.getAttribute("loggedInAdmin");
+    
+    logger.log(Level.INFO, "Session check - User: {0}, Admin: {1}", 
+            new Object[]{loggedInUser != null ? loggedInUser.toString() : "null", 
+                        loggedInAdmin != null ? loggedInAdmin.toString() : "null"});
+    
+    // Redirect if not logged in as admin
+    if (loggedInUser == null || loggedInAdmin == null) {
+        logger.log(Level.WARNING, "Session attributes missing - redirecting to login");
+        response.sendRedirect(request.getContextPath() + "/login.jsp?message=Please+log+in+to+access+admin+area.&type=warning");
+        return;
+    }
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -370,7 +391,6 @@
                 <%
                     UIAccessObject dao = new UIAccessObject();
                     DecimalFormat currencyFormat = new DecimalFormat("#,##0.00");
-                    Logger logger = Logger.getLogger(this.getClass().getName());
 
                     int totalBookings = 0;
                     int completedBookings = 0;

@@ -62,6 +62,7 @@ public class LoginServlet extends HttpServlet {
                 // Create and store User object in session
                 User user = new User(userID, username, role);
                 session.setAttribute("loggedInUser", user);
+                LOGGER.log(Level.INFO, "User object stored in session: {0}", user.toString());
 
                 if ("Administrator".equalsIgnoreCase(role)) {
                     LOGGER.log(Level.INFO, "Processing administrator login for userID: {0}", userID);
@@ -70,15 +71,27 @@ public class LoginServlet extends HttpServlet {
                     PreparedStatement adminStmt = con.prepareStatement(adminSql);
                     adminStmt.setString(1, userID);
                     ResultSet adminRs = adminStmt.executeQuery();
+                    
                     if (adminRs.next()) {
                         // Create and store Admin object in session
                         Admin admin = new Admin(userID, adminRs.getString("adminID"), adminRs.getString("name"), adminRs.getString("email"), adminRs.getString("profileImagePath"));
                         session.setAttribute("loggedInAdmin", admin);
-                        LOGGER.log(Level.INFO, "Admin session created for adminID: {0}", adminRs.getString("adminID"));
+                        LOGGER.log(Level.INFO, "Admin object stored in session: {0}", admin.toString());
+                        
+                        // Verify session attributes after setting
+                        User sessionUser = (User) session.getAttribute("loggedInUser");
+                        Admin sessionAdmin = (Admin) session.getAttribute("loggedInAdmin");
+                        LOGGER.log(Level.INFO, "Session verification - User: {0}, Admin: {1}", 
+                                new Object[]{sessionUser != null ? sessionUser.toString() : "null", 
+                                           sessionAdmin != null ? sessionAdmin.toString() : "null"});
+                        
+                        adminRs.close();
+                        adminStmt.close();
+                        response.sendRedirect(request.getContextPath() + "/admin/admin-dashboard.jsp");
+                    } else {
+                        LOGGER.log(Level.WARNING, "No admin record found for userID: {0}", userID);
+                        response.sendRedirect("login.jsp?message=No+administrator+record+found.&type=danger");
                     }
-                    adminRs.close();
-                    adminStmt.close();
-                    response.sendRedirect("admin/admin-dashboard.jsp");
                 } else { 
                     LOGGER.log(Level.INFO, "Processing client login for userID: {0}", userID);
                     // Handle client login

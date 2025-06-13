@@ -502,10 +502,17 @@
                         <p><strong>Amount:</strong> RM <%= payment.getAmount()%></p>
                         <p><strong>Payment Status:</strong> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%></p>
                         <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? payment.getPaymentDate() : "N/A"%></p>
-                        <p><strong>Reference No:</strong> <%= payment.getReferenceNo() != null ? payment.getReferenceNo() : "N/A"%></p>
                         <p><strong>Invoice Number:</strong> <%= payment.getInvoiceNumber() != null ? payment.getInvoiceNumber() : "N/A"%></p>
                         <p><strong>Handled By:</strong> <%= payment.getHandledBy() != null ? payment.getHandledBy() : "N/A"%></p>
-                        <p><strong>Proof of Payment:</strong> <%= payment.getProofOfPayment() != null ? payment.getProofOfPayment() : "N/A"%></p>
+                        <% if (payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) { %>
+                        <p><strong>Proof of Payment:</strong> 
+                            <button class="action-btn view-proof-btn" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')">
+                                <i class="fas fa-file-pdf"></i> View Proof
+                            </button>
+                        </p>
+                        <% } else { %>
+                        <p><strong>Proof of Payment:</strong> Not available</p>
+                        <% } %>
                         <% } else { %>
                         <div class="alert alert-warning">
                             Payment information not available.
@@ -595,6 +602,14 @@
                         console.error('Error:', error);
                         showNotification('Error updating booking status. Please try again.', false);
                     });
+                }
+            }
+
+            function viewProofOfPayment(proofUrl) {
+                if (proofUrl) {
+                    window.open(proofUrl, '_blank');
+                } else {
+                    alert('No proof of payment available.');
                 }
             }
         </script>

@@ -2,6 +2,7 @@
 <%@ page import="Database.UIAccessObject"%>
 <%@ page import="Vehicle.Vehicle"%>
 <%@ page import="User.Client"%>
+<%@ page import="User.Admin"%>
 <%@ page import="Payment.Payment"%>
 <%@ page import="java.text.SimpleDateFormat"%>
 <%@ page import="java.util.Date"%>
@@ -201,6 +202,18 @@
                     Payment payment = null;
                     String errorMessage = null;
 
+                    // Retrieve admin object from session
+                    Admin loggedInAdmin = (Admin) session.getAttribute("loggedInAdmin");
+                    
+                    // Redirect to login if admin not logged in
+                    if (loggedInAdmin == null || loggedInAdmin.getAdminID() == null || loggedInAdmin.getAdminID().isEmpty()) {
+                        response.sendRedirect(request.getContextPath() + "/login.jsp?message=Please+log+in+to+edit+bookings.&type=warning");
+                        return;
+                    }
+
+                    String adminId = loggedInAdmin.getAdminID();
+                    logger.log(Level.INFO, "Admin ID: {0}", adminId);
+
                     if (bookingId != null && !bookingId.trim().isEmpty()) {
                         UIAccessObject uiAccessObject = new UIAccessObject();
                         try {
@@ -238,11 +251,11 @@
                 </div>
                 <% if (booking != null) {%>
                 <form class="edit-form" id="editBookingForm" action="update-booking.jsp" method="POST">
-                    <input type="hidden" name="bookingId" value="<%= bookingId %>">
-                    
                     <div class="form-section">
                         <h3>Booking Information</h3>
                         <div class="readonly-info">
+                            <input type="hidden" name="bookingId" value="<%= bookingId %>">
+                            <input type="hidden" name="adminId" value="<%= ((Admin)session.getAttribute("loggedInAdmin")).getAdminID() %>">
                             <p><strong>Booking ID:</strong> <%= bookingId %></p>
                             <p><strong>Booking Date:</strong> <%= booking.getBookingDate() %></p>
                         </div>
@@ -307,7 +320,6 @@
                             <p><strong>Amount:</strong> RM <%= payment.getAmount() %></p>
                             <p><strong>Payment Status:</strong> <%= payment.getPaymentStatus() %></p>
                             <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() %></p>
-                            <p><strong>Reference No:</strong> <%= payment.getReferenceNo() %></p>
                             <p><strong>Invoice Number:</strong> <%= payment.getInvoiceNumber() %></p>
                             <p><strong>Handled By:</strong> <%= payment.getHandledBy() %></p>
                         </div>
@@ -353,25 +365,41 @@
                 
                 const formData = new FormData(this);
                 const bookingId = formData.get('bookingId');
-                
-                if (!bookingId) {
-                    showNotification("Booking ID is missing", false);
-                    return false;
-                }
-                
-                // Validate all required fields
+                const adminId = formData.get('adminId');
                 const startDate = formData.get('startDate');
                 const endDate = formData.get('endDate');
                 const totalCost = formData.get('totalCost');
                 
-                if (!startDate || !endDate || !totalCost) {
-                    showNotification("All fields are required", false);
+                // Log form data for debugging
+                console.log('Form Data:', {
+                    bookingId: bookingId,
+                    adminId: adminId,
+                    startDate: startDate,
+                    endDate: endDate,
+                    totalCost: totalCost
+                });
+                
+                // Validate all required fields
+                if (!bookingId || !adminId || !startDate || !endDate || !totalCost) {
+                    showNotification("All fields are required. Please ensure you are logged in as admin.", false);
                     return false;
                 }
                 
+                // Validate dates
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                if (start > end) {
+                    showNotification("Start date must be before or on the end date", false);
+                    return false;
+                }
+                
+                // Submit form data
                 fetch('update-booking.jsp', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(formData)
                 })
                 .then(response => response.json())
                 .then(data => {
