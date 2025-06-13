@@ -67,14 +67,14 @@ public class LoginServlet extends HttpServlet {
                 if ("Administrator".equalsIgnoreCase(role)) {
                     LOGGER.log(Level.INFO, "Processing administrator login for userID: {0}", userID);
                     // Handle administrator login
-                    String adminSql = "SELECT adminID, name, email, profileImagePath FROM administrator WHERE userID = ? AND isDeleted = 0";
+                    String adminSql = "SELECT adminID, name, email, phoneNumber, profileImagePath FROM administrator WHERE userID = ? AND isDeleted = 0";
                     PreparedStatement adminStmt = con.prepareStatement(adminSql);
                     adminStmt.setString(1, userID);
                     ResultSet adminRs = adminStmt.executeQuery();
                     
                     if (adminRs.next()) {
                         // Create and store Admin object in session
-                        Admin admin = new Admin(userID, adminRs.getString("adminID"), adminRs.getString("name"), adminRs.getString("email"), adminRs.getString("profileImagePath"));
+                        Admin admin = new Admin(userID, adminRs.getString("adminID"), adminRs.getString("name"), adminRs.getString("email"), adminRs.getString("phoneNumber"), adminRs.getString("profileImagePath"));
                         session.setAttribute("loggedInAdmin", admin);
                         LOGGER.log(Level.INFO, "Admin object stored in session: {0}", admin.toString());
                         

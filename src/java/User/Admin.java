@@ -6,16 +6,18 @@ public class Admin {
     private String adminID;
     private String name;
     private String email;
+    private String phoneNumber;
     private String profileImagePath;
 
     public Admin() {
     }
 
-    public Admin(String userID, String adminID, String name, String email, String profileImagePath) {
+    public Admin(String userID, String adminID, String name, String email, String phoneNumber, String profileImagePath) {
         this.userID = userID;
         this.adminID = adminID;
         this.name = name;
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.profileImagePath = profileImagePath;
     }
 
@@ -46,6 +48,15 @@ public class Admin {
     public String getEmail() {
         return this.email;
     }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+    
 
     public void setEmail(String email) {
         this.email = email;

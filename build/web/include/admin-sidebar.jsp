@@ -6,6 +6,11 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="admin-profile.jsp">
+                <i class="fa fa-user-shield"></i> My Profile
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="admin-users.jsp">
                 <i class="fa fa-users"></i> User Management
             </a>

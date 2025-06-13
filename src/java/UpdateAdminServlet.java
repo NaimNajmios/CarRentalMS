@@ -19,6 +19,8 @@ import javax.servlet.http.Part;
 import java.io.File;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import User.Admin;
+import User.User;
 
 /**
  *
@@ -31,7 +33,7 @@ import java.util.logging.Level;
 public class UpdateAdminServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateAdminServlet.class.getName());
-    private static final String UPLOAD_DIRECTORY = "uploads/profile_pics/"; // Relative path for storage
+    private static final String UPLOAD_DIRECTORY = "images/profilepic";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -93,95 +95,84 @@ public class UpdateAdminServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String currentImagePath = request.getParameter("currentImagePath");
 
-        String profileImagePath = null;
-        Part profileImagePart = null;
-        try {
-            profileImagePart = request.getPart("profileImage");
-        } catch (ServletException e) {
-            LOGGER.log(Level.WARNING, "Error retrieving profile image part: {0}", e.getMessage());
-        }
-
-        if (profileImagePart != null && profileImagePart.getSize() > 0) {
-            String originalFileName = profileImagePart.getSubmittedFileName();
-            String extension = "";
-            if (originalFileName != null && originalFileName.contains(".")) {
-                extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-            }
-
-            String baseUploadPath = getServletContext().getRealPath("/");
-            if (baseUploadPath == null) {
-                baseUploadPath = System.getProperty("upload.path", System.getProperty("user.home") + "/app/uploads/");
-                LOGGER.log(Level.WARNING, "ServletContext.getRealPath() returned null, using fallback path: {0}", baseUploadPath);
-            }
-            String uploadPath = baseUploadPath + UPLOAD_DIRECTORY;
+        // Get the uploaded file
+        Part filePart = request.getPart("profileImage");
+        String profileImagePath = currentImagePath;
+        
+        // Handle file upload if a new image was selected
+        if (filePart != null && filePart.getSize() > 0) {
+            String fileName = System.currentTimeMillis() + "_" + getSubmittedFileName(filePart);
+            String uploadPath = getUploadPath(request);
+            
+            // Create directory if it doesn't exist
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
-                boolean dirCreated = uploadDir.mkdirs();
-                if (dirCreated) {
-                    LOGGER.log(Level.INFO, "Created upload directory: {0}", uploadPath);
-                } else {
-                    LOGGER.log(Level.SEVERE, "Failed to create upload directory: {0}. Check permissions.", uploadPath);
-                    throw new IOException("Unable to create upload directory: " + uploadPath);
+                uploadDir.mkdir();
+            }
+            
+            // Save the file
+            filePart.write(uploadPath + File.separator + fileName);
+            profileImagePath = UPLOAD_DIRECTORY + "/" + fileName;
+            
+            // Delete old image if it exists and is not the default
+            if (currentImagePath != null && !currentImagePath.isEmpty() && 
+                !currentImagePath.equals(UPLOAD_DIRECTORY + "/default_profile.jpg")) {
+                File oldFile = new File(request.getServletContext().getRealPath("/") + currentImagePath);
+                if (oldFile.exists()) {
+                    oldFile.delete();
                 }
             }
-
-            if (!uploadDir.canWrite()) {
-                LOGGER.log(Level.SEVERE, "Upload directory is not writable: {0}. Check permissions.", uploadPath);
-                throw new IOException("Upload directory is not writable: " + uploadPath);
-            }
-
-            String randomFileName;
-            File uploadFile;
-            do {
-                randomFileName = System.currentTimeMillis() + "_" + Math.round(Math.random() * 1000) + extension;
-                uploadFile = new File(uploadPath + randomFileName);
-            } while (uploadFile.exists());
-
-            profileImagePath = UPLOAD_DIRECTORY + randomFileName;
-            try {
-                profileImagePart.write(uploadFile.getAbsolutePath());
-                LOGGER.log(Level.INFO, "Profile image uploaded successfully to: {0}", uploadFile.getAbsolutePath());
-                if (uploadFile.exists()) {
-                    LOGGER.log(Level.INFO, "Confirmed: Profile image file exists at: {0}", uploadFile.getAbsolutePath());
-                } else {
-                    LOGGER.log(Level.SEVERE, "Profile image file does not exist after writing: {0}", uploadFile.getAbsolutePath());
-                    profileImagePath = currentImagePath;
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Error writing profile image to disk: {0}", e.getMessage());
-                profileImagePath = currentImagePath;
-            }
-        } else {
-            LOGGER.log(Level.INFO, "No new profile image uploaded or file is empty. Retaining current image.");
-            profileImagePath = currentImagePath;
-        }
-
-        // If currentImagePath was empty and no new file was uploaded, set to default
-        if (profileImagePath == null || profileImagePath.isEmpty()) {
-            profileImagePath = "images/profilepic/default_profile.jpg";
         }
 
         try (Connection con = DatabaseConnection.getConnection()) {
-            String query = "UPDATE administrator SET name=?, email=?, phoneNumber=?, profileImagePath=? WHERE userID=?";
+            String query = "UPDATE administrator SET name=?, phoneNumber=?, email=?, profileImagePath=? WHERE userID=?";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, name);
-            ps.setString(2, email);
-            ps.setString(3, phone);
+            ps.setString(2, phone);
+            ps.setString(3, email);
             ps.setString(4, profileImagePath);
             ps.setString(5, userID);
             int status = ps.executeUpdate();
 
             if (status > 0) {
-                LOGGER.log(Level.INFO, "Administrator details updated successfully for User ID: {0}", userID);
-                response.sendRedirect(request.getContextPath() + "/admin/viewAdmin.jsp?userID=" + userID + "&message=Administrator+updated+successfully.&type=success");
+                LOGGER.log(Level.INFO, "Admin details updated successfully for User ID: {0}", userID);
+                
+                // Update the session data
+                Admin updatedAdmin = (Admin) request.getSession().getAttribute("loggedInAdmin");
+                if (updatedAdmin != null) {
+                    updatedAdmin.setName(name);
+                    updatedAdmin.setPhoneNumber(phone);
+                    updatedAdmin.setEmail(email);
+                    updatedAdmin.setProfileImagePath(profileImagePath);
+                    request.getSession().setAttribute("loggedInAdmin", updatedAdmin);
+                }
+                
+                request.getSession().setAttribute("successMessage", "Profile updated successfully.");
+                response.sendRedirect(request.getContextPath() + "/admin/admin-profile.jsp");
             } else {
-                LOGGER.log(Level.WARNING, "Failed to update administrator details for User ID: {0}", userID);
-                response.sendRedirect(request.getContextPath() + "/admin/editAdmin.jsp?userID=" + userID + "&message=Error+updating+administrator+details.&type=danger");
+                request.getSession().setAttribute("errorMessage", "Failed to update profile.");
+                response.sendRedirect(request.getContextPath() + "/admin/admin-profile.jsp");
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Database error during administrator update for User ID: {0}: {1}", new Object[]{userID, e.getMessage()});
-            response.sendRedirect(request.getContextPath() + "/admin/editAdmin.jsp?userID=" + userID + "&message=Error+updating+administrator:+" + e.getMessage() + "&type=danger");
+            LOGGER.log(Level.SEVERE, "Error updating admin profile", e);
+            request.getSession().setAttribute("errorMessage", "An error occurred while updating your profile.");
+            response.sendRedirect(request.getContextPath() + "/admin/admin-profile.jsp");
         }
+    }
+
+    private String getSubmittedFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                return token.substring(token.indexOf("=") + 2, token.length() - 1);
+            }
+        }
+        return "";
+    }
+
+    private String getUploadPath(HttpServletRequest request) {
+        return request.getServletContext().getRealPath("/") + UPLOAD_DIRECTORY;
     }
 
     /**
