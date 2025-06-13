@@ -492,4 +492,105 @@ public class DatabaseCRUD {
         
         return bookingId;
     }
+
+    /**
+     * Registers a new walk-in user (client or admin) in the database.
+     * 
+     * @param username The username for the new user
+     * @param password The password for the new user
+     * @param role The role of the user (Client or Administrator)
+     * @param name The full name of the user
+     * @param email The email address of the user
+     * @param address The address of the user
+     * @param phoneNumber The phone number of the user
+     * @return true if registration was successful, false otherwise
+     * @throws SQLException if there is an error accessing the database
+     */
+    public boolean registerWalkInUser(String username, String password, String role, 
+            String name, String email, String address, String phoneNumber) 
+            throws SQLException, ClassNotFoundException {
+        LOGGER.info("Starting registerWalkInUser method for username: " + username);
+        Connection connection = null;
+        boolean success = false;
+
+        try {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+            LOGGER.info("Database connection established and auto-commit set to false");
+
+            // Check if username or email already exists
+            String checkExistingSql = "SELECT COUNT(*) FROM user u LEFT JOIN client c ON u.userID = c.userID " +
+                    "LEFT JOIN administrator a ON u.userID = a.userID " +
+                    "WHERE u.username = ? OR c.email = ? OR a.email = ?";
+            PreparedStatement psCheck = connection.prepareStatement(checkExistingSql);
+            psCheck.setString(1, username);
+            psCheck.setString(2, email);
+            psCheck.setString(3, email);
+            ResultSet rsCheck = psCheck.executeQuery();
+            
+            if (rsCheck.next() && rsCheck.getInt(1) > 0) {
+                LOGGER.warning("Registration failed - Username or email already exists: " + username + ", email: " + email);
+                return false;
+            }
+
+            // Insert into user table
+            String userSql = "INSERT INTO user (username, password, role) VALUES (?, ?, ?)";
+            PreparedStatement psUser = connection.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS);
+            psUser.setString(1, username);
+            psUser.setString(2, password);
+            psUser.setString(3, role);
+            psUser.executeUpdate();
+
+            ResultSet rs = psUser.getGeneratedKeys();
+            if (rs.next()) {
+                int userID = rs.getInt(1);
+                LOGGER.info("Generated userID: " + userID);
+
+                // Insert into appropriate table based on role
+                if (role.equals("Client")) {
+                    String clientSql = "INSERT INTO client (userID, name, address, phoneNumber, email, isDeleted) " +
+                            "VALUES (?, ?, ?, ?, ?, 0)";
+                    PreparedStatement psClient = connection.prepareStatement(clientSql);
+                    psClient.setInt(1, userID);
+                    psClient.setString(2, name);
+                    psClient.setString(3, address);
+                    psClient.setString(4, phoneNumber);
+                    psClient.setString(5, email);
+                    psClient.executeUpdate();
+                } else if (role.equals("Administrator")) {
+                    String adminSql = "INSERT INTO administrator (userID, name, phoneNumber, email, isDeleted) " +
+                            "VALUES (?, ?, ?, ?, 0)";
+                    PreparedStatement psAdmin = connection.prepareStatement(adminSql);
+                    psAdmin.setInt(1, userID);
+                    psAdmin.setString(2, name);
+                    psAdmin.setString(3, phoneNumber);
+                    psAdmin.setString(4, email);
+                    psAdmin.executeUpdate();
+                }
+
+                connection.commit();
+                success = true;
+                LOGGER.info("Successfully registered new " + role + " user: " + username);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error registering walk-in user", e);
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.SEVERE, "Error rolling back transaction", ex);
+                }
+            }
+            throw e;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing connection", e);
+                }
+            }
+        }
+        return success;
+    }
 }

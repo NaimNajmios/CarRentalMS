@@ -71,6 +71,10 @@
         <servlet-name>CreateBookingServlet</servlet-name>
         <servlet-class>CreateBookingServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>RegisterWalkInServlet</servlet-name>
+        <servlet-class>RegisterWalkInServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VehicleBookingServlet</servlet-name>
         <url-pattern>/VehicleBooking</url-pattern>
@@ -138,6 +142,10 @@
     <servlet-mapping>
         <servlet-name>CreateBookingServlet</servlet-name>
         <url-pattern>/CreateBooking</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RegisterWalkInServlet</servlet-name>
+        <url-pattern>/RegisterWalkIn</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

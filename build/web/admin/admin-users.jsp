@@ -214,6 +214,18 @@
                 text-align: right;
                 margin-top: 1rem;
             }
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            .form-label {
+                font-weight: 500;
+                color: #333;
+                margin-bottom: 0.5rem;
+            }
+            .form-control:disabled {
+                background-color: #e9ecef;
+                opacity: 1;
+            }
             @media (max-width: 768px) {
                 body {
                     padding-top: 69px;
@@ -279,9 +291,9 @@
                 %>
                 <div class="dashboard-header">
                     <h2>User Management</h2>
-                    <a href="addUser.jsp" class="btn btn-success">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
                         <i class="fas fa-plus"></i> Add New User
-                    </a>
+                    </button>
                 </div>
                 <ul class="nav nav-tabs" id="userTabs" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -423,6 +435,110 @@
                         </div>
                     </div>
                 </div>
+                <!-- Modal for Adding New User -->
+                <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light">
+                                <h5 class="modal-title" id="addUserModalLabel">
+                                    <i class="fa-solid fa-user-plus me-2"></i>Add New User
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="<%= request.getContextPath() %>/RegisterWalkIn" method="post" id="addUserForm">
+                                    <div class="row g-4">
+                                        <!-- Username -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="userName" class="form-label">Username</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                                    <input type="text" class="form-control" id="userName" name="username" placeholder="Enter username" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Role -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="userRole" class="form-label">Role</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fa-solid fa-user-tag"></i></span>
+                                                    <select class="form-select" id="userRole" name="role" required>
+                                                        <option value="Client" selected>Client</option>
+                                                        <option value="Administrator">Admin</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Password -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="userPassword" class="form-label">Password</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                                    <input type="text" class="form-control" id="userPassword" name="password" value="Temp123!" readonly>
+                                                    <button class="btn btn-outline-secondary" type="button" id="copyPassword" title="Copy password">
+                                                        <i class="fa-solid fa-copy"></i>
+                                                    </button>
+                                                </div>
+                                                <small class="text-muted">Temporary password for first login</small>
+                                            </div>
+                                        </div>
+                                        <!-- Email -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="userEmail" class="form-label">Email</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                                    <input type="email" class="form-control" id="userEmail" name="email" placeholder="Enter email" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Full Name -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="fullName" class="form-label">Full Name</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
+                                                    <input type="text" class="form-control" id="fullName" name="full-name" placeholder="Enter full name" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Address -->
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="address" class="form-label">Address</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                                                    <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter address" required></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Phone Number -->
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="phoneNumber" class="form-label">Phone Number</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                                                    <input type="tel" class="form-control" id="phoneNumber" name="phone-number" placeholder="Enter phone number" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-light mt-4">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            <i class="fa-solid fa-times me-2"></i>Cancel
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa-solid fa-user-plus me-2"></i>Add User
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -432,7 +548,6 @@
                 var filter = input.value.toUpperCase();
                 var table = document.getElementById(tableId);
                 var tr = table.getElementsByTagName("tr");
-
                 for (var i = 1; i < tr.length; i++) {
                     var td = tr[i].getElementsByTagName("td");
                     var found = false;
@@ -448,6 +563,41 @@
                     tr[i].style.display = found ? "" : "none";
                 }
             }
+
+            // Handle role change for address field
+            function toggleAddressField() {
+                var roleSelect = document.getElementById('userRole');
+                var addressField = document.getElementById('address');
+                if (roleSelect.value === 'Administrator') {
+                    addressField.value = '';
+                    addressField.disabled = true;
+                    addressField.removeAttribute('required');
+                } else {
+                    addressField.disabled = false;
+                    addressField.setAttribute('required', 'required');
+                }
+            }
+
+            // Initialize address field state on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                toggleAddressField();
+                document.getElementById('userRole').addEventListener('change', toggleAddressField);
+            });
+
+            // Copy password functionality
+            document.getElementById('copyPassword').addEventListener('click', function() {
+                var passwordInput = document.getElementById('userPassword');
+                passwordInput.select();
+                try {
+                    document.execCommand('copy');
+                    this.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fa-solid fa-copy"></i>';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy password:', err);
+                }
+            });
         </script>
     </body>
 </html>
