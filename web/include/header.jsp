@@ -39,14 +39,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('profile') || pageContext.request.requestURI.contains('edit-profile') ? 'active' : ''}" href="client-profile.jsp">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="nav-link text-primary">
+                        <a class="nav-link text-primary ${pageContext.request.requestURI.contains('profile') || pageContext.request.requestURI.contains('edit-profile') ? 'active' : ''}" href="client-profile.jsp">
                             <i class="fas fa-user-circle"></i> <%= loggedClient.getName() %>
-                        </span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="Logout">
