@@ -80,14 +80,36 @@ CarRentalMS/
 ```
 
 ## Configuration
-[Add any specific configuration details here]
 
-## Contributing
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+### Required Libraries
+The project requires the following external libraries:
+- MySQL Connector/J (version 9.2.0)
+- Gson (version 2.13.1)
+
+### Server Configuration
+- Java Development Kit (JDK) 8 or higher
+- Apache Tomcat Server
+- NetBeans IDE (recommended)
+
+### Project Structure
+The project follows a standard Java web application structure:
+- `src/` - Contains all Java source files
+  - `Database/` - Database connection and CRUD operations
+  - `Vehicle/` - Vehicle management classes
+  - `Booking/` - Booking management classes
+  - `User/` - User management classes
+  - `Payment/` - Payment processing classes
+- `web/` - Web resources
+  - `WEB-INF/` - Web application configuration
+  - `include/` - Reusable JSP components
+- `lib/` - External libraries
+- `test/` - Test files
+- `nbproject/` - NetBeans project configuration
+
+### Security Configuration
+- Password hashing is implemented for user authentication
+- Session management for user login
+- Role-based access control (Admin, Client)
 
 ## License
 [Add your license information here]
