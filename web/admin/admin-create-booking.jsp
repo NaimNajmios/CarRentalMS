@@ -268,12 +268,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <% } %>
-                <form action="${pageContext.request.contextPath}/CreateBooking" method="post" class="booking-form">
+                <form action="${pageContext.request.contextPath}/CreateBooking" method="post" class="booking-form" id="createBookingForm">
                     <div class="form-section">
                         <h3>Client Information</h3>
                         <div class="form-group">
                             <label for="clientId">Select Client</label>
-                            <select name="clientId" id="clientId" class="form-control" required>
+                            <select name="clientId" id="clientId" class="form-control" required onchange="validateForm()">
                                 <option value="">Select a client</option>
                                 <% for (Client client : clients) { %>
                                 <option value="<%= client.getClientID() %>">
@@ -307,21 +307,30 @@
                         <h3>Booking Details</h3>
                         <div class="form-group">
                             <label for="startDate">Start Date</label>
-                            <input type="text" name="startDate" id="startDate" class="form-control" required placeholder="Select start date">
+                            <input type="text" name="startDate" id="startDate" class="form-control" required placeholder="Select start date" onchange="validateForm()">
                         </div>
                         <div class="form-group">
                             <label for="endDate">End Date</label>
-                            <input type="text" name="endDate" id="endDate" class="form-control" required placeholder="Select end date">
+                            <input type="text" name="endDate" id="endDate" class="form-control" required placeholder="Select end date" onchange="validateForm()">
                         </div>
                         <div class="form-group">
                             <label for="totalCost">Total Cost (RM)</label>
                             <input type="text" name="totalCost" id="totalCost" class="form-control" readonly required>
                         </div>
+                        <div class="form-group">
+                            <label for="paymentType">Payment Method</label>
+                            <select name="paymentType" id="paymentType" class="form-control" required onchange="validateForm()">
+                                <option value="">Select payment method</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Debit Card">Debit Card</option>
+                                <option value="Credit Card">Credit Card</option>
+                            </select>
+                        </div>
                         <input type="hidden" name="assignedDate" value="<%= currentDate %>">
                         <input type="hidden" name="bookingDate" value="<%= currentDate %>">
-                        <input type="hidden" name="adminId" value="<%= session.getAttribute("adminId") %>">
+                        <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
                     </div>
-                    <button type="submit" class="submit-btn">Create Booking</button>
+                    <button type="submit" class="submit-btn" id="submitBtn" disabled>Create Booking</button>
                 </form>
                 <div class="timestamp">
                     Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date()) %>
@@ -422,6 +431,56 @@
                     });
             }
 
+            function validateForm() {
+                const clientId = document.getElementById('clientId').value;
+                const vehicleId = document.getElementById('vehicleId').value;
+                const startDate = startPicker.selectedDates[0];
+                const endDate = endPicker.selectedDates[0];
+                const paymentType = document.getElementById('paymentType').value;
+                const submitBtn = document.getElementById('submitBtn');
+
+                // Basic validation
+                if (!clientId || !vehicleId || !startDate || !endDate || !paymentType) {
+                    submitBtn.disabled = true;
+                    return;
+                }
+
+                // Date validation
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (startDate < today) {
+                    showMessage('Start date cannot be in the past', 'danger');
+                    submitBtn.disabled = true;
+                    return;
+                }
+
+                if (endDate < startDate) {
+                    showMessage('End date must be after start date', 'danger');
+                    submitBtn.disabled = true;
+                    return;
+                }
+
+                // Check for booked dates
+                const selectedDates = [];
+                let current = new Date(startDate);
+                while (current <= endDate) {
+                    selectedDates.push(current.toISOString().split('T')[0]);
+                    current.setDate(current.getDate() + 1);
+                }
+
+                const hasBookedDates = selectedDates.some(date => bookedDates.includes(date));
+                if (hasBookedDates) {
+                    showMessage('Selected dates include unavailable dates', 'danger');
+                    submitBtn.disabled = true;
+                    return;
+                }
+
+                // If all validations pass
+                showMessage('All validations passed. Ready to create booking.', 'success');
+                submitBtn.disabled = false;
+            }
+
             function validateDates() {
                 const start = startPicker.selectedDates[0];
                 const end = endPicker.selectedDates[0];
@@ -430,18 +489,21 @@
 
                 // Skip validation if either date is not selected
                 if (!start || !end) {
+                    validateForm();
                     return;
                 }
 
                 if (start < today) {
                     showMessage('Start date cannot be in the past', 'danger');
                     startPicker.setDate(null);
+                    validateForm();
                     return;
                 }
 
                 if (end < start) {
                     showMessage('End date must be after start date', 'danger');
                     endPicker.setDate(null);
+                    validateForm();
                     return;
                 }
 
@@ -467,42 +529,15 @@
                     const totalCost = ratePerDay * days;
                     document.getElementById('totalCost').value = totalCost.toFixed(2);
                 }
+                validateForm();
             }
 
-            document.querySelector('form').addEventListener('submit', function(e) {
-                const start = startPicker.selectedDates[0];
-                const end = endPicker.selectedDates[0];
-                if (!start || !end) {
-                    e.preventDefault();
-                    showMessage('Please select both start and end dates', 'danger');
-                    return;
-                }
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                if (start < today) {
-                    e.preventDefault();
-                    showMessage('Start date cannot be in the past', 'danger');
-                    startPicker.setDate(null);
-                    return;
-                }
-                if (end < start) {
-                    e.preventDefault();
-                    showMessage('End date must be after start date', 'danger');
-                    endPicker.setDate(null);
-                    return;
-                }
-                const selectedDates = [];
-                let current = new Date(start);
-                while (current <= end) {
-                    selectedDates.push(current.toISOString().split('T')[0]);
-                    current.setDate(current.getDate() + 1);
-                }
-                const hasBookedDates = selectedDates.some(date => bookedDates.includes(date));
-                if (hasBookedDates) {
-                    e.preventDefault();
-                    showMessage('Selected dates include unavailable dates', 'danger');
-                    startPicker.setDate(null);
-                    endPicker.setDate(null);
+            document.getElementById('createBookingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                validateForm();
+                
+                if (!document.getElementById('submitBtn').disabled) {
+                    this.submit();
                 }
             });
         </script>

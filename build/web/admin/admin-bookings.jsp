@@ -125,11 +125,14 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                flex-wrap: wrap;
+                gap: 1rem;
             }
 
             .filter-buttons .left-buttons {
                 display: flex;
                 gap: 0.5rem;
+                flex-wrap: wrap;
             }
 
             .filter-buttons button {
@@ -140,17 +143,33 @@
                 background-color: #f8f9fa;
                 color: #333;
                 font-size: 0.9rem;
-                transition: background-color 0.15s ease-in-out;
+                transition: all 0.15s ease-in-out;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
             }
 
             .filter-buttons button:hover {
                 background-color: #e9ecef;
+                transform: translateY(-1px);
             }
 
             .filter-buttons button.active {
                 background-color: #007bff;
                 color: white;
                 border-color: #007bff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .filter-buttons button .count {
+                background-color: rgba(0, 0, 0, 0.1);
+                padding: 0.1rem 0.4rem;
+                border-radius: 10px;
+                font-size: 0.8rem;
+            }
+
+            .filter-buttons button.active .count {
+                background-color: rgba(255, 255, 255, 0.2);
             }
 
             .booking-table {
@@ -206,6 +225,15 @@
             .booking-table .status-Cancelled {
                 color: #721c24;
                 background-color: #f8d7da;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .booking-table .status-Confirmed {
+                color: #004085;
+                background-color: #cce5ff;
                 padding: 0.3rem 0.6rem;
                 border-radius: 20px;
                 font-size: 0.75rem;
@@ -323,10 +351,11 @@
 
                 <div class="filter-buttons">
                     <div class="left-buttons">
-                        <button class="active" onclick="filterBookings('all')">All</button>
-                        <button onclick="filterBookings('Pending')">Pending</button>
-                        <button onclick="filterBookings('Completed')">Completed</button>
-                        <button onclick="filterBookings('Cancelled')">Cancelled</button>
+                        <button class="active" onclick="filterBookings('all')">All <span class="count" id="allCount">0</span></button>
+                        <button onclick="filterBookings('Pending')">Pending <span class="count" id="pendingCount">0</span></button>
+                        <button onclick="filterBookings('Confirmed')">Confirmed <span class="count" id="confirmedCount">0</span></button>
+                        <button onclick="filterBookings('Completed')">Completed <span class="count" id="completedCount">0</span></button>
+                        <button onclick="filterBookings('Cancelled')">Cancelled <span class="count" id="cancelledCount">0</span></button>
                     </div>
                     <a href="admin-create-booking.jsp" class="new-booking-btn">
                         <i class="fas fa-plus"></i>
@@ -392,6 +421,39 @@
                 const filterButtons = document.querySelectorAll('.filter-buttons button');
                 const bookingRows = document.querySelectorAll('.booking-row');
                 const searchInput = document.getElementById('searchInput');
+                const statusCounts = {
+                    'all': document.getElementById('allCount'),
+                    'Pending': document.getElementById('pendingCount'),
+                    'Confirmed': document.getElementById('confirmedCount'),
+                    'Completed': document.getElementById('completedCount'),
+                    'Cancelled': document.getElementById('cancelledCount')
+                };
+
+                function updateStatusCounts() {
+                    const counts = {
+                        'Pending': 0,
+                        'Confirmed': 0,
+                        'Completed': 0,
+                        'Cancelled': 0
+                    };
+
+                    bookingRows.forEach(row => {
+                        const status = row.getAttribute('data-status');
+                        if (status && counts.hasOwnProperty(status)) {
+                            counts[status]++;
+                        }
+                    });
+
+                    // Update all counts
+                    Object.keys(counts).forEach(status => {
+                        if (statusCounts[status]) {
+                            statusCounts[status].textContent = counts[status];
+                        }
+                    });
+
+                    // Update total count
+                    statusCounts['all'].textContent = bookingRows.length;
+                }
 
                 function filterBookings(status) {
                     bookingRows.forEach(row => {
@@ -429,8 +491,9 @@
                     searchBookings(searchText);
                 });
 
-                // Initial filter
+                // Initial filter and count update
                 filterBookings('all');
+                updateStatusCounts();
             });
         </script>
     </body>

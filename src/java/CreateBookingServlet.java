@@ -80,10 +80,10 @@ public class CreateBookingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.info("Received booking creation request");
-
+        LOGGER.info("Processing booking creation request");
+        
         try {
-            // Get the booking details from the request
+            // Get all required parameters
             String clientId = request.getParameter("clientId");
             String vehicleId = request.getParameter("vehicleId");
             String assignedDate = request.getParameter("assignedDate");
@@ -91,39 +91,59 @@ public class CreateBookingServlet extends HttpServlet {
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
             String totalCost = request.getParameter("totalCost");
-            String bookingStatus = "Completed";
-            String createdBy = request.getParameter("adminId"); // Get admin ID from request
+            String bookingStatus = "Confirmed"; // Default status for admin-created bookings
+            String createdBy = request.getParameter("adminId");
+            String paymentType = request.getParameter("paymentType");
 
             // Validate required parameters
-            if (clientId == null || vehicleId == null || startDate == null || endDate == null || totalCost == null) {
+            if (clientId == null || vehicleId == null || assignedDate == null || 
+                bookingDate == null || startDate == null || endDate == null || 
+                totalCost == null || createdBy == null || paymentType == null) {
                 LOGGER.warning("Missing required parameters");
                 response.sendRedirect(request.getContextPath() + "/admin/admin-create-booking.jsp?error=Missing+required+parameters");
                 return;
             }
 
-            // Create a new booking object
-            Booking booking = new Booking(clientId, vehicleId, assignedDate, bookingDate, startDate, endDate, totalCost,
-                    bookingStatus, createdBy);
+            // Validate adminId
+            if (createdBy.trim().isEmpty()) {
+                LOGGER.warning("Admin ID is empty");
+                response.sendRedirect(request.getContextPath() + "/admin/admin-create-booking.jsp?error=Admin+ID+is+required");
+                return;
+            }
 
-            LOGGER.info("Created booking object: " + booking);
+            // Create booking object
+            Booking booking = new Booking();
+            booking.setClientId(clientId);
+            booking.setVehicleId(vehicleId);
+            booking.setAssignedDate(assignedDate);
+            booking.setBookingDate(bookingDate);
+            booking.setBookingStartDate(startDate);
+            booking.setBookingEndDate(endDate);
+            booking.setTotalCost(totalCost);
+            booking.setBookingStatus(bookingStatus);
+            booking.setCreatedBy(createdBy);
 
-            // Add the booking to the database
-            boolean isBookingAdded = databaseCRUD.addBooking(booking);
+            // Add booking to database
+            boolean success = databaseCRUD.addBooking(booking, paymentType);
 
-            if (isBookingAdded) {
-                LOGGER.info("Booking added successfully");
+            if (success) {
+                LOGGER.info("Booking created successfully");
                 // Get the latest booking ID for this client
                 String bookingId = databaseCRUD.getLatestBookingId(clientId);
                 response.sendRedirect(request.getContextPath() + "/admin/admin-view-booking.jsp?success=Booking+created+successfully&bookingId=" + bookingId);
             } else {
-                LOGGER.warning("Failed to add booking");
+                LOGGER.warning("Failed to create booking");
                 response.sendRedirect(request.getContextPath() + "/admin/admin-create-booking.jsp?error=Failed+to+create+booking");
             }
-
         } catch (SQLException | ClassNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, "Error creating booking", ex);
-            response.sendRedirect(request.getContextPath() + "/admin/admin-create-booking.jsp?error=Database+error:+"
-                    + ex.getMessage().replace(" ", "+"));
+            LOGGER.severe("Database error: " + ex.getMessage());
+            response.sendRedirect(request.getContextPath() + "/admin/admin-create-booking.jsp?error=Database+error:+Please+try+again");
+        } catch (NumberFormatException ex) {
+            LOGGER.warning("Invalid total cost format: " + ex.getMessage());
+            response.sendRedirect(request.getContextPath() + "/admin/admin-create-booking.jsp?error=Invalid+total+cost+format");
+        } catch (Exception ex) {
+            LOGGER.severe("Unexpected error: " + ex.getMessage());
+            response.sendRedirect(request.getContextPath() + "/admin/admin-create-booking.jsp?error=Unexpected+error:+Please+try+again");
         }
     }
 

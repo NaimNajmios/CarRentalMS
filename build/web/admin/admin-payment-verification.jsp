@@ -176,12 +176,26 @@
                 background-color: #f8f9fa;
                 color: #333;
                 transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .filter-buttons button .count {
+                background-color: rgba(0, 0, 0, 0.1);
+                padding: 0.1rem 0.4rem;
+                border-radius: 10px;
+                font-size: 0.8rem;
             }
 
             .filter-buttons button.active {
                 background-color: #007bff;
                 color: white;
                 border-color: #007bff;
+            }
+
+            .filter-buttons button.active .count {
+                background-color: rgba(255, 255, 255, 0.2);
             }
 
             .filter-buttons select {
@@ -411,16 +425,16 @@
                 </div>
 
                 <div class="filter-buttons">
-                    <button class="filter-btn active" data-status="Pending">Pending</button>
+                    <button class="filter-btn active" data-status="Pending">Pending <span class="count" id="pendingCount">0</span></button>
                     <select id="pendingFilter" style="display: none;" class="form-select">
                         <option value="All">All Pending</option>
                         <option value="Bank Transfer">Bank Transfer</option>
                         <option value="Cash">Cash</option>
                     </select>
-                    <button class="filter-btn" data-status="Confirmed">Confirmed</button>
-                    <button class="filter-btn" data-status="Completed">Completed</button>
-                    <button class="filter-btn" data-status="Cancelled">Cancelled</button>
-                    <button class="filter-btn" data-status="all">All</button>
+                    <button class="filter-btn" data-status="Confirmed">Confirmed <span class="count" id="confirmedCount">0</span></button>
+                    <button class="filter-btn" data-status="Completed">Completed <span class="count" id="completedCount">0</span></button>
+                    <button class="filter-btn" data-status="Cancelled">Cancelled <span class="count" id="cancelledCount">0</span></button>
+                    <button class="filter-btn" data-status="all">All <span class="count" id="allCount">0</span></button>
                 </div>
 
                 <% if (allPayments == null || allPayments.isEmpty()) { %>
@@ -490,6 +504,39 @@
                 const paymentCards = document.querySelectorAll('#paymentCardsList .payment-item');
                 const searchInput = document.getElementById('searchInput');
                 const pendingFilter = document.getElementById('pendingFilter');
+                const statusCounts = {
+                    'Pending': document.getElementById('pendingCount'),
+                    'Confirmed': document.getElementById('confirmedCount'),
+                    'Completed': document.getElementById('completedCount'),
+                    'Cancelled': document.getElementById('cancelledCount'),
+                    'all': document.getElementById('allCount')
+                };
+
+                function updateStatusCounts() {
+                    const counts = {
+                        'Pending': 0,
+                        'Confirmed': 0,
+                        'Completed': 0,
+                        'Cancelled': 0
+                    };
+
+                    paymentCards.forEach(card => {
+                        const status = card.getAttribute('data-status');
+                        if (status && counts.hasOwnProperty(status)) {
+                            counts[status]++;
+                        }
+                    });
+
+                    // Update all counts
+                    Object.keys(counts).forEach(status => {
+                        if (statusCounts[status]) {
+                            statusCounts[status].textContent = counts[status];
+                        }
+                    });
+
+                    // Update total count
+                    statusCounts['all'].textContent = paymentCards.length;
+                }
 
                 function filterCards(status, type = 'All') {
                     paymentCards.forEach(card => {
@@ -539,7 +586,9 @@
                     searchCards(searchText);
                 });
 
+                // Initial filter and count update
                 filterCards('Pending');
+                updateStatusCounts();
             });
 
             function viewProofOfPayment(proofUrl) {

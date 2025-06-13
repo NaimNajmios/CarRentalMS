@@ -94,8 +94,7 @@ public class DatabaseCRUD {
                                         paymentStatement.setString(3, booking.getTotalCost());
                                         paymentStatement.setString(4, "Pending"); // Default payment status
                                         paymentStatement.setDate(5, null); // Null date
-                                        paymentStatement.setString(6, null); // referenceNo (can be set by booking if
-                                        // needed)
+                                        paymentStatement.setString(6, null); // referenceNo (can be set by booking if needed)
                                         paymentStatement.setString(7, null); // invoiceNumber (null)
                                         paymentStatement.setString(8, null); // handledBy (null)
                                         paymentStatement.setString(9, null); // proofOfPayment (null)
@@ -153,6 +152,110 @@ public class DatabaseCRUD {
                 }
             }
         }
+    }
+
+    // Method to add booking to the database with payment type, returning boolean for success
+    public boolean addBooking(Booking booking, String paymentType) throws SQLException, ClassNotFoundException {
+        LOGGER.info("Starting addBooking method with payment type: " + paymentType);
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        boolean success = false;
+
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false); // Start transaction
+
+            // Insert into BOOKING table
+            String sql = "INSERT INTO BOOKING (clientID, bookingDate, startDate, endDate, totalCost, bookingStatus, createdBy) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, booking.getClientId());
+            pstmt.setString(2, booking.getBookingDate());
+            pstmt.setString(3, booking.getBookingStartDate());
+            pstmt.setString(4, booking.getBookingEndDate());
+            pstmt.setString(5, booking.getTotalCost());
+            pstmt.setString(6, booking.getBookingStatus());
+            pstmt.setInt(7, Integer.parseInt(booking.getCreatedBy())); // Convert createdBy to integer
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                // Get the generated booking ID
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        String bookingId = generatedKeys.getString(1);
+                        
+                        // Insert into BOOKINGVEHICLE table
+                        String bookingVehicleSql = "INSERT INTO BOOKINGVEHICLE (bookingID, vehicleID, assignedDate) VALUES (?, ?, ?)";
+                        pstmt = conn.prepareStatement(bookingVehicleSql);
+                        pstmt.setString(1, bookingId);
+                        pstmt.setString(2, booking.getVehicleId());
+                        pstmt.setString(3, booking.getAssignedDate());
+                        
+                        rowsAffected = pstmt.executeUpdate();
+                        if (rowsAffected > 0) {
+                            // Insert into PAYMENT table
+                            String paymentSql = "INSERT INTO PAYMENT (bookingID, paymentDate, amount, paymentType, paymentStatus) VALUES (?, ?, ?, ?, ?)";
+                            pstmt = conn.prepareStatement(paymentSql);
+                            pstmt.setString(1, bookingId);
+                            pstmt.setString(2, booking.getBookingDate()); // Use booking date as payment date
+                            pstmt.setString(3, booking.getTotalCost());
+                            pstmt.setString(4, paymentType);
+                            pstmt.setString(5, "Completed"); // Set initial payment status as Completed
+
+                            rowsAffected = pstmt.executeUpdate();
+                            if (rowsAffected > 0) {
+                                conn.commit(); // Commit transaction
+                                success = true;
+                                LOGGER.info("Successfully added booking with ID: " + bookingId);
+                            } else {
+                                conn.rollback(); // Rollback if payment insertion fails
+                                LOGGER.warning("Failed to insert payment record");
+                            }
+                        } else {
+                            conn.rollback(); // Rollback if booking vehicle insertion fails
+                            LOGGER.warning("Failed to insert booking vehicle record");
+                        }
+                    } else {
+                        conn.rollback(); // Rollback if no booking ID was generated
+                        LOGGER.warning("Failed to get generated booking ID");
+                    }
+                }
+            } else {
+                conn.rollback(); // Rollback if booking insertion fails
+                LOGGER.warning("Failed to insert booking record");
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Error adding booking: " + e.getMessage());
+            try {
+                if (conn != null) {
+                    conn.rollback(); // Rollback on error
+                }
+            } catch (SQLException ex) {
+                LOGGER.severe("Error rolling back transaction: " + ex.getMessage());
+            }
+            throw e;
+        } catch (NumberFormatException e) {
+            LOGGER.severe("Error converting createdBy to integer: " + e.getMessage());
+            try {
+                if (conn != null) {
+                    conn.rollback(); // Rollback on error
+                }
+            } catch (SQLException ex) {
+                LOGGER.severe("Error rolling back transaction: " + ex.getMessage());
+            }
+            throw new SQLException("Invalid admin ID format: " + e.getMessage());
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                LOGGER.severe("Error closing resources: " + e.getMessage());
+            }
+        }
+        return success;
     }
 
     // Method for client to submit payment status in the database, returning boolean
