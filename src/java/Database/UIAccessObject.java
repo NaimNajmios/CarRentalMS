@@ -44,7 +44,7 @@ public class UIAccessObject {
 
     private Connection getConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalms", "root", "admin");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3307/carrentalms", "root", "admin");
     }
 
     // Fetch list of vehicles from the database in ArrayList, return ArrayList

@@ -8,28 +8,40 @@
 <%@ page import="java.util.Date"%>
 <%@ page import="User.User" %>
 <%@ page import="User.Client" %>
+<%@ page import="java.util.logging.Logger"%>
+<%@ page import="java.util.logging.Level"%>
 
 <%
+    // Initialize logger
+    Logger logger = Logger.getLogger("mybooking.jsp");
+    logger.setLevel(Level.INFO);
+    logger.info("Starting mybooking.jsp page load");
+
     // Retrieve user and client objects from session
     User loggedInUser = (User) session.getAttribute("loggedInUser");
     Client loggedInClient = (Client) session.getAttribute("loggedInClient");
 
     // Redirect to login if user or client not logged in
     if (loggedInUser == null || loggedInClient == null || loggedInClient.getClientID() == null || loggedInClient.getClientID().isEmpty()) {
+        logger.warning("Unauthorized access attempt - User or client not logged in");
         response.sendRedirect(request.getContextPath() + "/login.jsp?message=Please+log+in+to+view+your+bookings.&type=warning");
         return;
     }
 
     String clientId = loggedInClient.getClientID();
+    logger.info("Retrieved client ID: " + clientId);
 
     UIAccessObject uiAccessObject = new UIAccessObject();
+    logger.info("Created UIAccessObject instance");
 
     // Get all bookings by client ID
     List<Booking> allBookings = uiAccessObject.getAllBookingByClientID(clientId);
+    logger.info("Retrieved " + (allBookings != null ? allBookings.size() : 0) + " bookings for client ID: " + clientId);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat timeSdf = new SimpleDateFormat("hh:mm a z");
-    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date()); // 2025-05-18 10:35 AM +08
+    String currentDateTime = sdf.format(new Date()) + " " + timeSdf.format(new Date());
+    logger.info("Current date/time: " + currentDateTime);
 %>
 
 <!DOCTYPE html>
