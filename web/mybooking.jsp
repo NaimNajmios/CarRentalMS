@@ -74,22 +74,52 @@
                 margin: 0;
             }
             .filter-buttons {
-                margin-bottom: 1rem;
+                margin-bottom: 1.5rem;
                 padding: 0 1rem;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
             }
             .filter-buttons button {
                 padding: 0.5rem 1rem;
-                margin-right: 0.5rem;
                 border: 1px solid #ccc;
                 border-radius: 4px;
                 cursor: pointer;
                 background-color: #f8f9fa;
                 color: #333;
+                transition: all 0.2s ease;
+            }
+            .filter-buttons button:hover {
+                border-color: #007bff;
+                background-color: #e9ecef;
             }
             .filter-buttons button.active {
                 background-color: #007bff;
                 color: white;
                 border-color: #007bff;
+            }
+            .filter-buttons select {
+                padding: 0.5rem 2rem 0.5rem 1rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                background-color: #f8f9fa;
+                color: #333;
+                cursor: pointer;
+                appearance: none;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 0.5rem center;
+                background-size: 1em;
+                transition: all 0.2s ease;
+            }
+            .filter-buttons select:hover {
+                border-color: #007bff;
+            }
+            .filter-buttons select:focus {
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
             }
             .booking-cards-list {
                 list-style: none;
@@ -204,6 +234,7 @@
 
                     <div class="filter-buttons">
                         <button class="filter-btn active" data-status="Pending">Pending</button>
+                        <button class="filter-btn" data-status="Confirmed">Confirmed</button>
                         <button class="filter-btn" data-status="Completed">Completed</button>
                         <button class="filter-btn" data-status="Cancelled">Cancelled</button>
                         <button class="filter-btn" data-status="all">All</button>

@@ -44,14 +44,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="Logout">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <span class="nav-link text-primary">
                             <i class="fas fa-user-circle"></i> <%= loggedClient.getName() %>
                         </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="Logout">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
                     </li>
                 </ul>
             </div>

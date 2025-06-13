@@ -9,6 +9,7 @@
 <%@ page import="java.text.DecimalFormat"%>
 <%@ page import="java.util.logging.Logger"%>
 <%@ page import="java.util.logging.Level"%>
+<%@ page import="User.Admin"%>
 
 <%
     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -17,7 +18,7 @@
     String errorMessage = null;
     String successMessage = null;
     String currentDateTime = "";
-
+    
     try {
         UIAccessObject uiAccessObject = new UIAccessObject();
         allPayments = uiAccessObject.getAllPaymentDetails();
@@ -161,22 +162,51 @@
 
             .filter-buttons {
                 margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
             }
 
             .filter-buttons button {
                 padding: 0.5rem 1rem;
-                margin-right: 0.5rem;
                 border: 1px solid #ccc;
                 border-radius: 4px;
                 cursor: pointer;
                 background-color: #f8f9fa;
                 color: #333;
+                transition: all 0.2s ease;
             }
 
             .filter-buttons button.active {
                 background-color: #007bff;
                 color: white;
                 border-color: #007bff;
+            }
+
+            .filter-buttons select {
+                padding: 0.5rem 2rem 0.5rem 1rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                background-color: #f8f9fa;
+                color: #333;
+                cursor: pointer;
+                appearance: none;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 0.5rem center;
+                background-size: 1em;
+                transition: all 0.2s ease;
+            }
+
+            .filter-buttons select:hover {
+                border-color: #007bff;
+            }
+
+            .filter-buttons select:focus {
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
             }
 
             .payment-cards-list {
@@ -382,11 +412,12 @@
 
                 <div class="filter-buttons">
                     <button class="filter-btn active" data-status="Pending">Pending</button>
-                    <select id="pendingFilter" style="display: none;">
+                    <select id="pendingFilter" style="display: none;" class="form-select">
                         <option value="All">All Pending</option>
                         <option value="Bank Transfer">Bank Transfer</option>
                         <option value="Cash">Cash</option>
                     </select>
+                    <button class="filter-btn" data-status="Confirmed">Confirmed</button>
                     <button class="filter-btn" data-status="Completed">Completed</button>
                     <button class="filter-btn" data-status="Cancelled">Cancelled</button>
                     <button class="filter-btn" data-status="all">All</button>
@@ -414,18 +445,20 @@
                                     <% if ("Pending".equals(payment.getPaymentStatus())) {%>
                                     <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="display:inline;">
                                         <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
-                                        <input type="hidden" name="paymentStatus" value="Completed">
+                                        <input type="hidden" name="paymentStatus" value="Confirmed">
+                                        <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
                                         <button type="submit" class="action-btn verify-btn" onclick="return confirm('Are you sure you want to verify payment <%= payment.getPaymentID()%>?')">Verify</button>
                                     </form>
                                     <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="display:inline;">
                                         <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
                                         <input type="hidden" name="paymentStatus" value="Cancelled">
+                                        <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
                                         <button type="submit" class="action-btn reject-btn" onclick="return confirm('Are you sure you want to reject payment <%= payment.getPaymentID()%>?')">Reject</button>
                                     </form>
                                     <% if ("Bank Transfer".equals(payment.getPaymentType())) {%>
                                     <button class="action-btn view-proof-btn" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')">View Proof</button>
                                     <% } %>
-                                    <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
+                                    <% } else if ("Confirmed".equals(payment.getPaymentStatus())) { %>
                                     <button class="action-btn verify-btn" disabled>Verified</button>
                                     <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
                                     <button class="action-btn cancel-btn" disabled>Cancelled</button>

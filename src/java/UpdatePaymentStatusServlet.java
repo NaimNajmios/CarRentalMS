@@ -37,12 +37,13 @@ public class UpdatePaymentStatusServlet extends HttpServlet {
 
         String paymentId = request.getParameter("paymentId");
         String paymentStatus = request.getParameter("paymentStatus");
+        String adminId = request.getParameter("adminId");
 
         LOGGER.log(Level.INFO, "Updating payment status for paymentId: {0} to status: {1}", new Object[]{paymentId, paymentStatus});
 
         try {
             DatabaseCRUD databaseCRUD = new DatabaseCRUD();
-            boolean success = databaseCRUD.updatePaymentStatus(paymentId, paymentStatus);
+            boolean success = databaseCRUD.updatePaymentStatus(paymentId, paymentStatus, adminId);
 
             if (success) {
                 LOGGER.info("Payment status update successful");

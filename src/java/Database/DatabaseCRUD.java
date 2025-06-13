@@ -218,7 +218,7 @@ public class DatabaseCRUD {
 
     // Method to update payment status and booking status in the database, returning
     // boolean for success
-    public boolean updatePaymentStatus(String paymentId, String paymentStatus)
+    public boolean updatePaymentStatus(String paymentId, String paymentStatus, String adminid)
             throws SQLException, ClassNotFoundException {
         LOGGER.info("Starting updatePaymentStatus method");
         Connection connection = null;
@@ -228,7 +228,7 @@ public class DatabaseCRUD {
             connection.setAutoCommit(false);
             LOGGER.info("Database connection established and auto-commit set to false");
 
-            String paymentQuery = "UPDATE payment SET paymentStatus = ? WHERE paymentID = ?";
+            String paymentQuery = "UPDATE payment SET paymentStatus = ?, handledBy = ? WHERE paymentID = ?";
             String bookingQuery = "UPDATE booking SET bookingStatus = ? WHERE bookingID = (SELECT bookingID FROM payment WHERE paymentID = ?)";
 
             try (PreparedStatement paymentStatement = connection.prepareStatement(paymentQuery);
@@ -236,7 +236,8 @@ public class DatabaseCRUD {
 
                 LOGGER.info("Preparing PAYMENT table update query");
                 paymentStatement.setString(1, paymentStatus);
-                paymentStatement.setString(2, paymentId);
+                paymentStatement.setString(2, adminid);
+                paymentStatement.setString(3, paymentId);
 
                 LOGGER.info("Executing PAYMENT table update query");
                 int paymentRowsAffected = paymentStatement.executeUpdate();
