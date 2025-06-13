@@ -12,13 +12,34 @@ A web-based Car Rental Management System developed for Universiti Malaysia Teren
 
 ### Module Responsibilities
 - **Module 1: User Management**
-  - [S70253] - User registration, authentication, and profile management
+  - [S70253] - User registration and authentication system
+  - Profile management and user information updates
+  - Role-based access control (Admin, Client)
+  - Password management and security features
+  - User session handling
+  - User dashboard and account settings
+  - User activity logging and tracking
 
 - **Module 2: Car Management**
-  - [S72452] - Car listing, details, availability, and maintenance records
+  - [S72452] - Car listing and catalog management
+  - Detailed car information and specifications
+  - Car availability tracking and status updates
+  - Car category and type management
+  - Car image and media management
+  - Car maintenance records
+  - Car pricing and rate management
+  - Search and filter functionality for cars
 
 - **Module 3: Booking System**
-  - [S70224] - Reservation management, booking process, and payment handling
+  - [S70224] - Reservation management and booking process
+  - Payment processing and transaction handling
+  - Booking confirmation and notifications
+  - Rental period management
+  - Booking history and records
+  - Cancellation and modification handling
+  - Invoice generation
+  - Payment gateway integration
+  - Booking status tracking
 
 
 ## Live Demo
@@ -27,10 +48,24 @@ A web-based Car Rental Management System developed for Universiti Malaysia Teren
 ## Installation Instructions
 
 ### Prerequisites
-- Java Development Kit (JDK) 8 or higher
-- Apache Tomcat Server
-- MySQL Database
-- NetBeans IDE (recommended)
+- **Development Environment**
+  - Java Development Kit (JDK) 8 or higher
+  - Apache NetBeans IDE 21.0 or higher
+  - Apache Tomcat Server 9.0 or higher
+  - MySQL Server 8.0 or higher
+  - Git for version control
+
+- **Required Software**
+  - MySQL Workbench (recommended for database management)
+  - Web browser (Chrome, Firefox, or Edge) for testing
+  - Text editor (VS Code, Sublime Text, or similar) for additional editing
+
+- **Development Tools**
+  - MySQL Connector/J
+  - JSTL (JavaServer Pages Standard Tag Library)
+  - Bootstrap 5.x
+  - jQuery 3.x
+  - Font Awesome 6.x
 
 ### Setup Steps
 1. Clone the repository
@@ -51,15 +86,34 @@ A web-based Car Rental Management System developed for Universiti Malaysia Teren
    - Run the project on Tomcat server
 
 ## Features
-- User registration and authentication
-- Car browsing and searching
-- Booking management
-- Payment processing
-- Admin dashboard
-- Report generation
-- Customer feedback system
 
-## Technologies Used
+### User Management
+- **User Registration and Authentication**
+  - Secure user registration with email verification
+  - Multi-factor authentication support
+  - Password recovery and reset functionality
+  - Session management and security
+  - Role-based access control (Admin, Staff, Customer)
+
+### Car Management
+- **Car Browsing and Searching**
+  - Advanced search with multiple filters (price, type, availability)
+  - Detailed car specifications and features
+  - High-quality image gallery
+  - Real-time availability checking
+  - Car comparison tool
+  - Category-based browsing
+
+### Booking System
+- **Booking Management**
+  - Online reservation system
+  - Real-time availability calendar
+  - Flexible booking periods
+  - Booking modification and cancellation
+  - Booking history and status tracking
+  - Email notifications and confirmations
+
+## Tech Stack Used
 - Java
 - JSP (JavaServer Pages)
 - MySQL
@@ -78,13 +132,6 @@ CarRentalMS/
 ├── test/          # Test files
 └── nbproject/     # NetBeans project files
 ```
-
-## Configuration
-
-### Required Libraries
-The project requires the following external libraries:
-- MySQL Connector/J (version 9.2.0)
-- Gson (version 2.13.1)
 
 ### Server Configuration
 - Java Development Kit (JDK) 8 or higher
@@ -105,11 +152,6 @@ The project follows a standard Java web application structure:
 - `lib/` - External libraries
 - `test/` - Test files
 - `nbproject/` - NetBeans project configuration
-
-### Security Configuration
-- Password hashing is implemented for user authentication
-- Session management for user login
-- Role-based access control (Admin, Client)
 
 ## License
 [Add your license information here]
