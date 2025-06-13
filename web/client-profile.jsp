@@ -172,12 +172,13 @@
             .profile-image-container {
                 width: 180px;
                 height: 180px;
-                margin: 0 auto 25px auto; /* Center and add margin below */
+                margin: 0 auto 25px auto;
                 position: relative;
                 border-radius: 50%;
                 overflow: hidden;
-                border: 5px solid #fff; /* White border around image */
+                border: 5px solid #fff;
                 box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+                cursor: pointer;
             }
 
             .profile-preview {
@@ -185,22 +186,24 @@
                 height: 100%;
                 object-fit: cover;
                 border-radius: 50%;
+                cursor: pointer;
             }
 
             .image-upload-overlay {
                 position: absolute;
                 bottom: 0;
                 right: 0;
-                background-color: rgba(0, 123, 255, 0.9); /* Blue overlay */
+                background-color: rgba(0, 123, 255, 0.9);
                 border-radius: 50%;
                 width: 50px;
                 height: 50px;
-                display: flex;
+                display: none;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
                 transition: background-color 0.2s ease;
+                z-index: 10;
             }
 
             .image-upload-overlay:hover {
@@ -264,6 +267,14 @@
                     User loggedInUser = (User) session.getAttribute("loggedInUser");
                     Client loggedInClient = (Client) session.getAttribute("loggedInClient");
 
+                    // Get message attributes from session
+                    String successMessage = (String) session.getAttribute("successMessage");
+                    String errorMessage = (String) session.getAttribute("errorMessage");
+                    
+                    // Clear the messages after retrieving them
+                    session.removeAttribute("successMessage");
+                    session.removeAttribute("errorMessage");
+
                     Connection con = null;
                     PreparedStatement ps = null;
                     ResultSet rs = null;
@@ -283,6 +294,22 @@
                             return; 
                         }
                 %>
+
+                <% if (errorMessage != null) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <%= errorMessage %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+
+                <% if (successMessage != null) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <%= successMessage %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
 
                 <div class="dashboard-header">
                     <h2>My Profile</h2>
@@ -404,8 +431,17 @@
                 const imageChangeButtons = document.getElementById('imageChangeButtons');
                 const imageResetButton = document.getElementById('imageResetButton'); 
                 const profilePreview = document.getElementById('profilePreview');
+                const profileImageContainer = document.querySelector('.profile-image-container');
+                const profileImageInput = document.getElementById('profileImage');
                 const originalImagePath = document.getElementById('currentImagePath').value;
                 const imageSizeInfo = document.getElementById('imageSizeInfo'); 
+
+                // Add click event listener to profile image container
+                profileImageContainer.addEventListener('click', function() {
+                    if (imageChangeButtons.style.display === 'flex') {
+                        profileImageInput.click();
+                    }
+                });
 
                 function setEditMode(isEditMode) {
                     formInputs.forEach(input => {
@@ -418,19 +454,19 @@
                         editProfileBtn.style.display = 'none';
                         cancelEditBtn.style.display = 'inline-flex';
                         updateBtn.style.display = 'inline-flex';
-                        imageChangeButtons.style.display = 'flex'; // Change to flex for camera icon
-                        imageResetButton.style.display = 'block'; 
+                        imageChangeButtons.style.display = 'flex';
+                        imageResetButton.style.display = 'block';
                         profilePreview.style.cursor = 'pointer';
-                        imageSizeInfo.classList.remove('hidden-on-display'); 
+                        imageSizeInfo.classList.remove('hidden-on-display');
                     } else {
                         editProfileBtn.style.display = 'inline-flex';
                         cancelEditBtn.style.display = 'none';
                         updateBtn.style.display = 'none';
                         imageChangeButtons.style.display = 'none';
-                        imageResetButton.style.display = 'none'; 
+                        imageResetButton.style.display = 'none';
                         profilePreview.style.cursor = 'default';
-                        imageSizeInfo.classList.add('hidden-on-display'); 
-                        document.getElementById('profileImage').value = ''; 
+                        imageSizeInfo.classList.add('hidden-on-display');
+                        document.getElementById('profileImage').value = '';
                         document.getElementById('profilePreview').src = "<%= request.getContextPath() %>/" + (originalImagePath || "images/profilepic/default_profile.jpg");
                     }
                 }

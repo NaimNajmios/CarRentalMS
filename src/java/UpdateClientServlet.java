@@ -19,6 +19,7 @@ import javax.servlet.http.Part;
 import java.io.File;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import User.Client;
 
 /**
  *
@@ -180,21 +181,39 @@ public class UpdateClientServlet extends HttpServlet {
             if (status > 0) {
                 LOGGER.log(Level.INFO, "Client details updated successfully for User ID: {0}", userID);
                 if (isClientProfileUpdate) {
-                    response.sendRedirect(request.getContextPath() + "/client-profile.jsp?message=Profile+updated+successfully.&type=success");
+                    // Update the session data
+                    Client updatedClient = (Client) request.getSession().getAttribute("loggedInClient");
+                    if (updatedClient != null) {
+                        updatedClient.setName(name);
+                        updatedClient.setAddress(address);
+                        updatedClient.setPhoneNumber(phone);
+                        updatedClient.setEmail(email);
+                        updatedClient.setProfileImagePath(profileImagePath);
+                        request.getSession().setAttribute("loggedInClient", updatedClient);
+                    }
+                    
+                    request.getSession().setAttribute("successMessage", "Profile updated successfully.");
+                    response.sendRedirect(request.getContextPath() + "/client-profile.jsp");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/admin/viewClient.jsp?userID=" + userID + "&message=Client+updated+successfully.&type=success");
                 }
             } else {
                 LOGGER.log(Level.WARNING, "Failed to update client details for User ID: {0}", userID);
                 if (isClientProfileUpdate) {
-                    response.sendRedirect(request.getContextPath() + "/client-profile.jsp?message=Error+updating+profile+details.&type=danger");
+                    request.getSession().setAttribute("errorMessage", "Error updating profile details.");
+                    response.sendRedirect(request.getContextPath() + "/client-profile.jsp");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/admin/editClient.jsp?userID=" + userID + "&message=Error+updating+client+details.&type=danger");
                 }
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Database error during client update for User ID: {0}: {1}", new Object[]{userID, e.getMessage()});
-            response.sendRedirect(request.getContextPath() + "/admin/editClient.jsp?userID=" + userID + "&message=Error+updating+client:+" + e.getMessage() + "&type=danger");
+            if (isClientProfileUpdate) {
+                request.getSession().setAttribute("errorMessage", "Error updating profile: " + e.getMessage());
+                response.sendRedirect(request.getContextPath() + "/client-profile.jsp");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/admin/editClient.jsp?userID=" + userID + "&message=Error+updating+client:+" + e.getMessage() + "&type=danger");
+            }
         }
     }
 
