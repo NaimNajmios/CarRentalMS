@@ -459,7 +459,14 @@
                                     <button class="action-btn view-proof-btn" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')">View Proof</button>
                                     <% } %>
                                     <% } else if ("Confirmed".equals(payment.getPaymentStatus())) { %>
-                                    <button class="action-btn verify-btn" disabled>Verified</button>
+                                    <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="display:inline;">
+                                        <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
+                                        <input type="hidden" name="paymentStatus" value="Completed">
+                                        <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
+                                        <button type="submit" class="action-btn verify-btn" onclick="return confirm('Are you sure you want to mark payment <%= payment.getPaymentID()%> as completed?')">Complete</button>
+                                    </form>
+                                    <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
+                                    <button class="action-btn verify-btn" disabled>Completed</button>
                                     <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
                                     <button class="action-btn cancel-btn" disabled>Cancelled</button>
                                     <% } %>

@@ -67,7 +67,7 @@ public class LoginServlet extends HttpServlet {
                 if ("Administrator".equalsIgnoreCase(role)) {
                     LOGGER.log(Level.INFO, "Processing administrator login for userID: {0}", userID);
                     // Handle administrator login
-                    String adminSql = "SELECT adminID, name, email, profileImagePath FROM administrator WHERE userID = ?";
+                    String adminSql = "SELECT adminID, name, email, profileImagePath FROM administrator WHERE userID = ? AND isDeleted = 0";
                     PreparedStatement adminStmt = con.prepareStatement(adminSql);
                     adminStmt.setString(1, userID);
                     ResultSet adminRs = adminStmt.executeQuery();
@@ -89,13 +89,13 @@ public class LoginServlet extends HttpServlet {
                         adminStmt.close();
                         response.sendRedirect(request.getContextPath() + "/admin/admin-dashboard.jsp");
                     } else {
-                        LOGGER.log(Level.WARNING, "No admin record found for userID: {0}", userID);
-                        response.sendRedirect("login.jsp?message=No+administrator+record+found.&type=danger");
+                        LOGGER.log(Level.WARNING, "No active admin record found for userID: {0}", userID);
+                        response.sendRedirect("login.jsp?message=Your+account+has+been+deactivated.+Please+contact+administrator.&type=danger");
                     }
                 } else { 
                     LOGGER.log(Level.INFO, "Processing client login for userID: {0}", userID);
                     // Handle client login
-                    String clientSql = "SELECT clientID, name, address, phoneNumber, email, profileImagePath FROM client WHERE userID = ?";
+                    String clientSql = "SELECT clientID, name, address, phoneNumber, email, profileImagePath FROM client WHERE userID = ? AND isDeleted = 0";
                     PreparedStatement clientStmt = con.prepareStatement(clientSql);
                     clientStmt.setString(1, userID);
                     ResultSet clientRs = clientStmt.executeQuery();
@@ -105,10 +105,13 @@ public class LoginServlet extends HttpServlet {
                         client.setProfileImagePath(clientRs.getString("profileImagePath"));
                         session.setAttribute("loggedInClient", client);
                         LOGGER.log(Level.INFO, "Client session created for clientID: {0}", clientRs.getString("clientID"));
+                        clientRs.close();
+                        clientStmt.close();
+                        response.sendRedirect("client-main.jsp");
+                    } else {
+                        LOGGER.log(Level.WARNING, "No active client record found for userID: {0}", userID);
+                        response.sendRedirect("login.jsp?message=Your+account+has+been+deactivated.+Please+contact+administrator.&type=danger");
                     }
-                    clientRs.close();
-                    clientStmt.close();
-                    response.sendRedirect("client-main.jsp");
                 }
             } else {
                 LOGGER.log(Level.WARNING, "Failed login attempt for username: {0}", username);
