@@ -687,8 +687,8 @@
                                     <button class="action-btn edit" onclick="window.location.href='edit-booking.jsp?bookingId=<%= booking.getBookingId() %>'">
                                         <i class="fas fa-edit"></i> Edit Booking Details
                                     </button>
-                                    <button class="action-btn print" onclick="window.print()">
-                                        <i class="fas fa-print"></i> Print Booking Details
+                                    <button class="action-btn print" onclick="window.open('admin-booking-invoice.jsp?bookingId=<%= booking.getBookingId() %>', '_blank')">
+                                        <i class="fas fa-print"></i> Print Booking Invoice
                                     </button>
                                 </div>
                             </div>

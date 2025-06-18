@@ -37,7 +37,7 @@
     Payment payment = null;
     try {
         vehicle = uiAccessObject.getVehicleById(Integer.parseInt(booking.getVehicleId()));
-        payment = uiAccessObject.getPaymentById(bookingId);
+        payment = uiAccessObject.getPaymentByBookingId(bookingId);
         logger.log(Level.INFO, "Retrieved vehicle: {0}", vehicle);
         logger.log(Level.INFO, "Retrieved payment: {0}", payment);
     } catch (NumberFormatException e) {
@@ -223,6 +223,21 @@
             .cancel-button:hover {
                 background-color: #c82333;
             }
+            .invoice-button {
+                background-color: #17a2b8;
+                color: white;
+                border: none;
+                padding: 1rem 2rem;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1.1rem;
+                font-weight: bold;
+                text-decoration: none;
+                margin-left: 1rem;
+            }
+            .invoice-button:hover {
+                background-color: #138496;
+            }
             .timestamp {
                 grid-column: 1 / -1;
                 text-align: right;
@@ -346,13 +361,16 @@
                 String bookingStatus = booking.getBookingStatus() != null ? booking.getBookingStatus().trim() : "";
                 boolean isPending = "Pending".equalsIgnoreCase(bookingStatus);
                 boolean isConfirmed = "Confirmed".equalsIgnoreCase(bookingStatus);
+                boolean isCompleted = "Completed".equalsIgnoreCase(bookingStatus);
                 boolean isPaymentPending = (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()));
+                boolean isPaymentCompleted = (payment != null && "Completed".equalsIgnoreCase(payment.getPaymentStatus()));
             %>
 
             <div class="proceed-button-container">
                 <% if (isPending && isPaymentPending) { %>
                     <a href="booking-payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button"><i class="fas fa-credit-card"></i> Proceed to Payment</a>
                 <% } %>
+                <a href="client-booking-invoice.jsp?bookingId=<%= booking.getBookingId()%>" target="_blank" class="invoice-button"><i class="fas fa-print"></i> Print Booking Invoice</a>
                 <% if (isPending || isConfirmed) { %>
                     <a href="CancelBookingServlet?bookingId=<%= booking.getBookingId()%>&returnPage=booking-details.jsp" 
                        class="cancel-button" 
