@@ -244,6 +244,23 @@
                 background-color: #f8d7da;
                 color: #721c24;
             }
+            .alert {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border: 1px solid transparent;
+                border-radius: 0.375rem;
+            }
+            .alert-info {
+                color: #055160;
+                background-color: #cff4fc;
+                border-color: #b6effb;
+            }
+            .alert strong {
+                color: #055160;
+            }
+            .text-muted {
+                color: #6c757d !important;
+            }
         </style>
     </head>
     <body>
@@ -374,7 +391,19 @@
             <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
             <div class="payment-form-card">
                 <h3><i class="fas fa-edit"></i> Payment Form</h3>
-                <% if (payment != null && payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) { %>
+                <% if (payment != null && payment.getPaymentType() != null && !payment.getPaymentType().isEmpty()) { %>
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Payment Already Submitted!</strong><br>
+                    Payment type: <strong><%= payment.getPaymentType() %></strong><br>
+                    Amount: <strong>RM <%= String.format("%.2f", payment.getAmount()) %></strong><br>
+                    Status: <strong><%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "Pending" %></strong><br>
+                    <% if (payment.getPaymentDate() != null) { %>
+                    Submitted on: <strong><%= payment.getPaymentDate() %></strong>
+                    <% } %>
+                </div>
+                <p class="text-muted"><i class="fas fa-info-circle me-2"></i>Your payment has been submitted and is being processed. You cannot submit another payment for this booking.</p>
+                <% } else if (payment != null && payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) { %>
                 <p class="info"><i class="fas fa-info-circle"></i> Payment proof has been submitted. The form is now disabled.</p>
                 <% } else { %>
                 <form action="SubmitPayment" method="post" enctype="multipart/form-data" class="payment-form">

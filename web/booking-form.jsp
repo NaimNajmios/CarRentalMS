@@ -195,36 +195,36 @@
                     <div class="vehicle-info">
                         <img src="<%= vehicleImagePath%>" alt="<%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%>" class="vehicle-image">
                         <div class="vehicle-details">
-                            <h3><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h3>
-                            <p class="text-muted">Rate: RM<%= vehicle.getVehicleRatePerDay()%>/day</p>
+                            <h3><i class="fas fa-car"></i> <%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h3>
+                            <p class="text-muted"><i class="fas fa-dollar-sign"></i> Rate: RM<%= vehicle.getVehicleRatePerDay()%>/day</p>
                         </div>
                     </div>
                     <div class="booking-form">
-                        <h2>Book This Vehicle</h2>
+                        <h2><i class="fas fa-calendar-plus"></i> Book This Vehicle</h2>
                         <form action="booking-confirmation.jsp" method="post" onsubmit="return validateForm()">
                             <input type="hidden" name="vehicleId" value="<%= vehicleId%>">
                             <input type="hidden" name="assignedDate" value="<%= currentDate%>">
                             <input type="hidden" name="clientId" value="<%= clientId%>">
                             <input type="hidden" name="createdBy" value="<%= createdBy%>">
                             <div class="form-group">
-                                <label for="bookingDate">Booking Date</label>
+                                <label for="bookingDate"><i class="fas fa-calendar"></i> Booking Date</label>
                                 <input type="date" class="form-control" id="bookingDate" name="bookingDate" value="<%= currentDate%>" readonly>
-                                <small class="text-muted">Today's date (readonly)</small>
+                                <small class="text-muted"><i class="fas fa-info-circle"></i> Today's date (readonly)</small>
                             </div>
                             <div class="form-group">
-                                <label for="startDate">Start Date</label>
+                                <label for="startDate"><i class="fas fa-calendar-plus"></i> Start Date</label>
                                 <input type="date" class="form-control" id="startDate" name="startDate" required min="<%= currentDate%>">
                             </div>
                             <div class="form-group">
-                                <label for="endDate">End Date</label>
+                                <label for="endDate"><i class="fas fa-calendar-minus"></i> End Date</label>
                                 <input type="date" class="form-control" id="endDate" name="endDate" required min="<%= currentDate%>">
                             </div>
                             <div class="form-group">
-                                <label for="totalCost">Total Cost (RM)</label>
+                                <label for="totalCost"><i class="fas fa-dollar-sign"></i> Total Cost (RM)</label>
                                 <input type="number" step="0.01" class="form-control" id="totalCost" name="totalCost" placeholder="0.00" readonly>
-                                <small class="text-muted">Calculated automatically</small>
+                                <small class="text-muted"><i class="fas fa-calculator"></i> Calculated automatically</small>
                             </div>
-                            <button type="submit" class="submit-btn">Proceed to Confirmation</button>
+                            <button type="submit" class="submit-btn"><i class="fas fa-check-circle"></i> Proceed to Confirmation</button>
                         </form>
                     </div>
                 </div>
@@ -265,8 +265,8 @@
                     return { valid: false, message: "End date must be after start date" };
                 }
 
-                // Check booking duration
-                const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                // Check booking duration (revised logic)
+                const daysDiff = calculateDuration(start, end);
                 if (daysDiff > MAX_BOOKING_DAYS) {
                     return { valid: false, message: `Maximum booking duration is ${MAX_BOOKING_DAYS} days` };
                 }
@@ -287,6 +287,25 @@
                 return { valid: true };
             }
 
+            // Function to calculate duration in days (revised logic)
+            function calculateDuration(startDate, endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                
+                // Set both dates to midnight for accurate comparison
+                start.setHours(0, 0, 0, 0);
+                end.setHours(0, 0, 0, 0);
+                
+                // Calculate the difference in milliseconds
+                const timeDiff = end.getTime() - start.getTime();
+                
+                // Convert to days and add 1 to include both start and end dates
+                // This ensures: 18/6 - 18/6 = 1 day, 18/6 - 19/6 = 2 days
+                const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+                
+                return daysDiff;
+            }
+
             // Function to calculate total cost
             function calculateTotalCost() {
                 const startDateValue = startDateInput.value;
@@ -302,7 +321,7 @@
 
                     const startDate = new Date(startDateValue);
                     const endDate = new Date(endDateValue);
-                    const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                    const daysDiff = calculateDuration(startDate, endDate);
                     const totalCost = daysDiff * ratePerDay;
                     totalCostInput.value = totalCost.toFixed(2);
                     hideError();

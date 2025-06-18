@@ -203,7 +203,7 @@ public class SubmitPaymentServlet extends HttpServlet {
 
         // Generate payment ID and other fields
         String paymentStatus = paymentType.equals("Bank Transfer") ? "Pending" : 
-                             paymentType.equals("Cash") ? "Pending" : "Completed";
+                             paymentType.equals("Cash") ? "Pending" : "Confirmed";
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String paymentDate = dateFormat.format(new Date());
         String invoiceNumber = "INV-" + bookingId + "-" + System.currentTimeMillis();

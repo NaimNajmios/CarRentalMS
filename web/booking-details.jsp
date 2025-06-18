@@ -147,12 +147,13 @@
                 border-radius: 8px;
                 padding: 1.5rem;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                align-items: center;
+                align-items: flex-start;
             }
             .vehicle-image-container {
                 max-width: 180px;
                 border-radius: 4px;
                 overflow: hidden;
+                flex-shrink: 0;
             }
             .vehicle-image {
                 display: block;
@@ -161,6 +162,26 @@
             }
             .vehicle-details {
                 flex-grow: 1;
+            }
+            .vehicle-details h3 {
+                font-size: 1.4rem;
+                color: #333;
+                margin-bottom: 1rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .vehicle-details-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem 1.5rem;
+            }
+            .vehicle-details-grid p {
+                margin-bottom: 0;
+                font-size: 0.95rem;
+                color: #555;
+            }
+            .vehicle-details-grid strong {
+                color: #333;
             }
             .payment-info-card {
                 background-color: #f9f9f9;
@@ -249,7 +270,7 @@
                 </p>
                 <p><strong><i class="fas fa-info-circle"></i> Status:</strong> 
                     <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>">
-                        <% if (booking.getBookingStatus() != null) { %>
+                        <% if (booking.getBookingStatus() != null) {%>
                             <% if (booking.getBookingStatus().equals("Pending")) { %>
                                 <i class="fas fa-clock"></i>
                             <% } else if (booking.getBookingStatus().equals("Confirmed")) { %>
@@ -278,13 +299,15 @@
                 <div class="vehicle-details">
                     <h3><i class="fas fa-car"></i> Vehicle Information</h3>
                     <% if (vehicle != null) {%>
-                    <p><strong><i class="fas fa-tag"></i> Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
-                    <p><strong><i class="fas fa-tag"></i> Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
-                    <p><strong><i class="fas fa-cog"></i> Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
-                    <p><strong><i class="fas fa-gas-pump"></i> Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
-                    <p><strong><i class="fas fa-cogs"></i> Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
-                    <p><strong><i class="fas fa-id-card"></i> Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
-                    <p><strong><i class="fas fa-dollar-sign"></i> Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
+                    <div class="vehicle-details-grid">
+                        <p><strong><i class="fas fa-tag"></i> Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
+                        <p><strong><i class="fas fa-tag"></i> Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
+                        <p><strong><i class="fas fa-cog"></i> Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
+                        <p><strong><i class="fas fa-gas-pump"></i> Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
+                        <p><strong><i class="fas fa-cogs"></i> Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
+                        <p><strong><i class="fas fa-id-card"></i> Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
+                        <p><strong><i class="fas fa-dollar-sign"></i> Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
+                    </div>
                     <% } else { %>
                     <p class="no-info"><i class="fas fa-exclamation-triangle"></i> No vehicle information available.</p>
                     <% } %>
@@ -331,7 +354,11 @@
                     <a href="booking-payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button"><i class="fas fa-credit-card"></i> Proceed to Payment</a>
                 <% } %>
                 <% if (isPending || isConfirmed) { %>
-                    <a href="CancelBookingServlet?bookingId=<%= booking.getBookingId()%>&returnPage=booking-details.jsp" class="cancel-button"><i class="fas fa-times"></i> Cancel Booking</a>
+                    <a href="CancelBookingServlet?bookingId=<%= booking.getBookingId()%>&returnPage=booking-details.jsp" 
+                       class="cancel-button" 
+                       onclick="return confirm('Are you sure you want to cancel this booking? This action cannot be undone.');">
+                        <i class="fas fa-times"></i> Cancel Booking
+                    </a>
                 <% } %>
             </div>
 

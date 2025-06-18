@@ -346,7 +346,17 @@ public class DatabaseCRUD {
                 int paymentRowsAffected = paymentStatement.executeUpdate();
 
                 LOGGER.info("Preparing BOOKING table update query");
-                String bookingStatus = paymentStatus.equals("Completed") ? "Completed" : "Pending";
+            // Set booking status based on payment status
+                String bookingStatus;
+                if (paymentStatus.equals("Completed")) {
+                    bookingStatus = "Completed";
+                } else if (paymentStatus.equals("Failed")) {
+                    bookingStatus = "Cancelled";
+                } else if (paymentStatus.equals("Confirmed")) {
+                    bookingStatus = "Confirmed";
+                } else {
+                    bookingStatus = "Pending";
+                }
                 bookingStatement.setString(1, bookingStatus);
                 bookingStatement.setString(2, paymentId);
 

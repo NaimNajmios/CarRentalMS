@@ -517,7 +517,21 @@
                         <p><i class="fas fa-hashtag text-muted"></i> <strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
                         <p><i class="fas fa-credit-card text-muted"></i> <strong>Payment Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
                         <p><i class="fas fa-dollar-sign text-muted"></i> <strong>Amount:</strong> RM <%= payment.getAmount()%></p>
-                        <p><i class="fas fa-info-circle text-muted"></i> <strong>Payment Status:</strong> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%></p>
+                        <p><i class="fas fa-info-circle text-muted"></i> <strong>Payment Status:</strong> 
+                            <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().replace(" ", "") : ""%>">
+                                <% if ("Pending".equals(payment.getPaymentStatus())) { %>
+                                    <i class="fas fa-clock"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                <% } else if ("Confirmed".equals(payment.getPaymentStatus())) { %>
+                                    <i class="fas fa-check-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
+                                    <i class="fas fa-check-double"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
+                                    <i class="fas fa-times-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                <% } else { %>
+                                    <i class="fas fa-info-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                <% } %>
+                            </span>
+                        </p>
                         <p><i class="fas fa-calendar-alt text-muted"></i> <strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? payment.getPaymentDate() : "N/A"%></p>
                         <p><i class="fas fa-file-invoice text-muted"></i> <strong>Invoice Number:</strong> <%= payment.getInvoiceNumber() != null ? payment.getInvoiceNumber() : "N/A"%></p>
                         <p><i class="fas fa-user-tie text-muted"></i> <strong>Handled By:</strong> <%= payment.getHandledBy() != null ? payment.getHandledBy() : "N/A"%></p>

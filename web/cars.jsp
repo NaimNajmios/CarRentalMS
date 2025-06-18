@@ -18,6 +18,89 @@
         <title>CarRent - Cars Selection</title>
         <%@ include file="include/client-css.html" %>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            /* Fix card consistency issues */
+            .card {
+                height: 100%;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+            }
+            
+            /* Fix image sizing and consistency */
+            .card-img-top {
+                width: 100%;
+                height: 200px; /* Fixed height for all images */
+                object-fit: cover; /* Maintains aspect ratio while covering the container */
+                object-position: center; /* Centers the image */
+                border-top-left-radius: 0.375rem;
+                border-top-right-radius: 0.375rem;
+            }
+            
+            /* Ensure card body has consistent spacing */
+            .card-body {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+                padding: 1.25rem;
+            }
+            
+            .card-details {
+                flex-grow: 1;
+            }
+            
+            .card-footer-btn {
+                margin-top: auto;
+            }
+            
+            /* Ensure consistent text sizing */
+            .card-title {
+                font-size: 1.1rem;
+                line-height: 1.3;
+                margin-bottom: 0.75rem;
+                min-height: 2.6rem; /* Fixed height for title area */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .card-text {
+                margin-bottom: 1rem;
+            }
+            
+            /* Fix list styling for consistent spacing */
+            .list-unstyled li {
+                font-size: 0.85rem;
+                margin-bottom: 0.25rem;
+                line-height: 1.2;
+            }
+            
+            /* Ensure button consistency */
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .card-img-top {
+                    height: 180px;
+                }
+                
+                .card-title {
+                    font-size: 1rem;
+                    min-height: 2.4rem;
+                }
+                
+                .list-unstyled li {
+                    font-size: 0.8rem;
+                }
+            }
+        </style>
     </head>
     <body>
         <!-- Header -->

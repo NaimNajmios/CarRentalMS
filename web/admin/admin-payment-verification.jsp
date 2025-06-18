@@ -211,16 +211,89 @@
                 background-position: right 0.5rem center;
                 background-size: 1em;
                 transition: all 0.2s ease;
+                font-size: 0.9rem;
+                font-weight: 500;
+                min-width: 140px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             }
 
             .filter-buttons select:hover {
                 border-color: #007bff;
+                background-color: #fff;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+                transform: translateY(-1px);
             }
 
             .filter-buttons select:focus {
                 outline: none;
                 border-color: #007bff;
-                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+                background-color: #fff;
+            }
+
+            .filter-buttons select.active {
+                border-color: #007bff;
+                background-color: #e3f2fd;
+                color: #007bff;
+                font-weight: 600;
+            }
+
+            .filter-buttons select option {
+                padding: 0.75rem;
+                font-weight: 500;
+                background-color: #fff;
+                color: #333;
+            }
+
+            .filter-buttons select option:hover {
+                background-color: #f8f9fa;
+            }
+
+            .filter-buttons select option[value="All"] {
+                color: #007bff;
+                font-weight: 600;
+            }
+
+            .filter-buttons select option[value="Bank Transfer"] {
+                color: #28a745;
+            }
+
+            .filter-buttons select option[value="Cash"] {
+                color: #ffc107;
+            }
+
+            .pending-filter-container {
+                display: none;
+                align-items: center;
+                gap: 0.5rem;
+                margin-left: 0.5rem;
+                padding: 0.25rem;
+                background-color: #fff3cd;
+                border-radius: 6px;
+                border: 1px solid #ffeaa7;
+                animation: slideIn 0.3s ease-out;
+            }
+
+            .pending-filter-container.show {
+                display: flex;
+            }
+
+            .pending-filter-label {
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: #856404;
+                white-space: nowrap;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
             }
 
             .payment-cards-list {
@@ -241,6 +314,22 @@
             .payment-item:hover {
                 transform: scale(1.02);
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .payment-details:hover {
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                padding: 0.5rem;
+                margin: -0.5rem;
+                transition: background-color 0.2s ease;
+            }
+
+            .payment-info > div:first-child:hover {
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                padding: 0.5rem;
+                margin: -0.5rem;
+                transition: background-color 0.2s ease;
             }
 
             .payment-header {
@@ -348,6 +437,14 @@
                 cursor: not-allowed;
             }
 
+            .action-btn:hover {
+                transform: none;
+            }
+
+            .action-btn:active {
+                transform: scale(0.98);
+            }
+
             .timestamp {
                 font-size: 0.9rem;
                 color: #7f8c8d;
@@ -428,11 +525,14 @@
 
                 <div class="filter-buttons">
                     <button class="filter-btn active" data-status="Pending"><i class="fas fa-clock"></i> Pending <span class="count" id="pendingCount">0</span></button>
-                    <select id="pendingFilter" style="display: none;" class="form-select">
-                        <option value="All">All Pending</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
-                        <option value="Cash">Cash</option>
-                    </select>
+                    <div class="pending-filter-container">
+                        <select id="pendingFilter" style="display: none;" class="form-select">
+                            <option value="All">All Pending</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Cash">Cash</option>
+                        </select>
+                        <span class="pending-filter-label">Filter</span>
+                    </div>
                     <button class="filter-btn" data-status="Confirmed"><i class="fas fa-check-circle"></i> Confirmed <span class="count" id="confirmedCount">0</span></button>
                     <button class="filter-btn" data-status="Completed"><i class="fas fa-check-double"></i> Completed <span class="count" id="completedCount">0</span></button>
                     <button class="filter-btn" data-status="Cancelled"><i class="fas fa-times-circle"></i> Cancelled <span class="count" id="cancelledCount">0</span></button>
@@ -446,27 +546,29 @@
                     <% for (Payment payment : allPayments) {%>
                     <li class="payment-item payment-card" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>" data-type="<%= payment.getPaymentType() != null ? payment.getPaymentType() : ""%>">
                         <div class="payment-header">
-                            <div class="payment-details">
+                            <div class="payment-details" onclick="window.location.href='admin-view-booking.jsp?bookingId=<%= payment.getBookingID()%>'" style="cursor: pointer;">
                                 <p><i class="fas fa-hashtag text-muted"></i> <strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
                                 <p><i class="fas fa-calendar-check text-muted"></i> <strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
                                 <p><i class="fas fa-calendar-alt text-muted"></i> <strong>Payment Date:</strong> <%= payment.getPaymentDate()%></p>
                                 <p><i class="fas fa-credit-card text-muted"></i> <strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
                             </div>
                             <div class="payment-info">
-                                <p class="amount"><i class="fas fa-dollar-sign"></i> RM <%= String.format("%.2f", payment.getAmount())%></p>
-                                <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().toLowerCase().replace(" ", "-") : ""%>">
-                                    <% if ("Pending".equals(payment.getPaymentStatus())) { %>
-                                        <i class="fas fa-clock"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
-                                    <% } else if ("Confirmed".equals(payment.getPaymentStatus())) { %>
-                                        <i class="fas fa-check-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
-                                    <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
-                                        <i class="fas fa-check-double"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
-                                    <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
-                                        <i class="fas fa-times-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
-                                    <% } else { %>
-                                        <i class="fas fa-info-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
-                                    <% } %>
-                                </span>
+                                <div onclick="window.location.href='admin-view-booking.jsp?bookingId=<%= payment.getBookingID()%>'" style="cursor: pointer;">
+                                    <p class="amount">RM <%= String.format("%.2f", payment.getAmount())%></p>
+                                    <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().toLowerCase().replace(" ", "-") : ""%>">
+                                        <% if ("Pending".equals(payment.getPaymentStatus())) { %>
+                                            <i class="fas fa-clock"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                        <% } else if ("Confirmed".equals(payment.getPaymentStatus())) { %>
+                                            <i class="fas fa-check-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                        <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
+                                            <i class="fas fa-check-double"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                        <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
+                                            <i class="fas fa-times-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                        <% } else { %>
+                                            <i class="fas fa-info-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                        <% } %>
+                                    </span>
+                                </div>
                                 <div class="action-buttons">
                                     <% if ("Pending".equals(payment.getPaymentStatus())) {%>
                                     <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="display:inline;">
@@ -524,6 +626,20 @@
                     'all': document.getElementById('allCount')
                 };
 
+                // Prevent action buttons from triggering card navigation
+                document.querySelectorAll('.action-btn').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                });
+
+                // Prevent form submissions from triggering card navigation
+                document.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                });
+
                 function updateStatusCounts() {
                     const counts = {
                         'Pending': 0,
@@ -579,10 +695,19 @@
                         const status = this.getAttribute('data-status');
                         filterButtons.forEach(btn => btn.classList.remove('active'));
                         this.classList.add('active');
+                        
+                        // Remove active class from select
+                        pendingFilter.classList.remove('active');
+                        
                         if (status === 'Pending') {
+                            const pendingContainer = document.querySelector('.pending-filter-container');
+                            pendingContainer.classList.add('show');
                             pendingFilter.style.display = 'inline-block';
+                            pendingFilter.classList.add('active');
                             filterCards(status, pendingFilter.value);
                         } else {
+                            const pendingContainer = document.querySelector('.pending-filter-container');
+                            pendingContainer.classList.remove('show');
                             pendingFilter.style.display = 'none';
                             filterCards(status);
                         }
@@ -590,6 +715,7 @@
                 });
 
                 pendingFilter.addEventListener('change', function () {
+                    this.classList.add('active');
                     filterCards('Pending', this.value);
                 });
 

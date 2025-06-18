@@ -28,7 +28,7 @@
                         </span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="${pageContext.request.contextPath}/Logout">
+                        <a class="nav-link ${pageContext.request.requestURI.contains('logout') ? 'active' : ''}" href="#" onclick="return confirmLogout()">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
                     </li>
@@ -37,3 +37,13 @@
         </div>
     </nav>
 </header>
+
+<script>
+    function confirmLogout() {
+        if (confirm('Are you sure you want to logout?\n\nYou will be redirected to the login page.')) {
+            window.location.href = '${pageContext.request.contextPath}/Logout';
+            return true;
+        }
+        return false;
+    }
+</script>

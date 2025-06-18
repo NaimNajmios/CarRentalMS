@@ -128,7 +128,7 @@
                 gap: 1rem;
                 margin-top: 2rem;
             }
-            .confirm-btn, .cancel-btn {
+            .confirm-btn, .back-btn, .cancel-btn {
                 padding: 0.75rem 1.5rem;
                 font-size: 1.1rem;
                 font-weight: 500;
@@ -139,24 +139,34 @@
                 text-align: center;
                 text-decoration: none;
                 display: inline-block;
-            }
-            .confirm-btn {
-                background-color: #28a745;
-                color: #fff;
                 border: none;
             }
+            .confirm-btn {
+                background-color: #007bff;
+                color: #fff;
+            }
             .confirm-btn:hover {
-                background-color: #218838;
+                background-color: #0056b3;
                 transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            }
+            .back-btn {
+                background-color: #6c757d;
+                color: #fff;
+            }
+            .back-btn:hover {
+                background-color: #545b62;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
             }
             .cancel-btn {
                 background-color: #dc3545;
                 color: #fff;
-                border: none;
             }
             .cancel-btn:hover {
                 background-color: #c82333;
                 transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
             }
             @media (max-width: 768px) {
                 .vehicle-info {
@@ -218,10 +228,13 @@
                             <input type="hidden" name="totalCost" value="<%= booking.getTotalCost()%>">
                             <input type="hidden" name="bookingStatus" value="<%= booking.getBookingStatus()%>">
                             <input type="hidden" name="createdBy" value="<%= booking.getCreatedBy()%>">
-                            <button type="submit" class="confirm-btn">
+                            <button type="submit" class="confirm-btn" onclick="return confirmBooking()">
                                 <i class="fas fa-check-circle me-2"></i>Confirm Booking
                             </button>
                         </form>
+                        <button type="button" class="back-btn" onclick="goBack()">
+                            <i class="fas fa-arrow-left me-2"></i>Back
+                        </button>
                         <a href="cars.jsp" class="cancel-btn">
                             <i class="fas fa-times-circle me-2"></i>Cancel
                         </a>
@@ -232,5 +245,21 @@
 
         <%@ include file="include/footer.jsp" %>
         <%@ include file="include/scripts.html" %>
+        
+        <script>
+            function confirmBooking() {
+                return confirm('Are you sure you want to confirm this booking?\n\nVehicle: <%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%>\nTotal Cost: RM<%= booking.getTotalCost()%>\n\nThis action cannot be undone.');
+            }
+            
+            function goBack() {
+                // Check if there's a previous page in browser history
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    // If no previous page, redirect to cars.jsp
+                    window.location.href = 'cars.jsp';
+                }
+            }
+        </script>
     </body>
 </html>
