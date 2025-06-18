@@ -218,6 +218,55 @@
                 background-color: #6c757d;
                 cursor: not-allowed;
             }
+            .btn-payment-action {
+                padding: 0.75rem 1rem;
+                border-radius: 6px;
+                font-weight: 500;
+                width: 100%;
+                margin-bottom: 0.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .btn-payment-action i {
+                margin-right: 0.75rem;
+            }
+            .btn-payment-action.confirm {
+                background-color: #28a745;
+                color: #fff;
+            }
+            .btn-payment-action.confirm:hover {
+                background-color: #218838;
+            }
+            .btn-payment-action.complete {
+                background-color: #17a2b8;
+                color: #fff;
+            }
+            .btn-payment-action.complete:hover {
+                background-color: #138496;
+            }
+            .btn-payment-action.reject {
+                background-color: #dc3545;
+                color: #fff;
+            }
+            .btn-payment-action.reject:hover {
+                background-color: #c82333;
+            }
+            .btn-payment-action.disabled {
+                background-color: #6c757d;
+                color: #fff;
+                cursor: not-allowed;
+            }
+            .btn-payment-action.view-proof {
+                background-color: #6f42c1;
+                color: #fff;
+            }
+            .btn-payment-action.view-proof:hover {
+                background-color: #5a32a3;
+            }
             .booking-section-wrapper {
                 grid-column: 1 / -1;
                 display: grid;
@@ -388,6 +437,17 @@
                     Client client = null;
                     Payment payment = null;
                     String errorMessage = null;
+                    String successMessage = null;
+
+                    // Check for success or error messages in URL parameters
+                    String success = request.getParameter("success");
+                    String error = request.getParameter("error");
+
+                    if ("true".equals(success)) {
+                        successMessage = "Payment status updated successfully.";
+                    } else if ("true".equals(error)) {
+                        errorMessage = "An error occurred while updating payment status.";
+                    }
 
                     if (bookingId != null && !bookingId.trim().isEmpty()) {
                         UIAccessObject uiAccessObject = new UIAccessObject();
@@ -418,6 +478,13 @@
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="fas fa-exclamation-triangle me-2"></i>
                     <%= errorMessage%>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+                <% if (successMessage != null) {%>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <%= successMessage%>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <% } %>
@@ -566,6 +633,54 @@
                                     <i class="fas fa-sync-alt"></i> Update Status
                                 </button>
                             </div>
+                            <% if (payment != null) { %>
+                            <div class="action-group">
+                                <h4><i class="fas fa-credit-card"></i> Payment Actions</h4>
+                                <% if ("Pending".equals(payment.getPaymentStatus())) {%>
+                                <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="margin-bottom: 0.5rem;">
+                                    <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
+                                    <input type="hidden" name="paymentStatus" value="Confirmed">
+                                    <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
+                                    <input type="hidden" name="redirectTo" value="admin-view-booking.jsp?bookingId=<%= booking.getBookingId() %>">
+                                    <button type="submit" class="btn-payment-action confirm" title="Mark as Confirmed" onclick="return confirm('Are you sure you want to mark payment <%= payment.getPaymentID()%> as Confirmed?')">
+                                        <i class="fas fa-check"></i> Mark as Confirmed
+                                    </button>
+                                </form>
+                                <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="margin-bottom: 0.5rem;">
+                                    <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
+                                    <input type="hidden" name="paymentStatus" value="Cancelled">
+                                    <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
+                                    <input type="hidden" name="redirectTo" value="admin-view-booking.jsp?bookingId=<%= booking.getBookingId() %>">
+                                    <button type="submit" class="btn-payment-action reject" title="Reject Payment" onclick="return confirm('Are you sure you want to reject payment <%= payment.getPaymentID()%>?')">
+                                        <i class="fas fa-times"></i> Reject Payment
+                                    </button>
+                                </form>
+                                <% if ("Bank Transfer".equals(payment.getPaymentType()) && payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) {%>
+                                <button class="btn-payment-action view-proof" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')" title="View Proof of Payment">
+                                    <i class="fas fa-eye"></i> View Proof
+                                </button>
+                                <% } %>
+                                <% } else if ("Confirmed".equals(payment.getPaymentStatus())) {%>
+                                <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="margin-bottom: 0.5rem;">
+                                    <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
+                                    <input type="hidden" name="paymentStatus" value="Completed">
+                                    <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
+                                    <input type="hidden" name="redirectTo" value="admin-view-booking.jsp?bookingId=<%= booking.getBookingId() %>">
+                                    <button type="submit" class="btn-payment-action complete" title="Mark as Completed" onclick="return confirm('Are you sure you want to mark payment <%= payment.getPaymentID()%> as Completed?')">
+                                        <i class="fas fa-check-double"></i> Mark as Completed
+                                    </button>
+                                </form>
+                                <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
+                                <button class="btn-payment-action disabled" disabled title="Payment Completed">
+                                    <i class="fas fa-check-double"></i> Payment Completed
+                                </button>
+                                <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
+                                <button class="btn-payment-action disabled" disabled title="Payment Cancelled">
+                                    <i class="fas fa-times-circle"></i> Payment Cancelled
+                                </button>
+                                <% } %>
+                            </div>
+                            <% } %>
                             <div class="action-group">
                                 <h4><i class="fas fa-tools"></i> Other Actions</h4>
                                 <div class="action-buttons">

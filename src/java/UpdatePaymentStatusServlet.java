@@ -38,6 +38,7 @@ public class UpdatePaymentStatusServlet extends HttpServlet {
         String paymentId = request.getParameter("paymentId");
         String paymentStatus = request.getParameter("paymentStatus");
         String adminId = request.getParameter("adminId");
+        String redirectTo = request.getParameter("redirectTo");
 
         LOGGER.log(Level.INFO, "Updating payment status for paymentId: {0} to status: {1}", new Object[]{paymentId, paymentStatus});
 
@@ -47,16 +48,28 @@ public class UpdatePaymentStatusServlet extends HttpServlet {
 
             if (success) {
                 LOGGER.info("Payment status update successful");
-                // Update successful, redirect to the same page
-                response.sendRedirect(request.getContextPath() + "/admin/admin-payment-verification.jsp?success=true");
+                // Update successful, redirect to the specified page or default to payment verification
+                if (redirectTo != null && !redirectTo.trim().isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/admin/" + redirectTo + "&success=true");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/admin/admin-payment-verification.jsp?success=true");
+                }
             } else {
                 LOGGER.warning("Payment status update failed");
-                // Update failed, redirect to the same page with an error message
-                response.sendRedirect(request.getContextPath() + "/admin/admin-payment-verification.jsp?error=true");
+                // Update failed, redirect to the specified page or default to payment verification
+                if (redirectTo != null && !redirectTo.trim().isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/admin/" + redirectTo + "&error=true");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/admin/admin-payment-verification.jsp?error=true");
+                }
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error updating payment status", e);
-            response.sendRedirect(request.getContextPath() + "/admin/admin-payment-verification.jsp?error=true");
+            if (redirectTo != null && !redirectTo.trim().isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/admin/" + redirectTo + "&error=true");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/admin/admin-payment-verification.jsp?error=true");
+            }
         }
     }
 
