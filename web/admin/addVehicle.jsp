@@ -232,10 +232,6 @@
                                 <label for="registrationNo" class="form-label">Registration Number</label>
                                 <input type="text" name="registrationNo" id="registrationNo" class="form-control" placeholder="e.g., ST7774X" required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="vehicleImagePath" class="form-label">Image Path</label>
-                                <input type="text" name="vehicleImagePath" id="vehicleImagePath" class="form-control" placeholder="e.g., images/car.jpg" required>
-                            </div>
                         </div>
 
                         <div class="mb-4">

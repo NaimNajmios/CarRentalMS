@@ -82,7 +82,6 @@ public class AddVehicleServlet extends HttpServlet {
         v.setMileage(Integer.parseInt(request.getParameter("mileage")));
         v.setRatePerDay(Double.parseDouble(request.getParameter("ratePerDay")));
         v.setRegistrationNo(request.getParameter("registrationNo"));
-        v.setVehicleImagePath(request.getParameter("vehicleImagePath"));
 
         int status = vehicleDAO.add(v);
         if (status > 0) {
