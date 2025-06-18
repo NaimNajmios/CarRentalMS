@@ -255,23 +255,28 @@
                 if (message != null) {
             %>
             <div class="message <%= message.contains("successfully") ? "success" : "error"%>">
+                <% if (message.contains("successfully")) { %>
+                    <i class="fas fa-check-circle me-2"></i>
+                <% } else { %>
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                <% } %>
                 <%= message%>
             </div>
             <% }%>
 
             <div class="booking-header">
-                <h2>Booking Payment</h2>
-                <a href="mybooking.jsp" class="back-link">← Back to Bookings</a>
+                <h2><i class="fas fa-credit-card"></i> Booking Payment</h2>
+                <a href="mybooking.jsp" class="back-link"><i class="fas fa-arrow-left"></i> Back to Bookings</a>
             </div>
 
             <div class="detail-section">
-                <h3>Booking Information</h3>
-                <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
-                <p><strong>Client ID:</strong> <%= booking.getClientId() != null ? booking.getClientId() : "N/A"%></p>
-                <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
-                <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
-                <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
-                <p><strong>Duration:</strong>
+                <h3><i class="fas fa-info-circle"></i> Booking Information</h3>
+                <p><strong><i class="fas fa-hashtag"></i> Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
+                <p><strong><i class="fas fa-user"></i> Client ID:</strong> <%= booking.getClientId() != null ? booking.getClientId() : "N/A"%></p>
+                <p><strong><i class="fas fa-calendar"></i> Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                <p><strong><i class="fas fa-calendar-plus"></i> Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
+                <p><strong><i class="fas fa-calendar-minus"></i> End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
+                <p><strong><i class="fas fa-clock"></i> Duration:</strong>
                     <%
                         if (booking.getBookingStartDate() != null && booking.getBookingEndDate() != null) {
                             try {
@@ -289,7 +294,24 @@
                         }
                     %>
                 </p>
-                <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
+                <p><strong><i class="fas fa-info-circle"></i> Status:</strong> 
+                    <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>">
+                        <% if (booking.getBookingStatus() != null) { %>
+                            <% if (booking.getBookingStatus().equals("Pending")) { %>
+                                <i class="fas fa-clock"></i>
+                            <% } else if (booking.getBookingStatus().equals("Confirmed")) { %>
+                                <i class="fas fa-check-circle"></i>
+                            <% } else if (booking.getBookingStatus().equals("Completed")) { %>
+                                <i class="fas fa-check-double"></i>
+                            <% } else if (booking.getBookingStatus().equals("Cancelled")) { %>
+                                <i class="fas fa-times-circle"></i>
+                            <% } %>
+                            <%= booking.getBookingStatus()%>
+                        <% } else { %>
+                            N/A
+                        <% } %>
+                    </span>
+                </p>
             </div>
 
             <div class="vehicle-info-card">
@@ -297,53 +319,68 @@
                     <img src="<%= vehicle != null && vehicle.getVehicleImagePath() != null ? vehicle.getVehicleImagePath() : "images/default-car.jpg"%>" alt="<%= vehicle != null ? vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel() : "No Vehicle Info"%>" class="vehicle-image">
                 </div>
                 <div class="vehicle-details">
-                    <h3>Vehicle Information</h3>
+                    <h3><i class="fas fa-car"></i> Vehicle Information</h3>
                     <% if (vehicle != null) {%>
-                    <p><strong>Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
-                    <p><strong>Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
-                    <p><strong>Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
-                    <p><strong>Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
-                    <p><strong>Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
-                    <p><strong>Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
-                    <p><strong>Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
+                    <p><strong><i class="fas fa-tag"></i> Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
+                    <p><strong><i class="fas fa-tag"></i> Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
+                    <p><strong><i class="fas fa-cog"></i> Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
+                    <p><strong><i class="fas fa-gas-pump"></i> Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
+                    <p><strong><i class="fas fa-cogs"></i> Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
+                    <p><strong><i class="fas fa-id-card"></i> Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
+                    <p><strong><i class="fas fa-dollar-sign"></i> Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
                     <% } else { %>
-                    <p class="no-info">No vehicle information available.</p>
+                    <p class="no-info"><i class="fas fa-exclamation-triangle"></i> No vehicle information available.</p>
                     <% }%>
                 </div>
             </div>
 
             <div class="payment-info-card">
-                <h3>Payment Information</h3>
+                <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
                 <% if (payment != null) {%>
-                <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
-                <p><strong>Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
-                <p><strong>Payment Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
-                <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().replace(" ", "") : ""%>"><%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%></span></p>
-                <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() != null ? payment.getPaymentDate() : "N/A"%></p>
+                <p><strong><i class="fas fa-hashtag"></i> Payment ID:</strong> <%= payment.getPaymentID()%></p>
+                <p><strong><i class="fas fa-dollar-sign"></i> Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
+                <p><strong><i class="fas fa-credit-card"></i> Payment Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
+                <p><strong><i class="fas fa-info-circle"></i> Payment Status:</strong> 
+                    <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().replace(" ", "") : ""%>">
+                        <% if (payment.getPaymentStatus() != null) { %>
+                            <% if (payment.getPaymentStatus().equals("Pending")) { %>
+                                <i class="fas fa-clock"></i>
+                            <% } else if (payment.getPaymentStatus().equals("Completed")) { %>
+                                <i class="fas fa-check-circle"></i>
+                            <% } else if (payment.getPaymentStatus().equals("Cancelled")) { %>
+                                <i class="fas fa-times-circle"></i>
+                            <% } %>
+                            <%= payment.getPaymentStatus()%>
+                        <% } else { %>
+                            N/A
+                        <% } %>
+                    </span>
+                </p>
+                <p><strong><i class="fas fa-calendar"></i> Payment Date:</strong> <%= payment.getPaymentDate() != null ? payment.getPaymentDate() : "N/A"%></p>
                 <% if (payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) {%>
-                <p><strong>Proof of Payment:</strong> <a href="<%= request.getContextPath()%><%= payment.getProofOfPayment()%>" target="_blank">View</a></p>
-                <p class="info">Payment proof has been submitted and is awaiting response.</p>
+                <p><strong><i class="fas fa-file-image"></i> Proof of Payment:</strong> <a href="<%= request.getContextPath()%><%= payment.getProofOfPayment()%>" target="_blank"><i class="fas fa-eye"></i> View</a></p>
+                <p class="info"><i class="fas fa-info-circle"></i> Payment proof has been submitted and is awaiting response.</p>
                 <% } %>
                 <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
-                <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
-                <p><strong>Booking ID:</strong> <%= booking.getBookingId()%></p>
-                <p><strong>Payment ID:</strong> Not yet assigned</p>
-                <p class="no-info"><strong>Payment pending.</strong> Please provide the payment details in the form below to complete your booking.</p>
+                <p><strong><i class="fas fa-dollar-sign"></i> Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
+                <p><strong><i class="fas fa-hashtag"></i> Booking ID:</strong> <%= booking.getBookingId()%></p>
+                <p><strong><i class="fas fa-hashtag"></i> Payment ID:</strong> Not yet assigned</p>
+                <p class="no-info"><i class="fas fa-exclamation-circle"></i> <strong>Payment pending.</strong> Please provide the payment details in the form below to complete your booking.</p>
                 <% } else { %>
-                <p class="no-info">No payment information available.</p>
+                <p class="no-info"><i class="fas fa-exclamation-triangle"></i> No payment information available.</p>
                 <% } %>
             </div>
 
             <% if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus()) && (payment == null || !"Completed".equalsIgnoreCase(payment.getPaymentStatus()))) {%>
             <div class="payment-form-card">
-                <h3>Payment Form</h3>
+                <h3><i class="fas fa-edit"></i> Payment Form</h3>
                 <% if (payment != null && payment.getProofOfPayment() != null && !payment.getProofOfPayment().isEmpty()) { %>
-                <p class="info">Payment proof has been submitted. The form is now disabled.</p>
+                <p class="info"><i class="fas fa-info-circle"></i> Payment proof has been submitted. The form is now disabled.</p>
                 <% } else { %>
                 <form action="SubmitPayment" method="post" enctype="multipart/form-data" class="payment-form">
                     <input type="hidden" name="bookingId" value="<%= booking.getBookingId()%>">
                     <input type="hidden" name="paymentId" value="<%= payment != null ? payment.getPaymentID() : ""%>">
-                    <label for="paymentType">Payment Type:</label>
+                    <label for="paymentType"><i class="fas fa-credit-card"></i> Payment Type:</label>
                     <select id="paymentType" name="paymentType" required onchange="showPaymentDetails()">
                         <option value="">Select payment type</option>
                         <option value="Credit Card">Credit Card</option>
@@ -351,36 +388,36 @@
                         <option value="Bank Transfer">Bank Transfer</option>
                         <option value="Cash">Cash</option>
                     </select>
-                    <label for="amount">Amount (RM):</label>
+                    <label for="amount"><i class="fas fa-dollar-sign"></i> Amount (RM):</label>
                     <input type="number" id="amount" name="amount" step="0.01" value="<%= booking.getTotalCost() != null ? Double.parseDouble(booking.getTotalCost()) : 0%>" required readonly>
 
                     <div id="cardInfo" style="display:none;">
-                        <label for="cardNumber">Card Number:</label>
+                        <label for="cardNumber"><i class="fas fa-credit-card"></i> Card Number:</label>
                         <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456">
-                        <label for="cardName">Name on Card:</label>
+                        <label for="cardName"><i class="fas fa-user"></i> Name on Card:</label>
                         <input type="text" id="cardName" name="cardName" placeholder="John Doe">
-                        <label for="expiryDate">Expiry Date:</label>
+                        <label for="expiryDate"><i class="fas fa-calendar"></i> Expiry Date:</label>
                         <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY">
-                        <label for="cvv">CVV:</label>
+                        <label for="cvv"><i class="fas fa-lock"></i> CVV:</label>
                         <input type="text" id="cvv" name="cvv" placeholder="123">
                     </div>
 
                     <div id="bankTransferInfo" style="display:none;">
-                        <p>Please transfer the amount to the following account:</p>
+                        <p><i class="fas fa-info-circle"></i> Please transfer the amount to the following account:</p>
                         <img src="images/companyUsage/qr_carrentco.png" alt="Bank Transfer Information" class="bank-transfer-image">
-                        <label for="proofOfPayment">Upload Proof of Payment (PDF or Image, max 5MB):</label>
+                        <label for="proofOfPayment"><i class="fas fa-upload"></i> Upload Proof of Payment (PDF or Image, max 5MB):</label>
                         <input type="file" id="proofOfPayment" name="proofOfPayment" accept="image/*,application/pdf">
                     </div>
 
-                    <p><strong>Note:</strong> If selecting Cash, payment will be made upon vehicle pickup.</p>
+                    <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> If selecting Cash, payment will be made upon vehicle pickup.</p>
 
-                    <button type="submit">Submit Payment</button>
+                    <button type="submit"><i class="fas fa-paper-plane"></i> Submit Payment</button>
                 </form>
                 <% } %>
             </div>
             <% }%>
 
-            <div class="timestamp">Last updated: <%= currentDateTime%></div>
+            <div class="timestamp"><i class="fas fa-clock"></i> Last updated: <%= currentDateTime%></div>
         </div>
 
         <%@ include file="include/footer.jsp" %>

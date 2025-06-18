@@ -221,6 +221,15 @@
                    if (message != null && !message.isEmpty()) {
                 %>
                 <div class="alert alert-<%= messageType != null ? messageType : "info" %> alert-dismissible fade show" role="alert">
+                    <% if (messageType != null && messageType.equals("danger")) { %>
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                    <% } else if (messageType != null && messageType.equals("success")) { %>
+                        <i class="fas fa-check-circle me-2"></i>
+                    <% } else if (messageType != null && messageType.equals("warning")) { %>
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                    <% } else { %>
+                        <i class="fas fa-info-circle me-2"></i>
+                    <% } %>
                     <%= message %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -228,20 +237,20 @@
 
                 <div class="booking-history-container">
                     <div class="booking-history-header">
-                        <h2>My Bookings</h2>
-                        <p class="text-muted">Client ID: <%= clientId%></p>
+                        <h2><i class="fas fa-calendar-check"></i> My Bookings</h2>
+                        <p class="text-muted"><i class="fas fa-user"></i> Client ID: <%= clientId%></p>
                     </div>
 
                     <div class="filter-buttons">
-                        <button class="filter-btn active" data-status="Pending">Pending</button>
-                        <button class="filter-btn" data-status="Confirmed">Confirmed</button>
-                        <button class="filter-btn" data-status="Completed">Completed</button>
-                        <button class="filter-btn" data-status="Cancelled">Cancelled</button>
-                        <button class="filter-btn" data-status="all">All</button>
+                        <button class="filter-btn active" data-status="Pending"><i class="fas fa-clock"></i> Pending</button>
+                        <button class="filter-btn" data-status="Confirmed"><i class="fas fa-check-circle"></i> Confirmed</button>
+                        <button class="filter-btn" data-status="Completed"><i class="fas fa-check-double"></i> Completed</button>
+                        <button class="filter-btn" data-status="Cancelled"><i class="fas fa-times-circle"></i> Cancelled</button>
+                        <button class="filter-btn" data-status="all"><i class="fas fa-list"></i> All</button>
                     </div>
 
                     <% if (allBookings == null || allBookings.isEmpty()) { %>
-                    <div class="no-bookings">No booking records found for this client.</div>
+                    <div class="no-bookings"><i class="fas fa-calendar-times"></i> No booking records found for this client.</div>
                     <% } else { %>
                     <ul class="booking-cards-list" id="bookingCardsList">
                         <% for (Booking booking : allBookings) { %>
@@ -259,22 +268,33 @@
                                 <img src="<%= vehicle != null ? vehicle.getVehicleImagePath() : "path/to/default/image.jpg"%>" alt="Vehicle Image" class="booking-image" onerror="this.src='path/to/default/image.jpg';">
                             </div>
                             <div class="booking-details">
-                                <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
-                                <p><strong>Vehicle:</strong> <%= vehicle != null ? vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel() : "N/A"%></p>
-                                <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
-                                <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
-                                <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                                <p><strong><i class="fas fa-hashtag"></i> Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
+                                <p><strong><i class="fas fa-car"></i> Vehicle:</strong> <%= vehicle != null ? vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel() : "N/A"%></p>
+                                <p><strong><i class="fas fa-calendar-plus"></i> Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
+                                <p><strong><i class="fas fa-calendar-minus"></i> End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
+                                <p><strong><i class="fas fa-calendar"></i> Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
                             </div>
                             <div class="booking-info">
-                                <p class="total-cost">RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
-                                <span class="status status-<%= bookingStatus.replace(" ", "") %>"><%= bookingStatus != null ? bookingStatus : "N/A"%></span>
+                                <p class="total-cost"><i class="fas fa-dollar-sign"></i> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
+                                <span class="status status-<%= bookingStatus.replace(" ", "") %>">
+                                    <% if (bookingStatus.equals("Pending")) { %>
+                                        <i class="fas fa-clock"></i>
+                                    <% } else if (bookingStatus.equals("Confirmed")) { %>
+                                        <i class="fas fa-check-circle"></i>
+                                    <% } else if (bookingStatus.equals("Completed")) { %>
+                                        <i class="fas fa-check-double"></i>
+                                    <% } else if (bookingStatus.equals("Cancelled")) { %>
+                                        <i class="fas fa-times-circle"></i>
+                                    <% } %>
+                                    <%= bookingStatus != null ? bookingStatus : "N/A"%>
+                                </span>
                             </div>
                         </li>
                         <% } %>
                     </ul>
                     <% }%>
 
-                    <div class="timestamp">Last updated: <%= currentDateTime%></div>
+                    <div class="timestamp"><i class="fas fa-clock"></i> Last updated: <%= currentDateTime%></div>
                 </div>
             </div>
         </section>

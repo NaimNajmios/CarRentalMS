@@ -344,7 +344,7 @@
 
             <main class="dashboard-content">
                 <div class="dashboard-header">
-                    <h2>Booking Management</h2>
+                    <h2><i class="fas fa-calendar-check"></i> Booking Management</h2>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" id="searchInput" placeholder="Search bookings..." class="form-control">
@@ -353,11 +353,11 @@
 
                 <div class="filter-buttons">
                     <div class="left-buttons">
-                        <button class="active" onclick="filterBookings('all')">All <span class="count" id="allCount">0</span></button>
-                        <button onclick="filterBookings('Pending')">Pending <span class="count" id="pendingCount">0</span></button>
-                        <button onclick="filterBookings('Confirmed')">Confirmed <span class="count" id="confirmedCount">0</span></button>
-                        <button onclick="filterBookings('Completed')">Completed <span class="count" id="completedCount">0</span></button>
-                        <button onclick="filterBookings('Cancelled')">Cancelled <span class="count" id="cancelledCount">0</span></button>
+                        <button class="active" onclick="filterBookings('all')"><i class="fas fa-list"></i> All <span class="count" id="allCount">0</span></button>
+                        <button onclick="filterBookings('Pending')"><i class="fas fa-clock"></i> Pending <span class="count" id="pendingCount">0</span></button>
+                        <button onclick="filterBookings('Confirmed')"><i class="fas fa-check-circle"></i> Confirmed <span class="count" id="confirmedCount">0</span></button>
+                        <button onclick="filterBookings('Completed')"><i class="fas fa-check-double"></i> Completed <span class="count" id="completedCount">0</span></button>
+                        <button onclick="filterBookings('Cancelled')"><i class="fas fa-times-circle"></i> Cancelled <span class="count" id="cancelledCount">0</span></button>
                     </div>
                     <a href="admin-create-booking.jsp" class="new-booking-btn">
                         <i class="fas fa-plus"></i>
@@ -379,6 +379,7 @@
                     if (errorMessage != null) {
                 %>
                 <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     <%= errorMessage%>
                 </div>
                 <%
@@ -387,13 +388,13 @@
                 <table class="booking-table">
                     <thead>
                         <tr>
-                            <th>Booking ID</th>
-                            <th>Client ID</th>
-                            <th>Vehicle ID</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Total Cost</th>
-                            <th>Status</th>
+                            <th><i class="fas fa-hashtag"></i> Booking ID</th>
+                            <th><i class="fas fa-user"></i> Client ID</th>
+                            <th><i class="fas fa-car"></i> Vehicle ID</th>
+                            <th><i class="fas fa-calendar-plus"></i> Start Date</th>
+                            <th><i class="fas fa-calendar-minus"></i> End Date</th>
+                            <th><i class="fas fa-dollar-sign"></i> Total Cost</th>
+                            <th><i class="fas fa-info-circle"></i> Status</th>
                         </tr>
                     </thead>
                     <tbody id="bookingTableBody">
@@ -405,12 +406,24 @@
                             <td><%= booking.getBookingStartDate()%></td>
                             <td><%= booking.getBookingEndDate()%></td>
                             <td><%= booking.getTotalCost()%></td>
-                            <td><span class="status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>"><%= booking.getBookingStatus()%></span></td>
+                            <td>
+                                <% if ("Pending".equals(booking.getBookingStatus())) { %>
+                                    <span class="status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>"><i class="fas fa-clock"></i> <%= booking.getBookingStatus()%></span>
+                                <% } else if ("Confirmed".equals(booking.getBookingStatus())) { %>
+                                    <span class="status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>"><i class="fas fa-check-circle"></i> <%= booking.getBookingStatus()%></span>
+                                <% } else if ("Completed".equals(booking.getBookingStatus())) { %>
+                                    <span class="status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>"><i class="fas fa-check-double"></i> <%= booking.getBookingStatus()%></span>
+                                <% } else if ("Cancelled".equals(booking.getBookingStatus())) { %>
+                                    <span class="status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>"><i class="fas fa-times-circle"></i> <%= booking.getBookingStatus()%></span>
+                                <% } else { %>
+                                    <span class="status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus() : ""%>"><i class="fas fa-info-circle"></i> <%= booking.getBookingStatus()%></span>
+                                <% } %>
+                            </td>
                         </tr>
                         <% }%>
                     </tbody>
                 </table>
-                <div class="timestamp">Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date())%></div>
+                <div class="timestamp"><i class="fas fa-clock"></i> Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date())%></div>
                 <%
                     }
                 %>

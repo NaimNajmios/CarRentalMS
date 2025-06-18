@@ -312,7 +312,7 @@
                 <% } %>
 
                 <div class="dashboard-header">
-                    <h2>My Profile</h2>
+                    <h2><i class="fas fa-user-circle"></i> My Profile</h2>
                 </div>
 
                 <div class="profile-card">
@@ -347,45 +347,45 @@
                         </div>
 
                         <!-- Personal Information Section -->
-                        <h4 class="section-title mb-3 mt-4">Personal Information</h4>
+                        <h4 class="section-title mb-3 mt-4"><i class="fas fa-id-card"></i> Personal Information</h4>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name" class="form-label">Full Name</label>
+                                    <label for="name" class="form-label"><i class="fas fa-user"></i> Full Name</label>
                                     <input type="text" class="form-control" id="name" name="name" value="<%= loggedInClient.getName()%>" required readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="username" class="form-label">Username</label>
+                                    <label for="username" class="form-label"><i class="fas fa-at"></i> Username</label>
                                     <input type="text" class="form-control" id="username" name="username" value="<%= loggedInUser.getUsername()%>" required readonly>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Contact Information Section -->
-                        <h4 class="section-title mb-3 mt-4">Contact Information</h4>
+                        <h4 class="section-title mb-3 mt-4"><i class="fas fa-address-book"></i> Contact Information</h4>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="email" class="form-label">Email</label>
+                                    <label for="email" class="form-label"><i class="fas fa-envelope"></i> Email</label>
                                     <input type="email" class="form-control" id="email" name="email" value="<%= loggedInClient.getEmail()%>" required readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <label for="phone" class="form-label"><i class="fas fa-phone"></i> Phone Number</label>
                                     <input type="text" class="form-control" id="phone" name="phone" value="<%= loggedInClient.getPhoneNumber()%>" required readonly>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Address Information Section -->
-                        <h4 class="section-title mb-3 mt-4">Address Information</h4>
+                        <h4 class="section-title mb-3 mt-4"><i class="fas fa-map-marker-alt"></i> Address Information</h4>
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label for="address" class="form-label">Address</label>
+                                    <label for="address" class="form-label"><i class="fas fa-home"></i> Address</label>
                                     <textarea class="form-control" id="address" name="address" required readonly><%= loggedInClient.getAddress()%></textarea>
                                 </div>
                             </div>
@@ -427,7 +427,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                        <h5 class="modal-title" id="changePasswordModalLabel"><i class="fas fa-key"></i> Change Password</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -435,17 +435,17 @@
                             <input type="hidden" name="userID" value="<%= loggedInUser.getUserID()%>">
                             
                             <div class="mb-3">
-                                <label for="oldPassword" class="form-label">Current Password</label>
+                                <label for="oldPassword" class="form-label"><i class="fas fa-lock"></i> Current Password</label>
                                 <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="newPassword" class="form-label">New Password</label>
+                                <label for="newPassword" class="form-label"><i class="fas fa-lock-open"></i> New Password</label>
                                 <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <label for="confirmPassword" class="form-label"><i class="fas fa-check-circle"></i> Confirm New Password</label>
                                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                             </div>
 
@@ -453,8 +453,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="submitPasswordChange">Change Password</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
+                        <button type="button" class="btn btn-primary" id="submitPasswordChange"><i class="fas fa-save"></i> Change Password</button>
                     </div>
                 </div>
             </div>

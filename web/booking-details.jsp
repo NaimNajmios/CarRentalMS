@@ -219,18 +219,18 @@
 
         <div class="booking-details-container">
             <div class="booking-header">
-                <h2>Booking Details</h2>
-                <a href="mybooking.jsp" class="back-link">← Back to Bookings</a>
+                <h2><i class="fas fa-calendar-check"></i> Booking Details</h2>
+                <a href="mybooking.jsp" class="back-link"><i class="fas fa-arrow-left"></i> Back to Bookings</a>
             </div>
 
             <div class="detail-section">
-                <h3>Booking Information</h3>
-                <p><strong>Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
-                <p><strong>Client ID:</strong> <%= booking.getClientId() != null ? booking.getClientId() : "N/A"%></p>
-                <p><strong>Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
-                <p><strong>Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
-                <p><strong>End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
-                <p><strong>Duration:</strong>
+                <h3><i class="fas fa-info-circle"></i> Booking Information</h3>
+                <p><strong><i class="fas fa-hashtag"></i> Booking ID:</strong> <%= booking.getBookingId() != null ? booking.getBookingId() : "N/A"%></p>
+                <p><strong><i class="fas fa-user"></i> Client ID:</strong> <%= booking.getClientId() != null ? booking.getClientId() : "N/A"%></p>
+                <p><strong><i class="fas fa-calendar"></i> Booking Date:</strong> <%= booking.getBookingDate() != null ? booking.getBookingDate() : "N/A"%></p>
+                <p><strong><i class="fas fa-calendar-plus"></i> Start Date:</strong> <%= booking.getBookingStartDate() != null ? booking.getBookingStartDate() : "N/A"%></p>
+                <p><strong><i class="fas fa-calendar-minus"></i> End Date:</strong> <%= booking.getBookingEndDate() != null ? booking.getBookingEndDate() : "N/A"%></p>
+                <p><strong><i class="fas fa-clock"></i> Duration:</strong>
                     <%
                         if (booking.getBookingStartDate() != null && booking.getBookingEndDate() != null) {
                             try {
@@ -247,10 +247,27 @@
                         }
                     %>
                 </p>
-                <p><strong>Status:</strong> <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>"><%= booking.getBookingStatus() != null ? booking.getBookingStatus() : "N/A"%></span></p>
+                <p><strong><i class="fas fa-info-circle"></i> Status:</strong> 
+                    <span class="status-badge status-<%= booking.getBookingStatus() != null ? booking.getBookingStatus().replace(" ", "") : ""%>">
+                        <% if (booking.getBookingStatus() != null) { %>
+                            <% if (booking.getBookingStatus().equals("Pending")) { %>
+                                <i class="fas fa-clock"></i>
+                            <% } else if (booking.getBookingStatus().equals("Confirmed")) { %>
+                                <i class="fas fa-check-circle"></i>
+                            <% } else if (booking.getBookingStatus().equals("Completed")) { %>
+                                <i class="fas fa-check-double"></i>
+                            <% } else if (booking.getBookingStatus().equals("Cancelled")) { %>
+                                <i class="fas fa-times-circle"></i>
+                            <% } %>
+                            <%= booking.getBookingStatus()%>
+                        <% } else { %>
+                            N/A
+                        <% } %>
+                    </span>
+                </p>
                 
                 <% if (booking.getBookingStatus() != null && "Completed".equalsIgnoreCase(booking.getBookingStatus().trim())) { %>
-                    <p class="text-success mt-3"><strong>Your booking is completed! You may now pick up your vehicle.</strong></p>
+                    <p class="text-success mt-3"><i class="fas fa-check-circle"></i> <strong>Your booking is completed! You may now pick up your vehicle.</strong></p>
                 <% } %>
             </div>
 
@@ -259,35 +276,46 @@
                     <img src="<%= vehicle != null && vehicle.getVehicleImagePath() != null ? vehicle.getVehicleImagePath() : "images/default-car.jpg"%>" alt="<%= vehicle != null ? vehicle.getVehicleBrand() + " " + vehicle.getVehicleModel() : "No Vehicle Info"%>" class="vehicle-image">
                 </div>
                 <div class="vehicle-details">
-                    <h3>Vehicle Information</h3>
+                    <h3><i class="fas fa-car"></i> Vehicle Information</h3>
                     <% if (vehicle != null) {%>
-                    <p><strong>Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
-                    <p><strong>Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
-                    <p><strong>Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
-                    <p><strong>Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
-                    <p><strong>Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
-                    <p><strong>Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
-                    <p><strong>Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
+                    <p><strong><i class="fas fa-tag"></i> Brand:</strong> <%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A"%></p>
+                    <p><strong><i class="fas fa-tag"></i> Model:</strong> <%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A"%></p>
+                    <p><strong><i class="fas fa-cog"></i> Vehicle Type:</strong> <%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A"%></p>
+                    <p><strong><i class="fas fa-gas-pump"></i> Fuel Type:</strong> <%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A"%></p>
+                    <p><strong><i class="fas fa-cogs"></i> Transmission:</strong> <%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A"%></p>
+                    <p><strong><i class="fas fa-id-card"></i> Registration No:</strong> <%= vehicle.getVehicleRegistrationNo() != null ? vehicle.getVehicleRegistrationNo() : "N/A"%></p>
+                    <p><strong><i class="fas fa-dollar-sign"></i> Rate Per Day:</strong> RM <%= vehicle.getVehicleRatePerDay() != null ? String.format("%.2f", Double.parseDouble(vehicle.getVehicleRatePerDay())) : "N/A"%></p>
                     <% } else { %>
-                    <p class="no-info">No vehicle information available.</p>
+                    <p class="no-info"><i class="fas fa-exclamation-triangle"></i> No vehicle information available.</p>
                     <% } %>
                 </div>
             </div>
 
             <div class="payment-info-card">
-                <h3>Payment Information</h3>
+                <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
                 <% if (payment != null) {%>
-                <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
-                <p><strong>Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
-                <p><strong>Payment Type:</strong> <%= payment.getPaymentType()%></p>
-                <p><strong>Payment Status:</strong> <span class="status-badge status-<%= payment.getPaymentStatus().replace(" ", "")%>"><%= payment.getPaymentStatus()%></span></p>
+                <p><strong><i class="fas fa-hashtag"></i> Payment ID:</strong> <%= payment.getPaymentID()%></p>
+                <p><strong><i class="fas fa-dollar-sign"></i> Amount:</strong> RM <%= String.format("%.2f", payment.getAmount())%></p>
+                <p><strong><i class="fas fa-credit-card"></i> Payment Type:</strong> <%= payment.getPaymentType()%></p>
+                <p><strong><i class="fas fa-info-circle"></i> Payment Status:</strong> 
+                    <span class="status-badge status-<%= payment.getPaymentStatus().replace(" ", "")%>">
+                        <% if (payment.getPaymentStatus().equals("Pending")) { %>
+                            <i class="fas fa-clock"></i>
+                        <% } else if (payment.getPaymentStatus().equals("Completed")) { %>
+                            <i class="fas fa-check-circle"></i>
+                        <% } else if (payment.getPaymentStatus().equals("Cancelled")) { %>
+                            <i class="fas fa-times-circle"></i>
+                        <% } %>
+                        <%= payment.getPaymentStatus()%>
+                    </span>
+                </p>
                 <% } else if (booking != null && "Pending".equalsIgnoreCase(booking.getBookingStatus())) {%>
-                <p><strong>Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
-                <p><strong>Booking ID:</strong> <%= booking.getBookingId()%></p>
-                <p><strong>Payment ID:</strong> Not yet assigned</p>
-                <p class="no-info">Payment pending. Please proceed to make the payment.</p>
+                <p><strong><i class="fas fa-dollar-sign"></i> Total Cost:</strong> RM <%= booking.getTotalCost() != null ? String.format("%.2f", Double.parseDouble(booking.getTotalCost())) : "N/A"%></p>
+                <p><strong><i class="fas fa-hashtag"></i> Booking ID:</strong> <%= booking.getBookingId()%></p>
+                <p><strong><i class="fas fa-hashtag"></i> Payment ID:</strong> Not yet assigned</p>
+                <p class="no-info"><i class="fas fa-exclamation-circle"></i> Payment pending. Please proceed to make the payment.</p>
                 <% } else { %>
-                <p class="no-info">No payment information available.</p>
+                <p class="no-info"><i class="fas fa-exclamation-triangle"></i> No payment information available.</p>
                 <% } %>
             </div>
 
@@ -300,14 +328,14 @@
 
             <div class="proceed-button-container">
                 <% if (isPending && isPaymentPending) { %>
-                    <a href="booking-payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button">Proceed to Payment</a>
+                    <a href="booking-payment.jsp?bookingId=<%= booking.getBookingId()%>" class="proceed-button"><i class="fas fa-credit-card"></i> Proceed to Payment</a>
                 <% } %>
                 <% if (isPending || isConfirmed) { %>
-                    <a href="CancelBookingServlet?bookingId=<%= booking.getBookingId()%>&returnPage=booking-details.jsp" class="cancel-button">Cancel Booking</a>
+                    <a href="CancelBookingServlet?bookingId=<%= booking.getBookingId()%>&returnPage=booking-details.jsp" class="cancel-button"><i class="fas fa-times"></i> Cancel Booking</a>
                 <% } %>
             </div>
 
-            <div class="timestamp">Last updated: <%= currentDateTime%></div>
+            <div class="timestamp"><i class="fas fa-clock"></i> Last updated: <%= currentDateTime%></div>
         </div>
 
         <%@ include file="include/footer.jsp" %>

@@ -192,7 +192,7 @@
                 %>
 
                 <div class="dashboard-header">
-                    <h2>Edit Client Information</h2>
+                    <h2><i class="fas fa-edit"></i> Edit Client Information</h2>
                     <a href="admin-users.jsp" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Users
                     </a>
@@ -206,6 +206,7 @@
                         <!-- Image Upload Section -->
                         <div class="row mb-4">
                             <div class="col-12 text-center">
+                                <h5 class="mb-3"><i class="fas fa-camera"></i> Profile Picture</h5>
                                 <img src="<%= rs.getString("profileImagePath") != null && !rs.getString("profileImagePath").isEmpty() ? request.getContextPath() + "/" + rs.getString("profileImagePath") : request.getContextPath() + "/images/profilepic/default_profile.jpg"%>"
                                      alt="Profile Picture" 
                                      class="rounded-circle profile-preview mb-3" 
@@ -224,20 +225,24 @@
                                         <i class="fas fa-undo me-2"></i>Reset
                                     </button>
                                 </div>
-                                <small class="text-muted">Recommended size: 200x200 pixels. Max file size: 2MB</small>
+                                <small class="text-muted"><i class="fas fa-info-circle"></i> Recommended size: 200x200 pixels. Max file size: 2MB</small>
                             </div>
                         </div>
 
-                        <div class="row mb-3">
+                        <!-- Personal Information Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="mb-3"><i class="fas fa-user"></i> Personal Information</h5>
+                            </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name" class="form-label">Name</label>
+                                    <label for="name" class="form-label"><i class="fas fa-user"></i> Name</label>
                                     <input type="text" class="form-control" id="name" name="name" value="<%= rs.getString("name")%>" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="address" class="form-label">Address</label>
+                                    <label for="address" class="form-label"><i class="fas fa-map-marker-alt"></i> Address</label>
                                     <input type="text" class="form-control" id="address" name="address" value="<%= rs.getString("address")%>" required>
                                 </div>
                             </div>
@@ -246,13 +251,13 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="phone" class="form-label">Phone</label>
+                                    <label for="phone" class="form-label"><i class="fas fa-phone"></i> Phone</label>
                                     <input type="text" class="form-control" id="phone" name="phone" value="<%= rs.getString("phoneNumber")%>" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="email" class="form-label">Email</label>
+                                    <label for="email" class="form-label"><i class="fas fa-envelope"></i> Email</label>
                                     <input type="email" class="form-control" id="email" name="email" value="<%= rs.getString("email")%>" required>
                                 </div>
                             </div>

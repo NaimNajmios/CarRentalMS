@@ -164,7 +164,7 @@
                 %>
 
                 <div class="dashboard-header">
-                    <h2>Edit Vehicle</h2>
+                    <h2><i class="fas fa-edit"></i> Edit Vehicle</h2>
                     <a href="admin-vehicles.jsp" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Vehicles
                     </a>
@@ -199,7 +199,7 @@
                                             <i class="fas fa-undo me-2"></i>Reset
                                         </button>
                                     </div>
-                                    <small class="text-muted">Recommended size: 800x600 pixels. Max file size: 5MB</small>
+                                    <small class="text-muted"><i class="fas fa-info-circle"></i> Recommended size: 800x600 pixels. Max file size: 5MB</small>
                                 </div>
                             </div>
                         </div>
@@ -207,25 +207,25 @@
                         <!-- Vehicle Details Section -->
                         <div class="row mb-4">
                             <div class="col-12">
-                                <h4 class="section-title mb-3">Vehicle Details</h4>
+                                <h4 class="section-title mb-3"><i class="fas fa-car"></i> Vehicle Details</h4>
                             </div>
                             <div class="col-md-6">
-                                <label for="model" class="form-label">Model</label>
+                                <label for="model" class="form-label"><i class="fas fa-tag"></i> Model</label>
                                 <input type="text" name="model" id="model" class="form-control" value="<%= vehicle.getModel()%>" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="brand" class="form-label">Brand</label>
+                                <label for="brand" class="form-label"><i class="fas fa-tag"></i> Brand</label>
                                 <input type="text" name="brand" id="brand" class="form-control" value="<%= vehicle.getBrand()%>" required>
                             </div>
                         </div>
 
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <label for="manufacturingYear" class="form-label">Manufacturing Year</label>
+                                <label for="manufacturingYear" class="form-label"><i class="fas fa-calendar"></i> Manufacturing Year</label>
                                 <input type="number" name="manufacturingYear" id="manufacturingYear" class="form-control" value="<%= vehicle.getManufacturingYear()%>" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="category" class="form-label">Category</label>
+                                <label for="category" class="form-label"><i class="fas fa-cog"></i> Category</label>
                                 <select name="category" id="category" class="form-select" required>
                                     <option value="" disabled>Select a category</option>
                                     <option value="Hatchback" <%= vehicle.getCategory().equals("Hatchback") ? "selected" : ""%>>Hatchback</option>
@@ -239,7 +239,7 @@
 
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <label for="fuelType" class="form-label">Fuel Type</label>
+                                <label for="fuelType" class="form-label"><i class="fas fa-gas-pump"></i> Fuel Type</label>
                                 <select name="fuelType" id="fuelType" class="form-select" required>
                                     <option value="" disabled>Select fuel type</option>
                                     <option value="Petrol" <%= vehicle.getFuelType().equals("Petrol") ? "selected" : ""%>>Petrol</option>
@@ -247,7 +247,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="transmissionType" class="form-label">Transmission Type</label>
+                                <label for="transmissionType" class="form-label"><i class="fas fa-cogs"></i> Transmission Type</label>
                                 <select name="transmissionType" id="transmissionType" class="form-select" required>
                                     <option value="" disabled>Select transmission type</option>
                                     <option value="Auto" <%= vehicle.getTransmissionType().equals("Auto") ? "selected" : ""%>>Auto</option>
@@ -258,30 +258,30 @@
 
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <label for="mileage" class="form-label">Mileage (km)</label>
+                                <label for="mileage" class="form-label"><i class="fas fa-tachometer-alt"></i> Mileage (km)</label>
                                 <input type="number" name="mileage" id="mileage" class="form-control" value="<%= vehicle.getMileage()%>" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="ratePerDay" class="form-label">Rate per Day (RM)</label>
+                                <label for="ratePerDay" class="form-label"><i class="fas fa-dollar-sign"></i> Rate per Day (RM)</label>
                                 <input type="number" step="0.01" name="ratePerDay" id="ratePerDay" class="form-control" value="<%= vehicle.getRatePerDay()%>" required>
                             </div>
                         </div>
 
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <label for="registrationNo" class="form-label">Registration Number</label>
+                                <label for="registrationNo" class="form-label"><i class="fas fa-id-card"></i> Registration Number</label>
                                 <input type="text" name="registrationNo" id="registrationNo" class="form-control" value="<%= vehicle.getRegistrationNo()%>" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Availability</label>
+                                <label class="form-label"><i class="fas fa-info-circle"></i> Availability</label>
                                 <div class="mt-2">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="availability" id="available" value="true" <%= vehicle.isAvailability() ? "checked" : ""%>>
-                                        <label class="form-check-label" for="available">Available</label>
+                                        <label class="form-check-label" for="available"><i class="fas fa-check-circle text-success"></i> Available</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="availability" id="notAvailable" value="false" <%= !vehicle.isAvailability() ? "checked" : ""%>>
-                                        <label class="form-check-label" for="notAvailable">Not Available</label>
+                                        <label class="form-check-label" for="notAvailable"><i class="fas fa-times-circle text-danger"></i> Not Available</label>
                                     </div>
                                 </div>
                             </div>
@@ -299,6 +299,7 @@
                 </div>
                 <% } else { %>
                 <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     Vehicle not found. Please check the vehicle ID and try again.
                 </div>
                 <% } %>

@@ -239,12 +239,13 @@
                 %>
                 <% if (errorMessage != null) {%>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     <%= errorMessage%>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <% } %>
                 <div class="dashboard-header">
-                    <h2>Edit Booking</h2>
+                    <h2><i class="fas fa-edit"></i> Edit Booking</h2>
                     <a href="admin-view-booking.jsp?bookingId=<%= bookingId %>" class="back-link">
                         <i class="fas fa-arrow-left"></i> Back to Booking Details
                     </a>
@@ -252,79 +253,82 @@
                 <% if (booking != null) {%>
                 <form class="edit-form" id="editBookingForm" action="update-booking.jsp" method="POST">
                     <div class="form-section">
-                        <h3>Booking Information</h3>
+                        <h3><i class="fas fa-info-circle"></i> Booking Information</h3>
                         <div class="readonly-info">
                             <input type="hidden" name="bookingId" value="<%= bookingId %>">
                             <input type="hidden" name="adminId" value="<%= ((Admin)session.getAttribute("loggedInAdmin")).getAdminID() %>">
-                            <p><strong>Booking ID:</strong> <%= bookingId %></p>
-                            <p><strong>Booking Date:</strong> <%= booking.getBookingDate() %></p>
+                            <p><i class="fas fa-hashtag text-muted"></i> <strong>Booking ID:</strong> <%= bookingId %></p>
+                            <p><i class="fas fa-calendar-alt text-muted"></i> <strong>Booking Date:</strong> <%= booking.getBookingDate() %></p>
                         </div>
                         <div class="form-group">
-                            <label for="startDate">Start Date</label>
+                            <label for="startDate"><i class="fas fa-calendar-plus"></i> Start Date</label>
                             <input type="date" class="form-control" id="startDate" name="startDate" 
                                    value="<%= booking.getBookingStartDate() %>" required>
                         </div>
                         <div class="form-group">
-                            <label for="endDate">End Date</label>
+                            <label for="endDate"><i class="fas fa-calendar-minus"></i> End Date</label>
                             <input type="date" class="form-control" id="endDate" name="endDate" 
                                    value="<%= booking.getBookingEndDate() %>" required>
                         </div>
                         <div class="form-group">
-                            <label for="totalCost">Total Cost (RM)</label>
+                            <label for="totalCost"><i class="fas fa-dollar-sign"></i> Total Cost (RM)</label>
                             <input type="number" class="form-control" id="totalCost" name="totalCost" 
                                    value="<%= booking.getTotalCost() %>" step="0.01" required>
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <h3>Client Information</h3>
+                        <h3><i class="fas fa-user"></i> Client Information</h3>
                         <% if (client != null) {%>
                         <div class="readonly-info">
-                            <p><strong>Client ID:</strong> <%= client.getClientID() %></p>
-                            <p><strong>Name:</strong> <%= client.getName() %></p>
-                            <p><strong>Email:</strong> <%= client.getEmail() %></p>
-                            <p><strong>Phone:</strong> <%= client.getPhoneNumber() %></p>
+                            <p><i class="fas fa-hashtag text-muted"></i> <strong>Client ID:</strong> <%= client.getClientID() %></p>
+                            <p><i class="fas fa-user text-muted"></i> <strong>Name:</strong> <%= client.getName() %></p>
+                            <p><i class="fas fa-envelope text-muted"></i> <strong>Email:</strong> <%= client.getEmail() %></p>
+                            <p><i class="fas fa-phone text-muted"></i> <strong>Phone:</strong> <%= client.getPhoneNumber() %></p>
                         </div>
                         <% } else { %>
                         <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
                             Client information not available.
                         </div>
                         <% } %>
                     </div>
 
                     <div class="form-section">
-                        <h3>Vehicle Information</h3>
+                        <h3><i class="fas fa-car"></i> Vehicle Information</h3>
                         <% if (vehicle != null) {%>
                         <div class="readonly-info">
-                            <p><strong>Vehicle ID:</strong> <%= vehicle.getVehicleId() %></p>
-                            <p><strong>Brand:</strong> <%= vehicle.getVehicleBrand() %></p>
-                            <p><strong>Model:</strong> <%= vehicle.getVehicleModel() %></p>
-                            <p><strong>Year:</strong> <%= vehicle.getVehicleYear() %></p>
-                            <p><strong>Type:</strong> <%= vehicle.getVehicleCategory() %></p>
-                            <p><strong>License Plate:</strong> <%= vehicle.getVehicleRegistrationNo() %></p>
-                            <p><strong>Rental Rate:</strong> RM <%= vehicle.getVehicleRatePerDay() %></p>
+                            <p><i class="fas fa-hashtag text-muted"></i> <strong>Vehicle ID:</strong> <%= vehicle.getVehicleId() %></p>
+                            <p><i class="fas fa-tag text-muted"></i> <strong>Brand:</strong> <%= vehicle.getVehicleBrand() %></p>
+                            <p><i class="fas fa-car text-muted"></i> <strong>Model:</strong> <%= vehicle.getVehicleModel() %></p>
+                            <p><i class="fas fa-calendar text-muted"></i> <strong>Year:</strong> <%= vehicle.getVehicleYear() %></p>
+                            <p><i class="fas fa-cog text-muted"></i> <strong>Type:</strong> <%= vehicle.getVehicleCategory() %></p>
+                            <p><i class="fas fa-id-card text-muted"></i> <strong>License Plate:</strong> <%= vehicle.getVehicleRegistrationNo() %></p>
+                            <p><i class="fas fa-dollar-sign text-muted"></i> <strong>Rental Rate:</strong> RM <%= vehicle.getVehicleRatePerDay() %></p>
                         </div>
                         <% } else { %>
                         <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
                             Vehicle information not available.
                         </div>
                         <% } %>
                     </div>
 
                     <div class="form-section">
-                        <h3>Payment Information</h3>
+                        <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
                         <% if (payment != null) {%>
                         <div class="readonly-info">
-                            <p><strong>Payment ID:</strong> <%= payment.getPaymentID() %></p>
-                            <p><strong>Payment Type:</strong> <%= payment.getPaymentType() %></p>
-                            <p><strong>Amount:</strong> RM <%= payment.getAmount() %></p>
-                            <p><strong>Payment Status:</strong> <%= payment.getPaymentStatus() %></p>
-                            <p><strong>Payment Date:</strong> <%= payment.getPaymentDate() %></p>
-                            <p><strong>Invoice Number:</strong> <%= payment.getInvoiceNumber() %></p>
-                            <p><strong>Handled By:</strong> <%= payment.getHandledBy() %></p>
+                            <p><i class="fas fa-hashtag text-muted"></i> <strong>Payment ID:</strong> <%= payment.getPaymentID() %></p>
+                            <p><i class="fas fa-credit-card text-muted"></i> <strong>Payment Type:</strong> <%= payment.getPaymentType() %></p>
+                            <p><i class="fas fa-dollar-sign text-muted"></i> <strong>Amount:</strong> RM <%= payment.getAmount() %></p>
+                            <p><i class="fas fa-info-circle text-muted"></i> <strong>Payment Status:</strong> <%= payment.getPaymentStatus() %></p>
+                            <p><i class="fas fa-calendar-alt text-muted"></i> <strong>Payment Date:</strong> <%= payment.getPaymentDate() %></p>
+                            <p><i class="fas fa-file-invoice text-muted"></i> <strong>Invoice Number:</strong> <%= payment.getInvoiceNumber() %></p>
+                            <p><i class="fas fa-user-tie text-muted"></i> <strong>Handled By:</strong> <%= payment.getHandledBy() %></p>
                         </div>
                         <% } else { %>
                         <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
                             Payment information not available.
                         </div>
                         <% }%>
@@ -341,6 +345,7 @@
                 </form>
                 <% } else { %>
                 <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
                     No booking details to display.
                 </div>
                 <% }%>

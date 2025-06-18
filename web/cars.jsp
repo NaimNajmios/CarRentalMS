@@ -17,6 +17,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>CarRent - Cars Selection</title>
         <%@ include file="include/client-css.html" %>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body>
         <!-- Header -->
@@ -25,26 +26,26 @@
         <!-- Cars Section -->
         <section id="cars" class="py-5 mt-5">
             <div class="container">
-                <h2 class="text-center mb-4 display-6 fw-bold">Available Cars</h2>
+                <h2 class="text-center mb-4 display-6 fw-bold"><i class="fas fa-car"></i> Available Cars</h2>
                 <!-- Category Tabs -->
                 <ul class="nav nav-tabs justify-content-center mb-5" id="carCategoryTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">All</button>
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true"><i class="fas fa-th"></i> All</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="hatchback-tab" data-bs-toggle="tab" data-bs-target="#hatchback" type="button" role="tab" aria-controls="hatchback" aria-selected="false">Hatchback</button>
+                        <button class="nav-link" id="hatchback-tab" data-bs-toggle="tab" data-bs-target="#hatchback" type="button" role="tab" aria-controls="hatchback" aria-selected="false"><i class="fas fa-car-side"></i> Hatchback</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="sedan-tab" data-bs-toggle="tab" data-bs-target="#sedan" type="button" role="tab" aria-controls="sedan" aria-selected="false">Sedan</button>
+                        <button class="nav-link" id="sedan-tab" data-bs-toggle="tab" data-bs-target="#sedan" type="button" role="tab" aria-controls="sedan" aria-selected="false"><i class="fas fa-car"></i> Sedan</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="suv-tab" data-bs-toggle="tab" data-bs-target="#suv" type="button" role="tab" aria-controls="suv" aria-selected="false">SUV</button>
+                        <button class="nav-link" id="suv-tab" data-bs-toggle="tab" data-bs-target="#suv" type="button" role="tab" aria-controls="suv" aria-selected="false"><i class="fas fa-truck-monster"></i> SUV</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="van-tab" data-bs-toggle="tab" data-bs-target="#van" type="button" role="tab" aria-controls="van" aria-selected="false">Van</button>
+                        <button class="nav-link" id="van-tab" data-bs-toggle="tab" data-bs-target="#van" type="button" role="tab" aria-controls="van" aria-selected="false"><i class="fas fa-shuttle-van"></i> Van</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="truck-tab" data-bs-toggle="tab" data-bs-target="#truck" type="button" role="tab" aria-controls="truck" aria-selected="false">Truck</button>
+                        <button class="nav-link" id="truck-tab" data-bs-toggle="tab" data-bs-target="#truck" type="button" role="tab" aria-controls="truck" aria-selected="false"><i class="fas fa-truck"></i> Truck</button>
                     </li>
                 </ul>
                 <!-- Car Listings -->
@@ -64,14 +65,14 @@
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
                                             <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
-                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
-                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
-                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                                <li><i class="fas fa-tag"></i> <span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><i class="fas fa-car"></i> <span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><i class="fas fa-cog"></i> <span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><i class="fas fa-gas-pump"></i> <span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="vehicle-details.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle-details.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100"><i class="fas fa-key"></i> Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -97,14 +98,14 @@
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
                                             <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
-                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
-                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
-                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                                <li><i class="fas fa-tag"></i> <span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><i class="fas fa-car"></i> <span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><i class="fas fa-cog"></i> <span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><i class="fas fa-gas-pump"></i> <span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100"><i class="fas fa-key"></i> Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -130,14 +131,14 @@
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
                                             <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
-                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
-                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
-                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                                <li><i class="fas fa-tag"></i> <span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><i class="fas fa-car"></i> <span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><i class="fas fa-cog"></i> <span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><i class="fas fa-gas-pump"></i> <span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100"><i class="fas fa-key"></i> Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -163,14 +164,14 @@
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
                                             <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
-                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
-                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
-                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                                <li><i class="fas fa-tag"></i> <span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><i class="fas fa-car"></i> <span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><i class="fas fa-cog"></i> <span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><i class="fas fa-gas-pump"></i> <span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100"><i class="fas fa-key"></i> Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -196,14 +197,14 @@
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
                                             <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
-                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
-                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
-                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                                <li><i class="fas fa-tag"></i> <span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><i class="fas fa-car"></i> <span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><i class="fas fa-cog"></i> <span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><i class="fas fa-gas-pump"></i> <span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100"><i class="fas fa-key"></i> Rent Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -229,14 +230,14 @@
                                             <h5 class="card-title fw-semibold"><%= vehicle.getVehicleBrand()%> <%= vehicle.getVehicleModel()%></h5>
                                             <p class="card-text fs-4 fw-bold mb-3">RM<%= vehicle.getVehicleRatePerDay()%> <span class="fs-6 text-muted">/day</span></p>
                                             <ul class="list-unstyled row row-cols-2 g-2 mb-4">
-                                                <li><span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
-                                                <li><span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
-                                                <li><span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
-                                                <li><span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
+                                                <li><i class="fas fa-tag"></i> <span class="text-muted">Brand:</span> <%= vehicle.getVehicleBrand()%></li>
+                                                <li><i class="fas fa-car"></i> <span class="text-muted">Model:</span> <%= vehicle.getVehicleModel()%></li>
+                                                <li><i class="fas fa-cog"></i> <span class="text-muted">Transmission:</span> <%= vehicle.getTransmissionType()%></li>
+                                                <li><i class="fas fa-gas-pump"></i> <span class="text-muted">Fuel Type:</span> <%= vehicle.getVehicleFuelType()%></li>
                                             </ul>
                                         </div>
                                         <div class="card-footer-btn">
-                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100">Rent Now</a>
+                                            <a href="vehicle.jsp?vehicleId=<%= vehicle.getVehicleId()%>" class="btn btn-primary w-100"><i class="fas fa-key"></i> Rent Now</a>
                                         </div>
                                     </div>
                                 </div>

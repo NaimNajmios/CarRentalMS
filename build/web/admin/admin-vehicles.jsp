@@ -247,6 +247,7 @@
                     if (message != null && messageType != null) {
                 %>
                 <div class="alert alert-<%= messageType%> alert-dismissible fade show" role="alert">
+                    <i class="fas fa-<%= messageType.equals("success") ? "check-circle" : "exclamation-triangle" %> me-2"></i>
                     <%= message%>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -255,7 +256,7 @@
                 %>
 
                 <div class="dashboard-header">
-                    <h2>Vehicle Management</h2>
+                    <h2><i class="fas fa-car"></i> Vehicle Management</h2>
                     <a href="addVehicle.jsp" class="btn btn-success">
                         <i class="fas fa-plus"></i> Add New Vehicle
                     </a>
@@ -270,12 +271,12 @@
                     <table class="vehicle-table" id="vehicleTable">
                         <thead>
                             <tr>
-                                <th>Vehicle ID</th>
-                                <th>Model</th>
-                                <th>Brand</th>
-                                <th>Rate/Day (RM)</th>
-                                <th>Availability</th>
-                                <th class="text-center">Actions</th>
+                                <th><i class="fas fa-id-badge"></i> Vehicle ID</th>
+                                <th><i class="fas fa-car"></i> Model</th>
+                                <th><i class="fas fa-tag"></i> Brand</th>
+                                <th><i class="fas fa-money-bill-wave"></i> Rate/Day (RM)</th>
+                                <th><i class="fas fa-check-circle"></i> Availability</th>
+                                <th class="text-center"><i class="fas fa-cogs"></i> Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -312,7 +313,7 @@
                 </div>
 
                 <div class="timestamp">
-                    Last updated: <%= new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date())%>
+                    <i class="fas fa-clock"></i> Last updated: <%= new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date())%>
                 </div>
             </div>
         </div>

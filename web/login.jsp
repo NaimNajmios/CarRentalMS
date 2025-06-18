@@ -114,33 +114,33 @@
 </head>
 <body>
     <div class="form-container">
-        <h2>CarRent Login</h2>
-        <p class="text-muted mb-4">Manage your vehicle rentals efficiently.</p>
+        <h2><i class="fas fa-car"></i> CarRent Login</h2>
+        <p class="text-muted mb-4"><i class="fas fa-cog"></i> Manage your vehicle rentals efficiently.</p>
         <% 
             String message = request.getParameter("message");
             if (message != null) {
         %>
                 <div class="alert alert-info" role="alert">
-                    <%= message %>
+                    <i class="fas fa-info-circle"></i> <%= message %>
                 </div>
         <% 
             }
         %>
         <form action="LoginServlet" method="post" onsubmit="return validateLoginForm();">
             <div class="mb-3">
-                <label for="username" class="form-label">Username:</label>
+                <label for="username" class="form-label"><i class="fas fa-user"></i> Username:</label>
                 <input type="text" class="form-control" id="username" name="username" required>
                 <span id="usernameError" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
+                <label for="password" class="form-label"><i class="fas fa-lock"></i> Password:</label>
                 <input type="password" class="form-control" id="password" name="password" required>
                 <span id="passwordError" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login</button>
         </form>
         <div class="register-link-container">
-            <a href="register.jsp">Register here</a>
+            <a href="register.jsp"><i class="fas fa-user-plus"></i> Register here</a>
         </div>
     </div>
     <script>

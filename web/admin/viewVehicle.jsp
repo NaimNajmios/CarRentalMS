@@ -220,7 +220,7 @@
                 %>
 
                 <div class="dashboard-header">
-                    <h2>Vehicle Details</h2>
+                    <h2><i class="fas fa-car"></i> Vehicle Details</h2>
                     <a href="admin-vehicles.jsp" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Vehicles
                     </a>
@@ -234,69 +234,73 @@
                                 <div class="image-container">
                                     <img src="${pageContext.request.contextPath}/<%= vehicle.getVehicleImagePath()%>" class="vehicle-image" alt="<%= vehicle.getBrand()%> <%= vehicle.getModel()%>">
                                     <div class="image-overlay">
-                                        <h4><%= vehicle.getBrand()%> <%= vehicle.getModel()%></h4>
+                                        <h4><i class="fas fa-car"></i> <%= vehicle.getBrand()%> <%= vehicle.getModel()%></h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-7">
                             <div class="vehicle-details p-4">
-                                <h3 class="vehicle-title mb-4"><%= vehicle.getBrand()%> - <%= vehicle.getModel()%></h3>
+                                <h3 class="vehicle-title mb-4"><i class="fas fa-info-circle"></i> <%= vehicle.getBrand()%> - <%= vehicle.getModel()%></h3>
                                 
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Vehicle ID</span>
+                                            <span class="detail-label"><i class="fas fa-hashtag text-muted"></i> Vehicle ID</span>
                                             <span class="detail-value"><%= vehicle.getVehicleID()%></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Manufacturing Year</span>
+                                            <span class="detail-label"><i class="fas fa-calendar text-muted"></i> Manufacturing Year</span>
                                             <span class="detail-value"><%= vehicle.getManufacturingYear()%></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Category</span>
+                                            <span class="detail-label"><i class="fas fa-cog text-muted"></i> Category</span>
                                             <span class="detail-value"><%= vehicle.getCategory()%></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Fuel Type</span>
+                                            <span class="detail-label"><i class="fas fa-gas-pump text-muted"></i> Fuel Type</span>
                                             <span class="detail-value"><%= vehicle.getFuelType()%></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Transmission</span>
+                                            <span class="detail-label"><i class="fas fa-cogs text-muted"></i> Transmission</span>
                                             <span class="detail-value"><%= vehicle.getTransmissionType()%></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Mileage</span>
+                                            <span class="detail-label"><i class="fas fa-tachometer-alt text-muted"></i> Mileage</span>
                                             <span class="detail-value"><%= vehicle.getMileage()%> km</span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Rate Per Day</span>
+                                            <span class="detail-label"><i class="fas fa-dollar-sign text-muted"></i> Rate Per Day</span>
                                             <span class="detail-value">RM <%= vehicle.getRatePerDay()%></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Registration No</span>
+                                            <span class="detail-label"><i class="fas fa-id-card text-muted"></i> Registration No</span>
                                             <span class="detail-value"><%= vehicle.getRegistrationNo()%></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="detail-item">
-                                            <span class="detail-label">Availability</span>
+                                            <span class="detail-label"><i class="fas fa-info-circle text-muted"></i> Availability</span>
                                             <span class="status-badge status-<%= vehicle.isAvailability() ? "Available" : "NotAvailable"%>">
-                                                <%= vehicle.isAvailability() ? "Available" : "Not Available"%>
+                                                <% if (vehicle.isAvailability()) { %>
+                                                    <i class="fas fa-check-circle"></i> Available
+                                                <% } else { %>
+                                                    <i class="fas fa-times-circle"></i> Not Available
+                                                <% } %>
                                             </span>
                                         </div>
                                     </div>
@@ -318,6 +322,7 @@
                 </div>
                 <% } else { %>
                 <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     Vehicle not found. Please check the vehicle ID and try again.
                 </div>
                 <% } %>

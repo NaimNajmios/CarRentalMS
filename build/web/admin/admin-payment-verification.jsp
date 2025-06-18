@@ -408,16 +408,18 @@
             <div class="main-content">
                 <% if (errorMessage != null) {%>
                 <div style="color: #721c24; background-color: #f8d7da; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     <strong>Error:</strong> <%= errorMessage%>
                 </div>
                 <% } %>
                 <% if (successMessage != null) {%>
                 <div style="color: #155724; background-color: #d4edda; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                    <i class="fas fa-check-circle me-2"></i>
                     <strong>Success:</strong> <%= successMessage%>
                 </div>
                 <% } %>
                 <div class="dashboard-header">
-                    <h2>Payment Verification</h2>
+                    <h2><i class="fas fa-credit-card"></i> Payment Verification</h2>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" id="searchInput" placeholder="Search payments..." class="form-control">
@@ -425,35 +427,45 @@
                 </div>
 
                 <div class="filter-buttons">
-                    <button class="filter-btn active" data-status="Pending">Pending <span class="count" id="pendingCount">0</span></button>
+                    <button class="filter-btn active" data-status="Pending"><i class="fas fa-clock"></i> Pending <span class="count" id="pendingCount">0</span></button>
                     <select id="pendingFilter" style="display: none;" class="form-select">
                         <option value="All">All Pending</option>
                         <option value="Bank Transfer">Bank Transfer</option>
                         <option value="Cash">Cash</option>
                     </select>
-                    <button class="filter-btn" data-status="Confirmed">Confirmed <span class="count" id="confirmedCount">0</span></button>
-                    <button class="filter-btn" data-status="Completed">Completed <span class="count" id="completedCount">0</span></button>
-                    <button class="filter-btn" data-status="Cancelled">Cancelled <span class="count" id="cancelledCount">0</span></button>
-                    <button class="filter-btn" data-status="all">All <span class="count" id="allCount">0</span></button>
+                    <button class="filter-btn" data-status="Confirmed"><i class="fas fa-check-circle"></i> Confirmed <span class="count" id="confirmedCount">0</span></button>
+                    <button class="filter-btn" data-status="Completed"><i class="fas fa-check-double"></i> Completed <span class="count" id="completedCount">0</span></button>
+                    <button class="filter-btn" data-status="Cancelled"><i class="fas fa-times-circle"></i> Cancelled <span class="count" id="cancelledCount">0</span></button>
+                    <button class="filter-btn" data-status="all"><i class="fas fa-list"></i> All <span class="count" id="allCount">0</span></button>
                 </div>
 
                 <% if (allPayments == null || allPayments.isEmpty()) { %>
-                <div class="no-payments">No payment records found.</div>
+                <div class="no-payments"><i class="fas fa-inbox"></i> No payment records found.</div>
                 <% } else { %>
                 <ul class="payment-cards-list" id="paymentCardsList">
                     <% for (Payment payment : allPayments) {%>
                     <li class="payment-item payment-card" data-status="<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : ""%>" data-type="<%= payment.getPaymentType() != null ? payment.getPaymentType() : ""%>">
                         <div class="payment-header">
                             <div class="payment-details">
-                                <p><strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
-                                <p><strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
-                                <p><strong>Payment Date:</strong> <%= payment.getPaymentDate()%></p>
-                                <p><strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
+                                <p><i class="fas fa-hashtag text-muted"></i> <strong>Payment ID:</strong> <%= payment.getPaymentID()%></p>
+                                <p><i class="fas fa-calendar-check text-muted"></i> <strong>Booking ID:</strong> <%= payment.getBookingID()%></p>
+                                <p><i class="fas fa-calendar-alt text-muted"></i> <strong>Payment Date:</strong> <%= payment.getPaymentDate()%></p>
+                                <p><i class="fas fa-credit-card text-muted"></i> <strong>Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "N/A"%></p>
                             </div>
                             <div class="payment-info">
-                                <p class="amount">RM <%= String.format("%.2f", payment.getAmount())%></p>
+                                <p class="amount"><i class="fas fa-dollar-sign"></i> RM <%= String.format("%.2f", payment.getAmount())%></p>
                                 <span class="status-badge status-<%= payment.getPaymentStatus() != null ? payment.getPaymentStatus().toLowerCase().replace(" ", "-") : ""%>">
-                                    <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                    <% if ("Pending".equals(payment.getPaymentStatus())) { %>
+                                        <i class="fas fa-clock"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                    <% } else if ("Confirmed".equals(payment.getPaymentStatus())) { %>
+                                        <i class="fas fa-check-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                    <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
+                                        <i class="fas fa-check-double"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                    <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
+                                        <i class="fas fa-times-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                    <% } else { %>
+                                        <i class="fas fa-info-circle"></i> <%= payment.getPaymentStatus() != null ? payment.getPaymentStatus() : "N/A"%>
+                                    <% } %>
                                 </span>
                                 <div class="action-buttons">
                                     <% if ("Pending".equals(payment.getPaymentStatus())) {%>
@@ -461,28 +473,28 @@
                                         <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
                                         <input type="hidden" name="paymentStatus" value="Confirmed">
                                         <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
-                                        <button type="submit" class="action-btn verify-btn" onclick="return confirm('Are you sure you want to verify payment <%= payment.getPaymentID()%>?')">Verify</button>
+                                        <button type="submit" class="action-btn verify-btn" onclick="return confirm('Are you sure you want to verify payment <%= payment.getPaymentID()%>?')"><i class="fas fa-check"></i> Verify</button>
                                     </form>
                                     <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="display:inline;">
                                         <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
                                         <input type="hidden" name="paymentStatus" value="Cancelled">
                                         <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
-                                        <button type="submit" class="action-btn reject-btn" onclick="return confirm('Are you sure you want to reject payment <%= payment.getPaymentID()%>?')">Reject</button>
+                                        <button type="submit" class="action-btn reject-btn" onclick="return confirm('Are you sure you want to reject payment <%= payment.getPaymentID()%>?')"><i class="fas fa-times"></i> Reject</button>
                                     </form>
                                     <% if ("Bank Transfer".equals(payment.getPaymentType())) {%>
-                                    <button class="action-btn view-proof-btn" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')">View Proof</button>
+                                    <button class="action-btn view-proof-btn" onclick="viewProofOfPayment('<%= request.getContextPath()%><%= payment.getProofOfPayment()%>')"><i class="fas fa-eye"></i> View Proof</button>
                                     <% } %>
                                     <% } else if ("Confirmed".equals(payment.getPaymentStatus())) { %>
                                     <form action="${pageContext.request.contextPath}/UpdatePaymentStatus" method="post" style="display:inline;">
                                         <input type="hidden" name="paymentId" value="<%= payment.getPaymentID()%>">
                                         <input type="hidden" name="paymentStatus" value="Completed">
                                         <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
-                                        <button type="submit" class="action-btn verify-btn" onclick="return confirm('Are you sure you want to mark payment <%= payment.getPaymentID()%> as completed?')">Complete</button>
+                                        <button type="submit" class="action-btn verify-btn" onclick="return confirm('Are you sure you want to mark payment <%= payment.getPaymentID()%> as completed?')"><i class="fas fa-check-double"></i> Complete</button>
                                     </form>
                                     <% } else if ("Completed".equals(payment.getPaymentStatus())) { %>
-                                    <button class="action-btn verify-btn" disabled>Completed</button>
+                                    <button class="action-btn verify-btn" disabled><i class="fas fa-check-double"></i> Completed</button>
                                     <% } else if ("Cancelled".equals(payment.getPaymentStatus())) { %>
-                                    <button class="action-btn cancel-btn" disabled>Cancelled</button>
+                                    <button class="action-btn cancel-btn" disabled><i class="fas fa-times-circle"></i> Cancelled</button>
                                     <% } %>
                                 </div>
                             </div>
@@ -492,7 +504,7 @@
                 </ul>
                 <% }%>
 
-                <div class="timestamp">Last updated: <%= currentDateTime%></div>
+                <div class="timestamp"><i class="fas fa-clock"></i> Last updated: <%= currentDateTime%></div>
             </div>
         </div>
 

@@ -381,7 +381,7 @@
 
             <main class="dashboard-content">
                 <div class="dashboard-header">
-                    <h2>Admin Dashboard</h2>
+                    <h2><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" id="searchInput" placeholder="Search dashboard..." class="form-control">
@@ -422,6 +422,7 @@
                     if (hasError) {
                 %>
                 <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     <%= errorMessage%>
                 </div>
                 <%
@@ -430,7 +431,7 @@
 
                 <!-- Stats Section -->
                 <div class="stats-section">
-                    <h3>Overview</h3>
+                    <h3><i class="fas fa-chart-bar"></i> Overview</h3>
                     <div class="stats-grid">
                         <div class="dashboard-card">
                             <i class="fas fa-book icon"></i>
@@ -491,7 +492,9 @@
                     </div>
                 </div>
 
-                <div class="timestamp">Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date())%></div>
+                <div class="timestamp">
+                    <i class="fas fa-clock"></i> Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date())%>
+                </div>
             </main>
         </div>
 

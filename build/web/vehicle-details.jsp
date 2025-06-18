@@ -182,31 +182,37 @@
 
                 <div class="vehicle-info-container">
                     <div class="vehicle-info-header">
-                        <h2><%= vehicle.getVehicleBrand() %> <%= vehicle.getVehicleModel() %></h2>
-                        <p class="price">RM<%= vehicle.getVehicleRatePerDay() %> <span>/day</span></p>
+                        <h2><i class="fas fa-car"></i> <%= vehicle.getVehicleBrand() %> <%= vehicle.getVehicleModel() %></h2>
+                        <p class="price"><i class="fas fa-dollar-sign"></i> RM<%= vehicle.getVehicleRatePerDay() %> <span>/day</span></p>
                     </div>
 
                     <div class="vehicle-details-grid">
-                        <dt>Category</dt>
+                        <dt><i class="fas fa-cog"></i> Category</dt>
                         <dd><%= vehicle.getVehicleCategory() != null ? vehicle.getVehicleCategory() : "N/A" %></dd>
 
-                        <dt>Brand</dt>
+                        <dt><i class="fas fa-tag"></i> Brand</dt>
                         <dd><%= vehicle.getVehicleBrand() != null ? vehicle.getVehicleBrand() : "N/A" %></dd>
 
-                        <dt>Model</dt>
+                        <dt><i class="fas fa-tag"></i> Model</dt>
                         <dd><%= vehicle.getVehicleModel() != null ? vehicle.getVehicleModel() : "N/A" %></dd>
 
-                        <dt>Transmission</dt>
+                        <dt><i class="fas fa-cogs"></i> Transmission</dt>
                         <dd><%= vehicle.getTransmissionType() != null ? vehicle.getTransmissionType() : "N/A" %></dd>
 
-                        <dt>Fuel Type</dt>
+                        <dt><i class="fas fa-gas-pump"></i> Fuel Type</dt>
                         <dd><%= vehicle.getVehicleFuelType() != null ? vehicle.getVehicleFuelType() : "N/A" %></dd>
 
-                        <dt>Availability</dt>
-                        <dd><%= vehicle.getVehicleAvailablity() ? "Available" : "Not Available" %></dd>
+                        <dt><i class="fas fa-info-circle"></i> Availability</dt>
+                        <dd>
+                            <% if (vehicle.getVehicleAvailablity()) { %>
+                                <i class="fas fa-check-circle text-success"></i> Available
+                            <% } else { %>
+                                <i class="fas fa-times-circle text-danger"></i> Not Available
+                            <% } %>
+                        </dd>
                     </div>
 
-                    <a href="booking-form.jsp?vehicleId=<%= vehicle.getVehicleId() %>" class="book-now-btn">Book Now</a>
+                    <a href="booking-form.jsp?vehicleId=<%= vehicle.getVehicleId() %>" class="book-now-btn"><i class="fas fa-calendar-plus"></i> Book Now</a>
                 </div>
             </div>
         </div>

@@ -173,6 +173,13 @@
                     if (message != null && messageType != null) {
                 %>
                 <div class="alert alert-<%= messageType%> alert-dismissible fade show" role="alert">
+                    <% if (messageType.equals("danger")) { %>
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                    <% } else if (messageType.equals("success")) { %>
+                        <i class="fas fa-check-circle me-2"></i>
+                    <% } else { %>
+                        <i class="fas fa-info-circle me-2"></i>
+                    <% } %>
                     <%= message%>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -202,7 +209,7 @@
                 %>
 
                 <div class="dashboard-header">
-                    <h2>Client Details</h2>
+                    <h2><i class="fas fa-user"></i> Client Details</h2>
                     <a href="admin-users.jsp" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Users
                     </a>
@@ -223,27 +230,27 @@
                             }
                         %>
                     </div>
-                    <h3 class="detail-title"><%= rs.getString("name") %></h3>
+                    <h3 class="detail-title"><i class="fas fa-user-circle"></i> <%= rs.getString("name") %></h3>
                     
                     <div class="details-grid">
                         <div class="detail-item">
-                            <span class="detail-label">Client ID</span>
+                            <span class="detail-label"><i class="fas fa-hashtag text-muted"></i> Client ID</span>
                             <span class="detail-value"><%= rs.getString("clientID") %></span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">User ID</span>
+                            <span class="detail-label"><i class="fas fa-user text-muted"></i> User ID</span>
                             <span class="detail-value"><%= rs.getString("userID") %></span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Address</span>
+                            <span class="detail-label"><i class="fas fa-map-marker-alt text-muted"></i> Address</span>
                             <span class="detail-value"><%= rs.getString("address") %></span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Phone Number</span>
+                            <span class="detail-label"><i class="fas fa-phone text-muted"></i> Phone Number</span>
                             <span class="detail-value"><%= rs.getString("phoneNumber") %></span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Email</span>
+                            <span class="detail-label"><i class="fas fa-envelope text-muted"></i> Email</span>
                             <span class="detail-value"><%= rs.getString("email") %></span>
                         </div>
                     </div>

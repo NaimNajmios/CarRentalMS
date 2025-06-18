@@ -283,6 +283,7 @@
                     if (message != null && messageType != null) {
                 %>
                 <div class="alert alert-<%= messageType %> alert-dismissible fade show" role="alert">
+                    <i class="fas fa-<%= messageType.equals("success") ? "check-circle" : "exclamation-triangle" %> me-2"></i>
                     <%= message %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -290,17 +291,17 @@
                     }
                 %>
                 <div class="dashboard-header">
-                    <h2>User Management</h2>
+                    <h2><i class="fas fa-users"></i> User Management</h2>
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
                         <i class="fas fa-plus"></i> Add New User
                     </button>
                 </div>
                 <ul class="nav nav-tabs" id="userTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" role="tab" aria-controls="client" aria-selected="true">Clients</a>
+                        <a class="nav-link active" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" role="tab" aria-controls="client" aria-selected="true"><i class="fas fa-user"></i> Clients</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" role="tab" aria-controls="admin" aria-selected="false">Administrators</a>
+                        <a class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" role="tab" aria-controls="admin" aria-selected="false"><i class="fas fa-user-shield"></i> Administrators</a>
                     </li>
                 </ul>
                 <div class="tab-content" id="userTabsContent">
@@ -313,12 +314,12 @@
                             <table class="data-table" id="clientTable">
                                 <thead>
                                     <tr>
-                                        <th>Client Id</th>
-                                        <th>User Id</th>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th class="text-center">Actions</th>
+                                        <th><i class="fas fa-id-badge"></i> Client ID</th>
+                                        <th><i class="fas fa-user"></i> User ID</th>
+                                        <th><i class="fas fa-user-circle"></i> Name</th>
+                                        <th><i class="fas fa-phone"></i> Phone</th>
+                                        <th><i class="fas fa-envelope"></i> Email</th>
+                                        <th class="text-center"><i class="fas fa-cogs"></i> Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -366,7 +367,7 @@
                             </table>
                         </div>
                         <div class="timestamp">
-                            Last updated: <%= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) %>
+                            <i class="fas fa-clock"></i> Last updated: <%= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) %>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
@@ -378,12 +379,12 @@
                             <table class="data-table" id="adminTable">
                                 <thead>
                                     <tr>
-                                        <th>Admin Id</th>
-                                        <th>User Id</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th class="text-center">Actions</th>
+                                        <th><i class="fas fa-id-badge"></i> Admin Id</th>
+                                        <th><i class="fas fa-user"></i> User Id</th>
+                                        <th><i class="fas fa-user-circle"></i> Name</th>
+                                        <th><i class="fas fa-envelope"></i> Email</th>
+                                        <th><i class="fas fa-phone"></i> Phone</th>
+                                        <th class="text-center"><i class="fas fa-cogs"></i> Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -431,7 +432,7 @@
                             </table>
                         </div>
                         <div class="timestamp">
-                            Last updated: <%= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) %>
+                            <i class="fas fa-clock"></i> Last updated: <%= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) %>
                         </div>
                     </div>
                 </div>

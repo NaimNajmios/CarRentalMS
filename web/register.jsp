@@ -125,59 +125,59 @@
 </head>
 <body>
     <div class="form-container">
-        <h2>CarRent Register</h2>
-        <p class="text-muted mb-4">Create your account to manage your vehicle rentals.</p>
+        <h2><i class="fas fa-car"></i> CarRent Register</h2>
+        <p class="text-muted mb-4"><i class="fas fa-user-plus"></i> Create your account to manage your vehicle rentals.</p>
         <% 
             String errorMessage = request.getParameter("message");
             if (errorMessage != null) {
         %>
                 <div class="alert alert-danger" role="alert">
-                    <%= errorMessage %>
+                    <i class="fas fa-exclamation-triangle"></i> <%= errorMessage %>
                 </div>
         <% 
             }
         %>
         <form action="RegisterServlet" method="post" onsubmit="return validateForm()">
             <div class="mb-3">
-                <label for="username" class="form-label">Username:</label>
+                <label for="username" class="form-label"><i class="fas fa-user"></i> Username:</label>
                 <input type="text" class="form-control" id="username" name="username" required value="${param.username}">
             </div>
 
             <div class="mb-3">
-                <label for="name" class="form-label">Name:</label>
+                <label for="name" class="form-label"><i class="fas fa-id-card"></i> Name:</label>
                 <input type="text" class="form-control" id="name" name="name" required value="${param.name}">
             </div>
 
             <div class="mb-3">
-                <label for="address" class="form-label">Address:</label>
+                <label for="address" class="form-label"><i class="fas fa-map-marker-alt"></i> Address:</label>
                 <input type="text" class="form-control" id="address" name="address" required value="${param.address}">
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
+                <label for="email" class="form-label"><i class="fas fa-envelope"></i> Email:</label>
                 <input type="email" class="form-control" id="email" name="email" required value="${param.email}">
             </div>
 
             <div class="mb-3">
-                <label for="contact" class="form-label">Contact:</label>
+                <label for="contact" class="form-label"><i class="fas fa-phone"></i> Contact:</label>
                 <input type="tel" class="form-control" id="contact" name="contact" required value="${param.contact}" inputmode="numeric">
             </div>
 
             <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
+                <label for="password" class="form-label"><i class="fas fa-lock"></i> Password:</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
 
             <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Repeat Password:</label>
+                <label for="confirmPassword" class="form-label"><i class="fas fa-lock"></i> Repeat Password:</label>
                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                 <span id="confirmPasswordError" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Register</button>
         </form>
         <div class="register-link-container">
-            <a href="login.jsp">Back to Login</a>
+            <a href="login.jsp"><i class="fas fa-arrow-left"></i> Back to Login</a>
         </div>
     </div>
 
