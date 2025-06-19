@@ -251,28 +251,28 @@
             <%@ include file="../include/admin-sidebar.jsp" %>
             <main class="main-content">
                 <div class="dashboard-header">
-                    <h2>Create New Booking</h2>
+                    <h2><i class="fas fa-plus-circle me-2"></i>Create New Booking</h2>
                     <a href="admin-bookings.jsp" class="back-btn">
                         <i class="fas fa-arrow-left"></i> Back to Bookings
                     </a>
                 </div>
                 <% if (errorMessage != null) { %>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <%= errorMessage %>
+                    <i class="fas fa-exclamation-triangle me-2"></i><%= errorMessage %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <% } %>
                 <% if (successMessage != null) { %>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <%= successMessage %>
+                    <i class="fas fa-check-circle me-2"></i><%= successMessage %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <% } %>
                 <form action="${pageContext.request.contextPath}/CreateBooking" method="post" class="booking-form" id="createBookingForm">
                     <div class="form-section">
-                        <h3>Client Information</h3>
+                        <h3><i class="fas fa-user me-2"></i>Client Information</h3>
                         <div class="form-group">
-                            <label for="clientId">Select Client</label>
+                            <label for="clientId"><i class="fas fa-users me-1"></i>Select Client</label>
                             <select name="clientId" id="clientId" class="form-control" required onchange="validateForm()">
                                 <option value="">Select a client</option>
                                 <% for (Client client : clients) { %>
@@ -284,9 +284,9 @@
                         </div>
                     </div>
                     <div class="form-section">
-                        <h3>Vehicle Information</h3>
+                        <h3><i class="fas fa-car me-2"></i>Vehicle Information</h3>
                         <div class="form-group">
-                            <label for="vehicleId">Select Vehicle</label>
+                            <label for="vehicleId"><i class="fas fa-car-side me-1"></i>Select Vehicle</label>
                             <select name="vehicleId" id="vehicleId" class="form-control" required onchange="checkVehicleAvailability(this.value)">
                                 <option value="">Select a vehicle</option>
                                 <% for (Vehicle vehicle : availableVehicles) { %>
@@ -298,42 +298,44 @@
                             </select>
                             <div id="availabilityMessage"></div>
                             <div id="unavailableDates" class="unavailable-dates" style="display: none;">
-                                <h4>Unavailable Dates</h4>
+                                <h4><i class="fas fa-calendar-times me-2"></i>Unavailable Dates</h4>
                                 <div id="unavailableDatesList" class="date-list"></div>
                             </div>
                         </div>
                     </div>
                     <div class="form-section">
-                        <h3>Booking Details</h3>
+                        <h3><i class="fas fa-calendar-alt me-2"></i>Booking Details</h3>
                         <div class="form-group">
-                            <label for="startDate">Start Date</label>
+                            <label for="startDate"><i class="fas fa-calendar-plus me-1"></i>Start Date</label>
                             <input type="text" name="startDate" id="startDate" class="form-control" required placeholder="Select start date" onchange="validateForm()">
                         </div>
                         <div class="form-group">
-                            <label for="endDate">End Date</label>
+                            <label for="endDate"><i class="fas fa-calendar-minus me-1"></i>End Date</label>
                             <input type="text" name="endDate" id="endDate" class="form-control" required placeholder="Select end date" onchange="validateForm()">
                         </div>
                         <div class="form-group">
-                            <label for="totalCost">Total Cost (RM)</label>
+                            <label for="totalCost"><i class="fas fa-money-bill-wave me-1"></i>Total Cost (RM)</label>
                             <input type="text" name="totalCost" id="totalCost" class="form-control" readonly required>
                         </div>
                         <div class="form-group">
-                            <label for="paymentType">Payment Method</label>
+                            <label for="paymentType"><i class="fas fa-credit-card me-1"></i>Payment Method</label>
                             <select name="paymentType" id="paymentType" class="form-control" required onchange="validateForm()">
                                 <option value="">Select payment method</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Debit Card">Debit Card</option>
-                                <option value="Credit Card">Credit Card</option>
+                                <option value="Cash"><i class="fas fa-money-bill"></i> Cash</option>
+                                <option value="Debit Card"><i class="fas fa-credit-card"></i> Debit Card</option>
+                                <option value="Credit Card"><i class="fas fa-credit-card"></i> Credit Card</option>
                             </select>
                         </div>
                         <input type="hidden" name="assignedDate" value="<%= currentDate %>">
                         <input type="hidden" name="bookingDate" value="<%= currentDate %>">
                         <input type="hidden" name="adminId" value="<%= loggedAdmin.getAdminID() %>">
                     </div>
-                    <button type="submit" class="submit-btn" id="submitBtn" disabled>Create Booking</button>
+                    <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                        <i class="fas fa-save me-2"></i>Create Booking
+                    </button>
                 </form>
                 <div class="timestamp">
-                    Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date()) %>
+                    <i class="fas fa-clock me-1"></i>Last updated: <%= new SimpleDateFormat("yyyy-MM-dd hh:mm a z").format(new Date()) %>
                 </div>
             </main>
         </div>
