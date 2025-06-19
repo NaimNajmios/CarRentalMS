@@ -19,6 +19,24 @@
         <%@ include file="include/client-css.html" %>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #f0f2f5;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+                margin: 0;
+                padding-top: 56px; /* Adjust for fixed header */
+            }
+
+            header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1000;
+            }
+
             /* Fix card consistency issues */
             .card {
                 height: 100%;
@@ -214,7 +232,35 @@
     </head>
     <body>
         <!-- Header -->
-        <%@ include file="include/header.jsp" %>
+        <header>
+            <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top">
+                <div class="container">
+                    <a class="navbar-brand" href="welcome.jsp"><i class="fas fa-car"></i> CarRent</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="welcome.jsp">
+                                    <i class="fas fa-home"></i> Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="cars-browse.jsp">
+                                    <i class="fas fa-car-side"></i> Cars
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-primary px-4 py-2 ms-3 rounded-pill fw-semibold" href="login.jsp" style="border-width: 2px; transition: all 0.3s ease;">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
 
         <!-- Cars Section -->
         <section id="cars" class="py-5 mt-5">

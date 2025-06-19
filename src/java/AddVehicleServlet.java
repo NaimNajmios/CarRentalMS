@@ -82,13 +82,17 @@ public class AddVehicleServlet extends HttpServlet {
         v.setMileage(Integer.parseInt(request.getParameter("mileage")));
         v.setRatePerDay(Double.parseDouble(request.getParameter("ratePerDay")));
         v.setRegistrationNo(request.getParameter("registrationNo"));
+        String vehicleImagePath = request.getParameter("vehicleImagePath");
+        if (vehicleImagePath == null || vehicleImagePath.trim().isEmpty()) {
+            vehicleImagePath = "images/vehicles/car.jpg";
+        }
+        v.setVehicleImagePath(vehicleImagePath);
 
         int status = vehicleDAO.add(v);
         if (status > 0) {
             response.sendRedirect(request.getContextPath() + "/admin/admin-vehicles.jsp?message=Vehicle+added+successfully&type=success");
         } else {
-            request.setAttribute("error", "Failed to add vehicle.");
-            request.getRequestDispatcher(request.getContextPath() + "/admin/admin-vehicles.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/admin/admin-vehicles.jsp?message=Failed+to+add+vehicle&type=error");
         }
 
     }

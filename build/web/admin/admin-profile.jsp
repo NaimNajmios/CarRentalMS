@@ -437,7 +437,12 @@
                 const formInputs = document.querySelectorAll('#profileForm input:not([type="hidden"]), #profileForm textarea');
 
                 editProfileBtn.addEventListener('click', function() {
-                    formInputs.forEach(input => input.removeAttribute('readonly'));
+                    formInputs.forEach(input => {
+                        // Keep username field readonly even in edit mode
+                        if (input.id !== 'username') {
+                            input.removeAttribute('readonly');
+                        }
+                    });
                     editProfileBtn.style.display = 'none';
                     cancelEditBtn.style.display = 'inline-block';
                     updateBtn.style.display = 'inline-block';
@@ -447,7 +452,10 @@
                 });
 
                 cancelEditBtn.addEventListener('click', function() {
-                    formInputs.forEach(input => input.setAttribute('readonly', ''));
+                    formInputs.forEach(input => {
+                        // Set all fields back to readonly, including username
+                        input.setAttribute('readonly', '');
+                    });
                     editProfileBtn.style.display = 'inline-block';
                     cancelEditBtn.style.display = 'none';
                     updateBtn.style.display = 'none';

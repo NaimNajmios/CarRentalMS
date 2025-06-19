@@ -87,11 +87,12 @@
             
             /* Search bar styling */
             .search-container {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: #f8f9fa;
                 padding: 2rem 0;
                 margin-bottom: 2rem;
-                border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                border: 1px solid #e9ecef;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             }
             
             .search-form {
@@ -100,33 +101,35 @@
             }
             
             .search-input {
-                border: none;
-                border-radius: 25px;
+                border: 1px solid #ced4da;
+                border-radius: 8px;
                 padding: 12px 20px;
                 font-size: 1rem;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
+                background: white;
             }
             
             .search-input:focus {
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-                transform: translateY(-2px);
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+                outline: none;
             }
             
             .search-btn {
-                border-radius: 25px;
+                border-radius: 8px;
                 padding: 12px 25px;
-                background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-                border: none;
+                background: #0d6efd;
+                border: 1px solid #0d6efd;
                 color: white;
-                font-weight: 600;
+                font-weight: 500;
                 transition: all 0.3s ease;
             }
             
             .search-btn:hover {
-                background: linear-gradient(45deg, #ee5a24, #ff6b6b);
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(238, 90, 36, 0.3);
+                background: #0b5ed7;
+                border-color: #0a58ca;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
             }
             
             .filter-options {
@@ -134,17 +137,35 @@
             }
             
             .filter-select {
-                border: none;
-                border-radius: 15px;
+                border: 1px solid #ced4da;
+                border-radius: 8px;
                 padding: 8px 15px;
                 font-size: 0.9rem;
-                background: rgba(255, 255, 255, 0.9);
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                background: white;
+                transition: all 0.3s ease;
             }
             
             .filter-select:focus {
                 outline: none;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            }
+            
+            .clear-filters-btn {
+                border-radius: 8px;
+                padding: 8px 15px;
+                background: #6c757d;
+                border: 1px solid #6c757d;
+                color: white;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+            
+            .clear-filters-btn:hover {
+                background: #5c636a;
+                border-color: #565e64;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(108, 117, 125, 0.2);
             }
             
             /* Hidden cards */
@@ -206,10 +227,10 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white border-0">
+                                    <span class="input-group-text bg-white border-end-0">
                                         <i class="fas fa-search text-muted"></i>
                                     </span>
-                                    <input type="text" class="form-control search-input" id="searchInput" placeholder="Search by brand, model, transmission, or fuel type...">
+                                    <input type="text" class="form-control search-input border-start-0" id="searchInput" placeholder="Search by brand, model, transmission, or fuel type...">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -265,7 +286,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <button type="button" class="btn btn-outline-light w-100" onclick="clearFilters()">
+                                    <button type="button" class="btn clear-filters-btn w-100" onclick="clearFilters()">
                                         <i class="fas fa-times"></i> Clear Filters
                                     </button>
                                 </div>
